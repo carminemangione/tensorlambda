@@ -32,7 +32,6 @@ public class RandomGaussianVector {
 
         for (int i = currentIndex; i < nextVector.length; i++) {
             nextVector[i] = random.nextGaussian() * sd + mean;
-
         }
         return nextVector;
     }

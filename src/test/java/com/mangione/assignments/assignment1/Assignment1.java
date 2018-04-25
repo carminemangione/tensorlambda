@@ -12,7 +12,7 @@ import java.net.URL;
 
 public class Assignment1 {
     public static void main(String[] args) throws Exception {
-        URL abaloneURL = Assignment1.class.getClassLoader().getResource("com/mangione/continuous/abalone/abalone.data.txt");
+        URL abaloneURL = Assignment1.class.getClassLoader().getResource("com/mangione/continuous/abalone/abalone.data");
 
         assert abaloneURL != null;
         long totalNumberOfLines = new CsvObservationProvider<>(new File(abaloneURL.toURI()), new ObservationFactory()).getNumberOfLines();

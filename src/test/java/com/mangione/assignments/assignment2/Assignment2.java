@@ -62,7 +62,7 @@ public class Assignment2 {
 
     private static void processAbalone() throws Exception {
         File file = new File(Assignment2.class.getClassLoader()
-                .getResource("com/mangione/continuous/abalone/" + "abalone.data.txt").toURI());
+                .getResource("com/mangione/continuous/abalone/" + "abalone.data").toURI());
 
         Map<Integer, VariableCalculator> calculators = new HashMap<>();
         calculators.put(0, feature -> {
