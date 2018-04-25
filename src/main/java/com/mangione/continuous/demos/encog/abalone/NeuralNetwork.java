@@ -1,4 +1,4 @@
-package com.mangione.continuous.demos;
+package com.mangione.continuous.demos.encog.abalone;
 
 import org.encog.ConsoleStatusReportable;
 import org.encog.Encog;
@@ -31,10 +31,10 @@ import org.encog.util.simple.EncogUtility;
 import java.io.File;
 import java.util.Arrays;
 
-public class Abalone{
+public class NeuralNetwork {
 
-    private final static String DATA_FILENAME = "src/main/resources/Abalone/abalone.data";
-    private final static String EGA_FILENAME = "src/main/resources/Abalone/abalone.ega";
+    private final static String DATA_FILENAME = "src/main/resources/NeuralNetwork/abalone.data";
+    private final static String EGA_FILENAME = "src/main/resources/NeuralNetwork/abalone.ega";
     private final static char DATA_FILE_DELIMITER = ',';
     private static EncogAnalyst ANALYST = new EncogAnalyst();
 
@@ -62,7 +62,7 @@ public class Abalone{
 
             // Set input headings
             norm.setInputHeadings(new String[] { "Sex", "Shell Length",
-                    "Shell Diameter", "Shell Height", "Total Abalone Weight",
+                    "Shell Diameter", "Shell Height", "Total NeuralNetwork Weight",
                     "Shucked Weight", "Viscera Weight", "Shell Weight", "Rings" });
 
             // Ensure that there are no headers in the output
@@ -104,7 +104,7 @@ public class Abalone{
                 ColumnType.continuous);
         abaloneDataset.defineSourceColumn("Shell Height", 3,
                 ColumnType.continuous);
-        abaloneDataset.defineSourceColumn("Total Abalone Weight", 4,
+        abaloneDataset.defineSourceColumn("Total NeuralNetwork Weight", 4,
                 ColumnType.continuous);
         abaloneDataset.defineSourceColumn("Shucked Weight", 5,
                 ColumnType.continuous);
@@ -168,7 +168,7 @@ public class Abalone{
 
         if (trainingApproach.equalsIgnoreCase("encog-model")) {
 
-            // Prepare the Abalone dataset
+            // Prepare the NeuralNetwork dataset
             VersatileMLDataSet preparedDataset = prepareDataset();
 
             // Prep the abalone model
