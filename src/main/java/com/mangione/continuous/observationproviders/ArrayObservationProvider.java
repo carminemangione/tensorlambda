@@ -7,19 +7,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArrayObservationProvider<S> extends ObservationProvider<S> {
-    private final List<S> observations = new ArrayList<>();
+public class ArrayObservationProvider<T extends Observation> extends ObservationProvider<T> {
+    private final List<T> observations = new ArrayList<>();
     private int current;
 
-    public ArrayObservationProvider(S[][] data, ObservationFactoryInterface<S> observationFactoryInterface) {
+    public ArrayObservationProvider(double[][] data, ObservationFactoryInterface<T> observationFactoryInterface) {
         super(observationFactoryInterface);
-        for (S[] doubles : data) {
+        for (double[] doubles : data) {
             observations.add(create(doubles));
         }
     }
 
-    public ArrayObservationProvider(ObservationProvider<S> observationProvider,
-            ObservationFactoryInterface<S> observationFactoryInterface) throws Exception {
+    public ArrayObservationProvider(ObservationProvider observationProvider,
+            ObservationFactoryInterface<T> observationFactoryInterface) throws Exception {
         super(observationFactoryInterface);
         while (observationProvider.hasNext()) {
             observations.add(create(observationProvider.next().getFeatures()));
@@ -28,22 +28,22 @@ public class ArrayObservationProvider<S> extends ObservationProvider<S> {
     }
 
     @Override
-    public boolean hasNext()  {
+    public boolean hasNext() throws IOException {
         return current < observations.size();
     }
 
     @Override
-    public T next() {
+    public T next() throws IOException {
         return observations.get(current++);
     }
 
     @Override
-    public void reset()  {
+    public void reset() throws IOException {
         current = 0;
     }
 
     @Override
-    public long getNumberOfLines()  {
+    public long getNumberOfLines() throws IOException {
         return observations.size();
     }
 }

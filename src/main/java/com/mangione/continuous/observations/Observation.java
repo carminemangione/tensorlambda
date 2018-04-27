@@ -1,13 +1,13 @@
 package com.mangione.continuous.observations;
 
-public class Observation<T> extends Observation<S> {
-    private final T[] features;
+public class Observation {
+    private final double[] features;
 
-    public Observation(T[] features) {
+    public Observation(double[] features) {
         this.features = features;
     }
 
-    public T[] getFeatures() {
+    public double[] getFeatures() {
         return features;
     }
 }

@@ -5,23 +5,23 @@ import com.mangione.continuous.observations.ObservationFactoryInterface;
 
 import java.io.IOException;
 
-public abstract class ObservationProvider<S> {
+public abstract class ObservationProvider<T extends Observation> {
 
-    private final ObservationFactoryInterface<S> factory;
+    private final ObservationFactoryInterface<T> factory;
 
-    protected ObservationProvider(ObservationFactoryInterface<S> factory) {
+    protected ObservationProvider(ObservationFactoryInterface<T> factory) {
         this.factory = factory;
     }
 
     public abstract boolean hasNext() throws Exception;
 
-    public abstract S next() throws Exception;
+    public abstract T next() throws Exception;
 
     public abstract void reset() throws Exception;
 
     public abstract long getNumberOfLines() throws IOException;
 
-    protected Observation<S> create(S data[]) {
+    protected T create(double data[]) {
         return factory.create(data);
     }
 }
