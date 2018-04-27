@@ -79,6 +79,13 @@
             <version>24.1-jre</version>
         </dependency>
     </dependencies>
+    <!-- https://mvnrepository.com/artifact/org.encog/encog-core -->
+    <dependency>
+        <groupId>org.encog</groupId>
+        <artifactId>encog-core</artifactId>
+        <version>3.4</version>
+    </dependency>
+
     <build>
         <pluginManagement>
             <plugins>
