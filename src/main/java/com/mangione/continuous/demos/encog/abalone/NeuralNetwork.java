@@ -48,7 +48,7 @@ public class NeuralNetwork {
                 DATA_FILENAME));
 
         // Only normalize the file if it hasn't already been done
-        if (normalizedFile.exists() == false) {
+        if (!normalizedFile.exists()) {
 
             // Create the wizard and analyze the file
             AnalystWizard wizard = new AnalystWizard(ANALYST);
