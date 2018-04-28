@@ -16,7 +16,6 @@ import java.util.Map;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.fail;
-import static org.junit.Assert.assertTrue;
 
 public class CsvObservationProviderTest {
 
@@ -78,7 +77,7 @@ public class CsvObservationProviderTest {
 
         Map<Integer, VariableCalculator<Double>> calculators = new HashMap<>();
         calculators.put(0, feature -> {
-            Double[] out = new Double[3];
+            Double[] out = new Double[]{0d,0d,0d};
             switch (feature) {
                 case "a":
                     out[0] = 1d;
@@ -96,9 +95,10 @@ public class CsvObservationProviderTest {
                 new DoubleObservationFactory<>(), calculators, new DoubleVariableCalculator(), new DoubleArraySupplier());
 
 
-        assertTrue(Arrays.equals(new Double[]{1d, 0d, 0d}, op.next().getFeatures()));
-        assertTrue(Arrays.equals(new Double[]{0d, 1d, 0d}, op.next().getFeatures()));
-        assertTrue(Arrays.equals(new Double[]{0d, 0d, 1d}, op.next().getFeatures()));
+
+        assertEquals(1d, op.next().getFeatures()[0], 0);
+        assertEquals(1d, op.next().getFeatures()[1], 0);
+        assertEquals(1d, op.next().getFeatures()[2], 0);
 
     }
 
