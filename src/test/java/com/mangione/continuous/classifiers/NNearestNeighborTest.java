@@ -3,6 +3,8 @@ package com.mangione.continuous.classifiers;
 import com.mangione.continuous.observationproviders.ArrayObservationProvider;
 import com.mangione.continuous.observationproviders.ObservationProvider;
 import com.mangione.continuous.observations.DiscreteExemplar;
+import com.mangione.continuous.observations.DiscreteExemplarFactory;
+import com.mangione.continuous.observations.ExemplarInterface;
 import com.mangione.continuous.observations.Observation;
 import com.mangione.continuous.observations.ObservationFactory;
 import org.junit.Test;
@@ -13,9 +15,11 @@ public class NNearestNeighborTest {
 
     @Test
     public void threePointsOneClass() throws Exception {
-        double[][] training = {{1, 1, 1}, {2, 2, 1}, {1, 1.5, 1}};
+        Double[][] training = {{1d, 1d, 1d}, {2d, 2d, 1d}, {1d, 1.5d, 1d}};
 
-        ObservationProvider<Observation> provider = new ArrayObservationProvider<>(training, new ObservationFactory());
+        ObservationProvider<Double, ExemplarInterface<Double, Integer>> provider = new ArrayObservationProvider<Double,
+                ExemplarInterface<Double, Integer>>(training,
+                new DiscreteExemplarFactory());
         int n = 2;
         NNearestNeighbor nearestNeighbor = new NNearestNeighbor(provider, n);
         assertEquals(1, nearestNeighbor.classify(new DiscreteExemplar(new double[]{2, 3}, 1.0, 1)));

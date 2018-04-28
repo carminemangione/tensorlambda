@@ -38,7 +38,7 @@ public class CsvObservationProviderTest {
         }
         bufferedWriter.close();
 
-        CsvObservationProvider<Observation> op = new CsvObservationProvider<>(file, new ObservationFactory());
+        CsvObservationProvider<Observation> op = new CsvObservationProvider<>(file, new ObservationFactory(), coercionInterface, arraySupplier);
         assertEquals(3, op.getNumberOfLines());
         ensureFileIsClosed();
     }
@@ -52,7 +52,7 @@ public class CsvObservationProviderTest {
         }
         bufferedWriter.close();
 
-        CsvObservationProvider<Observation> op = new CsvObservationProvider<>(file, new ObservationFactory());
+        CsvObservationProvider<Observation> op = new CsvObservationProvider<>(file, new ObservationFactory(), coercionInterface, arraySupplier);
         int i = 0;
         while (op.hasNext()) {
             final double[] next = op.next().getFeatures();
@@ -90,7 +90,7 @@ public class CsvObservationProviderTest {
             }
             return out;
         });
-        CsvObservationProvider<Observation> op = new CsvObservationProvider<>(file, new ObservationFactory(), calculators);
+        CsvObservationProvider<Observation> op = new CsvObservationProvider<>(file, new ObservationFactory(), calculators, coercionInterface);
         assertTrue(Arrays.equals(new double[]{1, 0, 0}, op.next().getFeatures()));
         assertTrue(Arrays.equals(new double[]{0, 1, 0}, op.next().getFeatures()));
         assertTrue(Arrays.equals(new double[]{0, 0, 1}, op.next().getFeatures()));

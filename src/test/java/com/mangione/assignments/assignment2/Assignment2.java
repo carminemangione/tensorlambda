@@ -30,7 +30,7 @@ public class Assignment2 {
     private static void processSingleFile(String currentFile) throws Exception {
         File file = new File(Assignment2.class.getClassLoader()
                 .getResource("com/mangione/continuous/assignment2/" + currentFile).toURI());
-        CsvObservationProvider<Observation> observationProvider = new CsvObservationProvider<>(file, new ObservationFactory());
+        CsvObservationProvider<Observation> observationProvider = new CsvObservationProvider<>(file, new ObservationFactory(), coercionInterface, arraySupplier);
 
         ObservationProvider<Observation> trainingSetProvider =
                 new SampledObservationProvider(.10, observationProvider, new MersenneTwister(2123), false);
@@ -80,7 +80,7 @@ public class Assignment2 {
             }
             return out;
         });
-        CsvObservationProvider<Observation> observationProvider = new CsvObservationProvider<>(file, new ObservationFactory(), calculators);
+        CsvObservationProvider<Observation> observationProvider = new CsvObservationProvider<>(file, new ObservationFactory(), calculators, coercionInterface);
 
         ObservationProvider<Observation> trainingSetProvider =
                 new SampledObservationProvider(.10, observationProvider, new MersenneTwister(2123), false);

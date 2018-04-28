@@ -1,8 +1,8 @@
 package com.mangione.continuous.observations;
 
-public class ObservationFactory implements ObservationFactoryInterface<Observation> {
+public class ObservationFactory<S> implements ObservationFactoryInterface<S, Observation<S>> {
     @Override
-    public Observation create(double[] data) {
-        return new Observation(data);
+    public Observation<S> create(S[] data) {
+        return new Observation<>(data);
     }
 }

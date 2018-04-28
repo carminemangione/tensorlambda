@@ -15,7 +15,7 @@ public class Assignment1 {
         URL abaloneURL = Assignment1.class.getClassLoader().getResource("com/mangione/continuous/abalone/abalone.data");
 
         assert abaloneURL != null;
-        long totalNumberOfLines = new CsvObservationProvider<>(new File(abaloneURL.toURI()), new ObservationFactory()).getNumberOfLines();
+        long totalNumberOfLines = new CsvObservationProvider<>(new File(abaloneURL.toURI()), new ObservationFactory(), coercionInterface, arraySupplier).getNumberOfLines();
 
         MersenneTwister random = new MersenneTwister(198273);
 

@@ -3,21 +3,22 @@ package com.mangione.continuous.abalone;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.mangione.continuous.observationproviders.CsvObservationProvider;
 import com.mangione.continuous.observationproviders.ObservationProvider;
 import com.mangione.continuous.observationproviders.VariableCalculator;
-import com.mangione.continuous.observations.Exemplar;
-import com.mangione.continuous.observations.ObservationFactoryInterface;
+import com.mangione.continuous.observations.DiscreteExemplar;
+import com.mangione.continuous.observations.DiscreteExemplarFactory;
 
-public class AbaloneObservationProvider<T extends Exemplar> extends ObservationProvider<T> {
+public class AbaloneObservationProvider extends ObservationProvider<Double, DiscreteExemplar<Double>> {
 
-    private final CsvObservationProvider<T> observationProvider;
+    private final CsvObservationProvider<Double, DiscreteExemplar<Double>> observationProvider;
 
-    public AbaloneObservationProvider(String abaloneFile, ObservationFactoryInterface<T> factory) throws Exception {
-        super(factory);
+    public AbaloneObservationProvider(String abaloneFile) throws Exception {
+        super(new DiscreteExemplarFactory());
         final URL url = AbaloneObservationProvider.class.getClassLoader()
                 .getResource(abaloneFile);
         if (url == null)
@@ -27,7 +28,9 @@ public class AbaloneObservationProvider<T extends Exemplar> extends ObservationP
         Map<Integer, VariableCalculator> calculators = new HashMap<>();
         calculators.put(0, new SexVariableCalculator());
 
-        observationProvider = new CsvObservationProvider<>(file, factory, calculators);
+        observationProvider = new CsvObservationProvider<>(file, new DiscreteExemplarFactory(),
+                feature -> Collections.singletonList(Double.parseDouble(feature)),
+                Double[]::new);
     }
 
     @Override
@@ -36,7 +39,7 @@ public class AbaloneObservationProvider<T extends Exemplar> extends ObservationP
     }
 
     @Override
-    public T next() throws Exception {
+    public DiscreteExemplar<Double> next() throws Exception {
         return observationProvider.next();
     }
 

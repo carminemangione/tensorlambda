@@ -1,64 +1,93 @@
 package com.mangione.continuous.observationproviders;
 
-import com.mangione.continuous.observations.Observation;
-import com.mangione.continuous.observations.ObservationFactoryInterface;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CsvObservationProvider<T extends Observation> extends ObservationProvider<T> {
+import com.mangione.continuous.observations.ObservationFactoryInterface;
+import com.mangione.continuous.observations.ObservationInterface;
+
+public class CsvObservationProvider<S, T extends ObservationInterface<S>> extends ObservationProvider<S, T> {
 
     private final File file;
-    private final Map<Integer, VariableCalculator> indexToCalculator;
+    private final Map<Integer, VariableCalculator<S>> indexToCalculator;
+    private final VariableCalculator<S> defaultCalculator;
+    private final ArraySupplier<S> arraySupplier;
+
     private BufferedReader bufferedReader;
 
-    public CsvObservationProvider(File file, ObservationFactoryInterface<T> factory) throws FileNotFoundException {
-        this(file, factory, new HashMap<>());
+    public CsvObservationProvider(File file, ObservationFactoryInterface<S, T> factory,
+            VariableCalculator<S> defaultCalculator, ArraySupplier<S> arraySupplier) throws FileNotFoundException {
+        this(file, factory, new HashMap<>(), defaultCalculator, arraySupplier);
     }
 
-    public CsvObservationProvider(File file, ObservationFactoryInterface<T> factory,
-            Map<Integer, VariableCalculator> indexToCalculator) throws FileNotFoundException {
+    private CsvObservationProvider(File file, ObservationFactoryInterface<S, T> factory,
+            Map<Integer, VariableCalculator<S>> indexToCalculator,
+            VariableCalculator<S> defaultCalculator, ArraySupplier<S> arraySupplier) throws FileNotFoundException {
         super(factory);
         this.file = file;
         this.indexToCalculator = indexToCalculator;
-        bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+        this.bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+        this.defaultCalculator = defaultCalculator;
+        this.arraySupplier = arraySupplier;
     }
 
     @Override
-    public boolean hasNext() throws IOException {
+    public boolean hasNext() {
         boolean ready = false;
-        if (bufferedReader != null) {
-            ready = bufferedReader.ready();
-            if (!ready) {
-                reachedEndCloseFileAndClearReader();
+        try {
+            if (bufferedReader != null) {
+                ready = bufferedReader.ready();
+                if (!ready) {
+                    reachedEndCloseFileAndClearReader();
+                }
             }
+        } catch (IOException e) {
+            throw new ProviderException(e);
         }
         return ready;
     }
 
     @Override
-    public T next() throws Exception {
-        String[] nextLine = bufferedReader.readLine().split(",");
-        double data[] = translateAllVariables(nextLine);
+    public T next() {
+        String[] nextLine;
+        try {
+            nextLine = bufferedReader.readLine().split(",");
+        } catch (IOException e) {
+            throw new ProviderException(e);
+        }
+        S data[] = translateAllVariables(nextLine);
         return create(data);
     }
 
     @Override
-    public void reset() throws IOException {
-        if (bufferedReader != null)
-            bufferedReader.close();
-        bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+    public void reset()  {
+        try {
+            if (bufferedReader != null)
+                bufferedReader.close();
+            bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+        } catch (IOException e) {
+            throw new ProviderException(e);
+        }
     }
 
     @Override
-    public long getNumberOfLines() throws IOException {
+    public long getNumberOfLines()  {
         long numberOfLines = 0;
-        while (bufferedReader.ready()) {
-            numberOfLines++;
-            bufferedReader.readLine();
+        try {
+            while (bufferedReader.ready()) {
+                numberOfLines++;
+                bufferedReader.readLine();
+            }
+        } catch (IOException e) {
+            throw new ProviderException(e);
         }
         reset();
         return numberOfLines;
@@ -70,25 +99,19 @@ public class CsvObservationProvider<T extends Observation> extends ObservationPr
     }
 
 
-    public double[] translateAllVariables(String[] features) {
-        List<Double> translatedVariables = new ArrayList<>();
-
+    private S[] translateAllVariables(String[] features) {
+        List<S> translatedVariables = new ArrayList<>();
         for (int i = 0; i < features.length; i++) {
-            if (indexToCalculator.get(i) != null) {
-                double[] variable = indexToCalculator.get(i).calculateVariable(features[i]);
-                for (double aVariable : variable) {
-                    translatedVariables.add(aVariable);
-                }
-            } else {
-                translatedVariables.add(Double.parseDouble(features[i]));
-            }
+            translatedVariables.addAll(calculateVariableWithIndexedCalcuatorOrDefault(features[i], i));
         }
-        double[] translated = new double[translatedVariables.size()];
-        for (int i = 0; i < translatedVariables.size(); i++) {
-            translated[i] = translatedVariables.get(i);
-        }
-        return translated;
+        return translatedVariables.toArray(arraySupplier.get(translatedVariables.size()));
     }
 
+    private List<S> calculateVariableWithIndexedCalcuatorOrDefault(String variable, int index) {
+        return indexToCalculator.get(index) != null ?
+            indexToCalculator.get(index).calculateVariable(variable) :
+                defaultCalculator.calculateVariable(variable);
+    }
 
 }
+

@@ -1,5 +1,7 @@
 package com.mangione.continuous.observationproviders;
 
-public interface VariableCalculator {
-    double[] calculateVariable(String feature);
+import java.util.List;
+
+public interface VariableCalculator<S> {
+    List<S> calculateVariable(String feature);
 }

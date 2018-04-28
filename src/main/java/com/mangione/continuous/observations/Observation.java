@@ -1,13 +1,13 @@
 package com.mangione.continuous.observations;
 
-public class Observation {
-    private final double[] features;
+public class Observation<T> implements ObservationInterface<T> {
+    private final T[] features;
 
-    public Observation(double[] features) {
+    public Observation(T[] features) {
         this.features = features;
     }
 
-    public double[] getFeatures() {
+    public T[] getFeatures() {
         return features;
     }
 }

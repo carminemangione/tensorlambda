@@ -1,26 +1,26 @@
 package com.mangione.continuous.observationproviders;
 
-import com.mangione.continuous.observations.Observation;
-import com.mangione.continuous.observations.ObservationFactoryInterface;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArrayObservationProvider<T extends Observation> extends ObservationProvider<T> {
+import com.mangione.continuous.observations.ObservationFactoryInterface;
+import com.mangione.continuous.observations.ObservationInterface;
+
+public class ArrayObservationProvider<S, T extends ObservationInterface<S>> extends ObservationProvider<S, T> {
     private final List<T> observations = new ArrayList<>();
     private int current;
 
-    public ArrayObservationProvider(double[][] data, ObservationFactoryInterface<T> observationFactoryInterface) {
+    public ArrayObservationProvider(S[][] data, ObservationFactoryInterface<S, T> observationFactoryInterface) {
         super(observationFactoryInterface);
-        for (double[] doubles : data) {
+        for (S[] doubles : data) {
             observations.add(create(doubles));
         }
     }
 
-    public ArrayObservationProvider(ObservationProvider observationProvider,
-            ObservationFactoryInterface<T> observationFactoryInterface) throws Exception {
+    public ArrayObservationProvider(ObservationProvider<S, T> observationProvider,
+            ObservationFactoryInterface<S, T> observationFactoryInterface) {
         super(observationFactoryInterface);
+
         while (observationProvider.hasNext()) {
             observations.add(create(observationProvider.next().getFeatures()));
         }
@@ -28,22 +28,22 @@ public class ArrayObservationProvider<T extends Observation> extends Observation
     }
 
     @Override
-    public boolean hasNext() throws IOException {
+    public boolean hasNext()  {
         return current < observations.size();
     }
 
     @Override
-    public T next() throws IOException {
+    public T next() {
         return observations.get(current++);
     }
 
     @Override
-    public void reset() throws IOException {
+    public void reset()  {
         current = 0;
     }
 
     @Override
-    public long getNumberOfLines() throws IOException {
+    public long getNumberOfLines()  {
         return observations.size();
     }
 }
