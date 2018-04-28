@@ -28,7 +28,7 @@ public class CsvObservationProvider<S, T extends ObservationInterface<S>> extend
         this(file, factory, new HashMap<>(), defaultCalculator, arraySupplier);
     }
 
-    private CsvObservationProvider(File file, ObservationFactoryInterface<S, T> factory,
+    CsvObservationProvider(File file, ObservationFactoryInterface<S, T> factory,
             Map<Integer, VariableCalculator<S>> indexToCalculator,
             VariableCalculator<S> defaultCalculator, ArraySupplier<S> arraySupplier) throws FileNotFoundException {
         super(factory);

@@ -1,21 +1,17 @@
 package com.mangione.continuous.abalone;
 
+import com.mangione.continuous.observationproviders.*;
+import com.mangione.continuous.observations.DiscreteExemplarFactory;
+import com.mangione.continuous.observations.ExemplarInterface;
+
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.mangione.continuous.observationproviders.CsvObservationProvider;
-import com.mangione.continuous.observationproviders.ObservationProvider;
-import com.mangione.continuous.observationproviders.VariableCalculator;
-import com.mangione.continuous.observations.DiscreteExemplar;
-import com.mangione.continuous.observations.DiscreteExemplarFactory;
+public class AbaloneObservationProvider extends ObservationProvider<Double, ExemplarInterface<Double, Integer>> {
 
-public class AbaloneObservationProvider extends ObservationProvider<Double, DiscreteExemplar<Double>> {
-
-    private final CsvObservationProvider<Double, DiscreteExemplar<Double>> observationProvider;
+    private final CsvObservationProvider<Double, ExemplarInterface<Double, Integer>> observationProvider;
 
     public AbaloneObservationProvider(String abaloneFile) throws Exception {
         super(new DiscreteExemplarFactory());
@@ -28,28 +24,29 @@ public class AbaloneObservationProvider extends ObservationProvider<Double, Disc
         Map<Integer, VariableCalculator> calculators = new HashMap<>();
         calculators.put(0, new SexVariableCalculator());
 
-        observationProvider = new CsvObservationProvider<>(file, new DiscreteExemplarFactory(),
-                feature -> Collections.singletonList(Double.parseDouble(feature)),
-                Double[]::new);
+        observationProvider = new CsvObservationProvider<>(file,
+                new DiscreteExemplarFactory(),
+                new DoubleVariableCalculator(),
+                new DoubleArraySupplier());
     }
 
     @Override
-    public boolean hasNext() throws Exception {
+    public boolean hasNext() {
         return observationProvider.hasNext();
     }
 
     @Override
-    public DiscreteExemplar<Double> next() throws Exception {
+    public ExemplarInterface<Double, Integer> next() {
         return observationProvider.next();
     }
 
     @Override
-    public void reset() throws Exception {
+    public void reset() {
         observationProvider.reset();
     }
 
     @Override
-    public long getNumberOfLines() throws IOException {
+    public long getNumberOfLines() {
         return observationProvider.getNumberOfLines();
     }
 }

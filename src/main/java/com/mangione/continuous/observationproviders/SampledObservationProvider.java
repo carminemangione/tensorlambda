@@ -1,15 +1,11 @@
 package com.mangione.continuous.observationproviders;
 
-import com.mangione.continuous.observations.Observation;
-import com.mangione.continuous.observations.ObservationFactory;
 import com.mangione.continuous.observations.ObservationFactoryInterface;
 import com.mangione.continuous.observations.ObservationInterface;
 import com.mangione.continuous.sampling.SamplingWithoutReplacement;
 import org.apache.commons.math3.random.RandomGenerator;
 
-import java.io.IOException;
-
-public class SampledObservationProvider<S, T extends Observation<S>> extends ObservationProvider<S, T> {
+public class SampledObservationProvider<S, T extends ObservationInterface<S>> extends ObservationProvider<S, T> {
 
     private final SamplingWithoutReplacement samplingWithoutReplacement;
     private final ObservationProvider<S, T> provider;
@@ -26,12 +22,12 @@ public class SampledObservationProvider<S, T extends Observation<S>> extends Obs
     }
 
     @Override
-    public boolean hasNext() throws Exception {
+    public boolean hasNext() {
         return provider.hasNext();
     }
 
     @Override
-    public T next() throws Exception {
+    public T next()  {
         while (provider.hasNext()) {
             if (samplingWithoutReplacement.select() == isTestSet)
                 return provider.next();
@@ -41,12 +37,12 @@ public class SampledObservationProvider<S, T extends Observation<S>> extends Obs
     }
 
     @Override
-    public void reset() throws Exception {
+    public void reset() {
         provider.reset();
     }
 
     @Override
-    public long getNumberOfLines() throws IOException {
+    public long getNumberOfLines() {
         return provider.getNumberOfLines();
     }
 }

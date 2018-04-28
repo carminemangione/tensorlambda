@@ -9,7 +9,7 @@ public class RandomGaussianVector {
     private final boolean includeBias;
     private final RandomGenerator random;
 
-    public RandomGaussianVector(int numberOfDimensions, double mean, double sd, boolean includeBias, RandomGenerator random) {
+    RandomGaussianVector(int numberOfDimensions, double mean, double sd, boolean includeBias, RandomGenerator random) {
         this.numberOfDimensions = numberOfDimensions;
         this.mean = mean;
         this.sd = sd;

@@ -1,7 +1,7 @@
 package com.mangione.continuous.observationproviders;
 
-import com.mangione.continuous.observations.Observation;
-import com.mangione.continuous.observations.ObservationFactory;
+import com.mangione.continuous.observations.DoubleObservationFactory;
+import com.mangione.continuous.observations.ObservationInterface;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +38,8 @@ public class CsvObservationProviderTest {
         }
         bufferedWriter.close();
 
-        CsvObservationProvider<Observation> op = new CsvObservationProvider<>(file, new ObservationFactory(), coercionInterface, arraySupplier);
+        CsvObservationProvider<Double, ObservationInterface<Double>> op =
+                new CsvObservationProvider<>(file, new DoubleObservationFactory<>(), new DoubleVariableCalculator(), new DoubleArraySupplier());
         assertEquals(3, op.getNumberOfLines());
         ensureFileIsClosed();
     }
@@ -52,10 +53,11 @@ public class CsvObservationProviderTest {
         }
         bufferedWriter.close();
 
-        CsvObservationProvider<Observation> op = new CsvObservationProvider<>(file, new ObservationFactory(), coercionInterface, arraySupplier);
+        CsvObservationProvider<Double, ObservationInterface<Double>> op = new CsvObservationProvider<>(file, new DoubleObservationFactory<>(),
+                new DoubleVariableCalculator(), new DoubleArraySupplier());
         int i = 0;
         while (op.hasNext()) {
-            final double[] next = op.next().getFeatures();
+            final Double[] next = op.next().getFeatures();
             assertEquals(3, next.length);
             for (int j = 0; j < next.length; j++) {
                 assertEquals(i + j, next[j], 0);
@@ -74,26 +76,29 @@ public class CsvObservationProviderTest {
         }
         bufferedWriter.close();
 
-        Map<Integer, VariableCalculator> calculators = new HashMap<>();
+        Map<Integer, VariableCalculator<Double>> calculators = new HashMap<>();
         calculators.put(0, feature -> {
-            double[] out = new double[3];
+            Double[] out = new Double[3];
             switch (feature) {
                 case "a":
-                    out[0] = 1;
+                    out[0] = 1d;
                     break;
                 case "b":
-                    out[1] = 1;
+                    out[1] = 1d;
                     break;
                 case "c":
-                    out[2] = 1;
+                    out[2] = 1d;
                     break;
             }
-            return out;
+            return Arrays.asList(out);
         });
-        CsvObservationProvider<Observation> op = new CsvObservationProvider<>(file, new ObservationFactory(), calculators, coercionInterface);
-        assertTrue(Arrays.equals(new double[]{1, 0, 0}, op.next().getFeatures()));
-        assertTrue(Arrays.equals(new double[]{0, 1, 0}, op.next().getFeatures()));
-        assertTrue(Arrays.equals(new double[]{0, 0, 1}, op.next().getFeatures()));
+        CsvObservationProvider<Double, ObservationInterface<Double>> op = new CsvObservationProvider<>(file,
+                new DoubleObservationFactory<>(), calculators, new DoubleVariableCalculator(), new DoubleArraySupplier());
+
+
+        assertTrue(Arrays.equals(new Double[]{1d, 0d, 0d}, op.next().getFeatures()));
+        assertTrue(Arrays.equals(new Double[]{0d, 1d, 0d}, op.next().getFeatures()));
+        assertTrue(Arrays.equals(new Double[]{0d, 0d, 1d}, op.next().getFeatures()));
 
     }
 

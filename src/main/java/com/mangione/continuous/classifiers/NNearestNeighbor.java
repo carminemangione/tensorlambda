@@ -1,25 +1,23 @@
 package com.mangione.continuous.classifiers;
 
-import static org.apache.commons.lang3.ArrayUtils.toPrimitive;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-
-import org.apache.commons.math3.ml.distance.EuclideanDistance;
-
 import com.mangione.continuous.observationproviders.ArrayObservationProvider;
 import com.mangione.continuous.observationproviders.ObservationProvider;
 import com.mangione.continuous.observations.ExemplarInterface;
 import com.mangione.continuous.observations.ObservationFactoryInterface;
 import com.mangione.continuous.zscale.ZScaleObservationProvider;
+import org.apache.commons.math3.ml.distance.EuclideanDistance;
+
+import javax.annotation.Nonnull;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.apache.commons.lang3.ArrayUtils.toPrimitive;
 
 public class NNearestNeighbor<T extends ExemplarInterface<Double, Integer>> {
     private final ZScaleObservationProvider<T> cachedMemoryProvider;
     private final int n;
 
-    public NNearestNeighbor(ObservationProvider<Double, T> provider, ObservationFactoryInterface<Double, T> factory, int n) throws Exception {
+    public NNearestNeighbor(ObservationProvider<Double, T> provider, ObservationFactoryInterface<Double, T> factory, int n) {
         this.n = n;
         cachedMemoryProvider = new ZScaleObservationProvider<>(
                 new ArrayObservationProvider<>(provider, factory),

@@ -37,7 +37,7 @@ public class DiscreteExemplarGeneratorTest {
         for (int i = 0; i < numberOfRuns; i++) {
             DiscreteExemplarGenerator discreteExemplarGenerator = new DiscreteExemplarGenerator(numberOfDimensions, numberOfExemplars, bias,
                     sdEpsilon, twister);
-            final List<DiscreteExemplar> exemplars = discreteExemplarGenerator.getExemplars();
+            final List<DiscreteExemplar<Double>> exemplars = discreteExemplarGenerator.getExemplars();
             assertEquals(numberOfExemplars, exemplars.size());
             exemplars.forEach(exemplar -> {
                 numPositives[0] += exemplar.getTarget() > 0 ? 1 : 0;

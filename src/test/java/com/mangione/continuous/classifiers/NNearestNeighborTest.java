@@ -5,8 +5,6 @@ import com.mangione.continuous.observationproviders.ObservationProvider;
 import com.mangione.continuous.observations.DiscreteExemplar;
 import com.mangione.continuous.observations.DiscreteExemplarFactory;
 import com.mangione.continuous.observations.ExemplarInterface;
-import com.mangione.continuous.observations.Observation;
-import com.mangione.continuous.observations.ObservationFactory;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -17,31 +15,35 @@ public class NNearestNeighborTest {
     public void threePointsOneClass() throws Exception {
         Double[][] training = {{1d, 1d, 1d}, {2d, 2d, 1d}, {1d, 1.5d, 1d}};
 
-        ObservationProvider<Double, ExemplarInterface<Double, Integer>> provider = new ArrayObservationProvider<Double,
-                ExemplarInterface<Double, Integer>>(training,
+        ObservationProvider<Double, ExemplarInterface<Double, Integer>> provider = new ArrayObservationProvider<>(training,
                 new DiscreteExemplarFactory());
         int n = 2;
-        NNearestNeighbor nearestNeighbor = new NNearestNeighbor(provider, n);
-        assertEquals(1, nearestNeighbor.classify(new DiscreteExemplar(new double[]{2, 3}, 1.0, 1)));
+        NNearestNeighbor<ExemplarInterface<Double, Integer>> nearestNeighbor = new NNearestNeighbor<>(provider, 
+                new DiscreteExemplarFactory(), n);
+        assertEquals(1, nearestNeighbor.classify(new DiscreteExemplar<>(new Double[]{2d, 3d}, 1.0, 1)));
     }
 
     @Test
     public void sixPointsTwoClassesSeparable() throws Exception {
-        double[][] training = {{1, 1, 1}, {2, 2, 1}, {1, 1.5, 1}, {-4, -3, 0}, {-6, -7, 0}, {-5, -6, 0}};
+        Double[][] training = {{1d, 1d, 1d}, {2d, 2d, 1d}, {1d, 1.5d, 1d}, {-4d, -3d, 0d}, {-6d, -7d, 0d}, {-5d, -6d, 0d}};
 
-        ObservationProvider<Observation> provider = new ArrayObservationProvider<>(training, new ObservationFactory());
+        ObservationProvider<Double, ExemplarInterface<Double, Integer>> provider = new ArrayObservationProvider<>(
+                training, new DiscreteExemplarFactory());
         int n = 2;
-        NNearestNeighbor nearestNeighbor = new NNearestNeighbor(provider, n);
-        assertEquals(1, nearestNeighbor.classify(new DiscreteExemplar(new double[]{2, 3}, 1.0, 1)));
+        NNearestNeighbor<ExemplarInterface<Double, Integer>> nearestNeighbor = new NNearestNeighbor<>(provider, 
+                new DiscreteExemplarFactory(), n);
+        assertEquals(1, nearestNeighbor.classify(new DiscreteExemplar<>(new Double[]{2d, 3d}, 1.0, 1)));
     }
 
     @Test
     public void sixPointsOneMisclassified() throws Exception {
-        double[][] training = {{1, 1, 1}, {2, 2, 1}, {1, 1.5, 1}, {-4, -3, 1}, {-6, -7, 0}, {-5, -6, 0}};
+        Double[][] training = {{1d, 1d, 1d}, {2d, 2d, 1d}, {1d, 1.5d, 1d}, {-4d, -3d, 1d}, {-6d, -7d, 0d}, {-5d, -6d, 0d}};
 
-        ObservationProvider<Observation> provider = new ArrayObservationProvider<>(training, new ObservationFactory());
+        ObservationProvider<Double, ExemplarInterface<Double, Integer>> provider =
+                new ArrayObservationProvider<>(training, new DiscreteExemplarFactory());
         int n = 2;
-        NNearestNeighbor nearestNeighbor = new NNearestNeighbor(provider, n);
-        assertEquals(1, nearestNeighbor.classify(new DiscreteExemplar(new double[]{2, 3}, 1.0, 1)));
+        NNearestNeighbor<ExemplarInterface<Double, Integer>> nearestNeighbor = new NNearestNeighbor<>(provider,
+                new DiscreteExemplarFactory(), n);
+        assertEquals(1, nearestNeighbor.classify(new DiscreteExemplar<>(new Double[]{2d, 3d}, 1.0, 1)));
     }
 }

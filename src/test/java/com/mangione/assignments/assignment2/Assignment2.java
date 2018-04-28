@@ -1,20 +1,15 @@
 package com.mangione.assignments.assignment2;
 
 import com.mangione.continuous.classifiers.NNearestNeighbor;
-import com.mangione.continuous.observationproviders.CsvObservationProvider;
-import com.mangione.continuous.observationproviders.ObservationProvider;
-import com.mangione.continuous.observationproviders.SampledObservationProvider;
-import com.mangione.continuous.observationproviders.VariableCalculator;
-import com.mangione.continuous.observations.DiscreteExemplar;
-import com.mangione.continuous.observations.Observation;
-import com.mangione.continuous.observations.ObservationFactory;
+import com.mangione.continuous.observationproviders.*;
+import com.mangione.continuous.observations.*;
 import org.apache.commons.math3.random.MersenneTwister;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-@SuppressWarnings("ConstantConditions")
 public class Assignment2 {
 
     public static void main(String[] args) throws Exception {
@@ -26,25 +21,35 @@ public class Assignment2 {
         processAbalone();
     }
 
-    @SuppressWarnings("ConstantConditions")
+
     private static void processSingleFile(String currentFile) throws Exception {
         File file = new File(Assignment2.class.getClassLoader()
                 .getResource("com/mangione/continuous/assignment2/" + currentFile).toURI());
-        CsvObservationProvider<Observation> observationProvider = new CsvObservationProvider<>(file, new ObservationFactory(), coercionInterface, arraySupplier);
 
-        ObservationProvider<Observation> trainingSetProvider =
-                new SampledObservationProvider(.10, observationProvider, new MersenneTwister(2123), false);
+
+        CsvObservationProvider<Double, ExemplarInterface<Double, Integer>> observationProvider = new CsvObservationProvider<>(file,
+                new DiscreteExemplarFactory(), new DoubleVariableCalculator(), new DoubleArraySupplier());
+
+        ObservationProvider<Double, ExemplarInterface<Double, Integer>> trainingSetProvider =
+                new SampledObservationProvider<>(
+                        .10, observationProvider,
+                        new DiscreteExemplarFactory(),
+                        new MersenneTwister(2123), false);
+
+
         int[] numNeighbors = {6, 12, 24, 36, 72};
 
         for (int numNeighbor : numNeighbors) {
             observationProvider.reset();
 
             int[][] confusionMatrix = new int[2][2];
-            NNearestNeighbor nearestNeighbor = new NNearestNeighbor(trainingSetProvider, numNeighbor);
+            NNearestNeighbor<ExemplarInterface<Double, Integer>> nearestNeighbor =
+                    new NNearestNeighbor<>(trainingSetProvider, new DiscreteExemplarFactory(), numNeighbor);
 
             observationProvider.reset();
-            ObservationProvider<Observation> testSetProvider =
-                    new SampledObservationProvider(.10, observationProvider, new MersenneTwister(2123), false);
+            ObservationProvider<Double, ExemplarInterface<Double, Integer>> testSetProvider =
+                    new SampledObservationProvider<>(.10, observationProvider,
+                            new DiscreteExemplarFactory(), new MersenneTwister(2123), false);
             testAndScore(confusionMatrix, nearestNeighbor, testSetProvider);
 
             System.out.println("file = " + currentFile);
@@ -78,23 +83,31 @@ public class Assignment2 {
                     out[2] = 1;
                     break;
             }
-            return out;
+            return Arrays.asList(out);
         });
-        CsvObservationProvider<Observation> observationProvider = new CsvObservationProvider<>(file, new ObservationFactory(), calculators, coercionInterface);
 
-        ObservationProvider<Observation> trainingSetProvider =
-                new SampledObservationProvider(.10, observationProvider, new MersenneTwister(2123), false);
+        CsvObservationProvider<Double, ExemplarInterface<Double, Integer>> observationProvider =
+                new CsvObservationProvider<>(file, new DiscreteExemplarFactory(), new DoubleVariableCalculator(),
+                        new DoubleArraySupplier());
+
+        ObservationProvider<Double, ExemplarInterface<Double, Integer>> trainingSetProvider =
+                new SampledObservationProvider<>(.10, observationProvider,
+                        new DiscreteExemplarFactory(), new MersenneTwister(2123), false);
+
         int[] numNeighbors = {6, 12, 24, 36, 72};
 
         for (int numNeighbor : numNeighbors) {
             observationProvider.reset();
 
             int[][] confusionMatrix = new int[30][30];
-            NNearestNeighbor nearestNeighbor = new NNearestNeighbor(trainingSetProvider, numNeighbor);
+            NNearestNeighbor<ExemplarInterface<Double, Integer>> nearestNeighbor =
+                    new NNearestNeighbor<>(trainingSetProvider, new DiscreteExemplarFactory(),
+                            numNeighbor);
 
             observationProvider.reset();
-            ObservationProvider<Observation> testSetProvider =
-                    new SampledObservationProvider(.10, observationProvider, new MersenneTwister(2123), false);
+            ObservationProvider<Double, ExemplarInterface<Double, Integer>> testSetProvider =
+                    new SampledObservationProvider<>(.10,
+                            observationProvider, new DiscreteExemplarFactory(), new MersenneTwister(2123), false);
 
             testAndScore(confusionMatrix, nearestNeighbor, testSetProvider);
 
@@ -118,10 +131,12 @@ public class Assignment2 {
         System.out.println();
     }
 
-    private static void testAndScore(int[][] confusionMatrix, NNearestNeighbor nearestNeighbor, ObservationProvider<Observation> testSetProvider) throws Exception {
+    private static void testAndScore(int[][] confusionMatrix, NNearestNeighbor<ExemplarInterface<Double, Integer>> nearestNeighbor,
+            ObservationProvider<Double, ExemplarInterface<Double, Integer>> testSetProvider) {
+        final DiscreteExemplarFactory discreteExemplarFactory = new DiscreteExemplarFactory();
         while (testSetProvider.hasNext()) {
-            final Observation next = testSetProvider.next();
-            DiscreteExemplar exemplar = new DiscreteExemplar(next.getFeatures());
+            final ExemplarInterface<Double, Integer> next = testSetProvider.next();
+            DiscreteExemplar<Double> exemplar = discreteExemplarFactory.create(next.getFeatures());
             int classification = nearestNeighbor.classify(next);
             confusionMatrix[exemplar.getTarget()][classification]++;
         }

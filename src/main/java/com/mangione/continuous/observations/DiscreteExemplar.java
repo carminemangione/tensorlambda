@@ -6,17 +6,11 @@ public class DiscreteExemplar<T> implements ExemplarInterface<T, Integer> {
     private final T[] features;
     private final T continuousValue;
     private final Integer target;
-
+    
     public DiscreteExemplar(T[] features, T continuousValue, Integer target) {
         this.features = features;
         this.continuousValue = continuousValue;
         this.target = target;
-    }
-
-    public DiscreteExemplar(T[] features) {
-        this.features = features;
-        this.continuousValue = features[features.length - 1];
-        this.target = (int)features[features.length - 1];
     }
 
     @Override
