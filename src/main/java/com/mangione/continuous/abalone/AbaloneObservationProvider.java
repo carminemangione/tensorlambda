@@ -1,6 +1,7 @@
 package com.mangione.continuous.abalone;
 
 import com.mangione.continuous.observationproviders.*;
+import com.mangione.continuous.observations.DiscreteExemplar;
 import com.mangione.continuous.observations.DiscreteExemplarFactory;
 import com.mangione.continuous.observations.ExemplarInterface;
 
@@ -11,7 +12,7 @@ import java.util.Map;
 
 public class AbaloneObservationProvider extends ObservationProvider<Double, ExemplarInterface<Double, Integer>> {
 
-    private final CsvObservationProvider<Double, ExemplarInterface<Double, Integer>> observationProvider;
+    private final ObservationProviderInterface<Double, ExemplarInterface<Double, Integer>> observationProvider;
 
     public AbaloneObservationProvider(String abaloneFile) throws Exception {
         super(new DiscreteExemplarFactory());
@@ -21,13 +22,13 @@ public class AbaloneObservationProvider extends ObservationProvider<Double, Exem
             throw new IllegalArgumentException("Could not find the file:" + abaloneFile);
         File file = new File(url.toURI());
 
-        Map<Integer, VariableCalculator> calculators = new HashMap<>();
+        Map<Integer, VariableCalculator<String, Double>> calculators = new HashMap<>();
         calculators.put(0, new SexVariableCalculator());
 
-        observationProvider = new CsvObservationProvider<>(file,
-                new DiscreteExemplarFactory(),
-                new DoubleVariableCalculator(),
-                new DoubleArraySupplier());
+
+        CsvObservationProvider csvObservationProvider = new CsvObservationProvider(file);
+        observationProvider = new VariableCalculatorObservationProvider<>(csvObservationProvider,
+                new StringToDoubleVariableCalculator(), calculators, new DoubleArraySupplier(), new DiscreteExemplarFactory());
     }
 
     @Override

@@ -37,8 +37,9 @@ public class CsvObservationProviderTest {
         }
         bufferedWriter.close();
 
-        CsvObservationProvider<Double, ObservationInterface<Double>> op =
-                new CsvObservationProvider<>(file, new DoubleObservationFactory<>(), new DoubleVariableCalculator(), new DoubleArraySupplier());
+        CsvObservationProvider op =
+                new CsvObservationProvider(file);
+
         assertEquals(3, op.getNumberOfLines());
         ensureFileIsClosed();
     }
@@ -52,55 +53,18 @@ public class CsvObservationProviderTest {
         }
         bufferedWriter.close();
 
-        CsvObservationProvider<Double, ObservationInterface<Double>> op = new CsvObservationProvider<>(file, new DoubleObservationFactory<>(),
-                new DoubleVariableCalculator(), new DoubleArraySupplier());
+        CsvObservationProvider op = new CsvObservationProvider(file);
         int i = 0;
         while (op.hasNext()) {
-            final Double[] next = op.next().getFeatures();
+            final String[] next = op.next().getFeatures();
             assertEquals(3, next.length);
             for (int j = 0; j < next.length; j++) {
-                assertEquals(i + j, next[j], 0);
+                assertEquals(i + j, Double.parseDouble(next[j]), 0);
             }
             i++;
         }
     }
 
-    @Test
-    public void variableCalculator() throws Exception {
-        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
-        String[] categories = {"a", "b", "c"};
-        for (int i = 0; i < 3; i++) {
-            bufferedWriter.write(categories[i]);
-            bufferedWriter.newLine();
-        }
-        bufferedWriter.close();
-
-        Map<Integer, VariableCalculator<Double>> calculators = new HashMap<>();
-        calculators.put(0, feature -> {
-            Double[] out = new Double[]{0d,0d,0d};
-            switch (feature) {
-                case "a":
-                    out[0] = 1d;
-                    break;
-                case "b":
-                    out[1] = 1d;
-                    break;
-                case "c":
-                    out[2] = 1d;
-                    break;
-            }
-            return Arrays.asList(out);
-        });
-        CsvObservationProvider<Double, ObservationInterface<Double>> op = new CsvObservationProvider<>(file,
-                new DoubleObservationFactory<>(), calculators, new DoubleVariableCalculator(), new DoubleArraySupplier());
-
-
-
-        assertEquals(1d, op.next().getFeatures()[0], 0);
-        assertEquals(1d, op.next().getFeatures()[1], 0);
-        assertEquals(1d, op.next().getFeatures()[2], 0);
-
-    }
 
     private void ensureFileIsClosed() throws IOException {
         try {

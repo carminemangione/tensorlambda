@@ -1,16 +1,14 @@
 package com.mangione.assignments.assignment1;
 
-import com.mangione.continuous.observationproviders.CsvObservationProvider;
-import com.mangione.continuous.observationproviders.DoubleArraySupplier;
-import com.mangione.continuous.observationproviders.DoubleVariableCalculator;
-import com.mangione.continuous.observations.DoubleObservationFactory;
-import com.mangione.continuous.sampling.SamplingWithoutReplacement;
+import java.io.File;
+import java.net.URL;
+
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 
-import java.io.File;
-import java.net.URL;
+import com.mangione.continuous.observationproviders.CsvObservationProvider;
+import com.mangione.continuous.sampling.SamplingWithoutReplacement;
 
 public class Assignment1 {
     public static void main(String[] args) throws Exception {
@@ -18,8 +16,7 @@ public class Assignment1 {
 
         assert abaloneURL != null;
         long totalNumberOfLines =
-                new CsvObservationProvider<>(new File(abaloneURL.toURI()), new DoubleObservationFactory<>(),
-                        new DoubleVariableCalculator(), new DoubleArraySupplier()).getNumberOfLines();
+                new CsvObservationProvider(new File(abaloneURL.toURI())).getNumberOfLines();
 
         MersenneTwister random = new MersenneTwister(198273);
 

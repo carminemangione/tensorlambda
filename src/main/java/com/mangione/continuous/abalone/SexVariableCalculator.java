@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.mangione.continuous.observationproviders.VariableCalculator;
 
-public class SexVariableCalculator implements VariableCalculator<Double> {
+public class SexVariableCalculator implements VariableCalculator<String, Double> {
     @Override
     public List<Double> calculateVariable(String feature) {
         Double[] out = new Double[2];

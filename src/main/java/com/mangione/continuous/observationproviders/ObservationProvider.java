@@ -1,11 +1,9 @@
 package com.mangione.continuous.observationproviders;
 
-import java.io.IOException;
-
 import com.mangione.continuous.observations.ObservationFactoryInterface;
 import com.mangione.continuous.observations.ObservationInterface;
 
-public abstract class ObservationProvider<S, T extends ObservationInterface<S>> {
+public abstract class ObservationProvider<S, T extends ObservationInterface<S>> implements ObservationProviderInterface<S, T> {
 
     private final ObservationFactoryInterface<S, T> factory;
 
@@ -13,15 +11,8 @@ public abstract class ObservationProvider<S, T extends ObservationInterface<S>> 
         this.factory = factory;
     }
 
-    public abstract boolean hasNext();
-
-    public abstract T next();
-
-    public abstract void reset();
-
-    public abstract long getNumberOfLines();
-
-    protected T create(S data[]) {
+	@Override
+	public T create(S data[]) {
         return factory.create(data);
     }
 }
