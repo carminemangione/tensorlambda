@@ -17,6 +17,10 @@ public class UrnSampler {
         this.count = IntStream.of(counts).sum();
     }
 
+    public UrnSampler(Random random,int... counts){
+        this(false,random,counts);
+    }
+
     private void remove(int index){
         if(counts[index]>0) {
             counts[index]-=1;
