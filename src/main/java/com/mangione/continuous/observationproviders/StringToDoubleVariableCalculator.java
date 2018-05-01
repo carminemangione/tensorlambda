@@ -5,7 +5,7 @@ import java.util.List;
 
 public class StringToDoubleVariableCalculator implements VariableCalculator<String, Double> {
     @Override
-    public List<Double> calculateVariable(String feature) {
+    public List<Double> apply(String feature) {
         return Collections.singletonList(Double.parseDouble(feature));
     }
 }

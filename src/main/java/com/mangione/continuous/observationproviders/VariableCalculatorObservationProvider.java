@@ -69,8 +69,8 @@ public class VariableCalculatorObservationProvider<R, S, T extends ObservationIn
 
 	private List<S> calculateVariableWithIndexedCalcuatorOrDefault(R variable, int index) {
 		return indexToCalculator.get(index) != null ?
-				indexToCalculator.get(index).calculateVariable(variable) :
-				defaultCalculator.calculateVariable(variable);
+				indexToCalculator.get(index).apply(variable) :
+				defaultCalculator.apply(variable);
 	}
 
 }

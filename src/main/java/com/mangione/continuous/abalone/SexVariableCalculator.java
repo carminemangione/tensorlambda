@@ -7,7 +7,7 @@ import com.mangione.continuous.observationproviders.VariableCalculator;
 
 public class SexVariableCalculator implements VariableCalculator<String, Double> {
     @Override
-    public List<Double> calculateVariable(String feature) {
+    public List<Double> apply(String feature) {
         Double[] out = new Double[2];
         if ("M".equals(feature))
             out[0] = 1.0;
