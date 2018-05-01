@@ -1,7 +1,7 @@
 package com.mangione.continuous.observationproviders;
 
-import com.mangione.continuous.observations.Observation;
-import com.mangione.continuous.observations.ObservationFactory;
+import com.mangione.continuous.observations.DoubleObservationFactory;
+import com.mangione.continuous.observations.ObservationInterface;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +16,6 @@ import java.util.Map;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.fail;
-import static org.junit.Assert.assertTrue;
 
 public class CsvObservationProviderTest {
 
@@ -38,7 +37,9 @@ public class CsvObservationProviderTest {
         }
         bufferedWriter.close();
 
-        CsvObservationProvider<Observation> op = new CsvObservationProvider<>(file, new ObservationFactory());
+        CsvObservationProvider op =
+                new CsvObservationProvider(file);
+
         assertEquals(3, op.getNumberOfLines());
         ensureFileIsClosed();
     }
@@ -52,50 +53,18 @@ public class CsvObservationProviderTest {
         }
         bufferedWriter.close();
 
-        CsvObservationProvider<Observation> op = new CsvObservationProvider<>(file, new ObservationFactory());
+        CsvObservationProvider op = new CsvObservationProvider(file);
         int i = 0;
         while (op.hasNext()) {
-            final double[] next = op.next().getFeatures();
+            final String[] next = op.next().getFeatures();
             assertEquals(3, next.length);
             for (int j = 0; j < next.length; j++) {
-                assertEquals(i + j, next[j], 0);
+                assertEquals(i + j, Double.parseDouble(next[j]), 0);
             }
             i++;
         }
     }
 
-    @Test
-    public void variableCalculator() throws Exception {
-        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
-        String[] categories = {"a", "b", "c"};
-        for (int i = 0; i < 3; i++) {
-            bufferedWriter.write(categories[i]);
-            bufferedWriter.newLine();
-        }
-        bufferedWriter.close();
-
-        Map<Integer, VariableCalculator> calculators = new HashMap<>();
-        calculators.put(0, feature -> {
-            double[] out = new double[3];
-            switch (feature) {
-                case "a":
-                    out[0] = 1;
-                    break;
-                case "b":
-                    out[1] = 1;
-                    break;
-                case "c":
-                    out[2] = 1;
-                    break;
-            }
-            return out;
-        });
-        CsvObservationProvider<Observation> op = new CsvObservationProvider<>(file, new ObservationFactory(), calculators);
-        assertTrue(Arrays.equals(new double[]{1, 0, 0}, op.next().getFeatures()));
-        assertTrue(Arrays.equals(new double[]{0, 1, 0}, op.next().getFeatures()));
-        assertTrue(Arrays.equals(new double[]{0, 0, 1}, op.next().getFeatures()));
-
-    }
 
     private void ensureFileIsClosed() throws IOException {
         try {

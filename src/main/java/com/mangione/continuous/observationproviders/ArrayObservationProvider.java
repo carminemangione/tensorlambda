@@ -1,26 +1,26 @@
 package com.mangione.continuous.observationproviders;
 
-import com.mangione.continuous.observations.Observation;
-import com.mangione.continuous.observations.ObservationFactoryInterface;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArrayObservationProvider<S> extends ObservationProvider<S> {
-    private final List<S> observations = new ArrayList<>();
+import com.mangione.continuous.observations.ObservationFactoryInterface;
+import com.mangione.continuous.observations.ObservationInterface;
+
+public class ArrayObservationProvider<S, T extends ObservationInterface<S>> extends ObservationProvider<S, T> {
+    private final List<T> observations = new ArrayList<>();
     private int current;
 
-    public ArrayObservationProvider(S[][] data, ObservationFactoryInterface<S> observationFactoryInterface) {
+    public ArrayObservationProvider(S[][] data, ObservationFactoryInterface<S, T> observationFactoryInterface) {
         super(observationFactoryInterface);
         for (S[] doubles : data) {
             observations.add(create(doubles));
         }
     }
 
-    public ArrayObservationProvider(ObservationProvider<S> observationProvider,
-            ObservationFactoryInterface<S> observationFactoryInterface) throws Exception {
+    public ArrayObservationProvider(ObservationProvider<S, T> observationProvider,
+            ObservationFactoryInterface<S, T> observationFactoryInterface) {
         super(observationFactoryInterface);
+
         while (observationProvider.hasNext()) {
             observations.add(create(observationProvider.next().getFeatures()));
         }

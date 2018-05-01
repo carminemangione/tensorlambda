@@ -9,13 +9,13 @@ public class ColumnZScale {
     private final double mean;
     private final double standardDeviation;
 
-    public ColumnZScale(double[] columnVector) {
+    ColumnZScale(double[] columnVector) {
         DescriptiveStatistics ds = new DescriptiveStatistics(columnVector);
         mean = ds.getMean();
         standardDeviation = ds.getStandardDeviation();
     }
 
-    public ColumnZScale(List<Double> columnVector) {
+    ColumnZScale(List<Double> columnVector) {
         DescriptiveStatistics ds = new DescriptiveStatistics();
         columnVector.forEach(ds::addValue);
         mean = ds.getMean();

@@ -9,17 +9,17 @@ import java.util.List;
 public class ScaledDiscreteExemplarGenerator {
 
 
-    private final com.mangione.continuous.datagenerators.DiscreteExemplarGenerator discreteExemplarGenerator;
+    private final DiscreteExemplarGenerator discreteExemplarGenerator;
     private final double[][] featureMeanAndSD;
 
-    public ScaledDiscreteExemplarGenerator(int numberOfExemplars, double[][] featureMeanAndSD, double bias, double sdEpsilon, MersenneTwister twister) {
+    ScaledDiscreteExemplarGenerator(int numberOfExemplars, double[][] featureMeanAndSD, double bias, double sdEpsilon, MersenneTwister twister) {
         this.featureMeanAndSD = featureMeanAndSD;
         discreteExemplarGenerator = new com.mangione.continuous.datagenerators.DiscreteExemplarGenerator(featureMeanAndSD.length, numberOfExemplars, bias, sdEpsilon, twister);
 
     }
 
-    public List<DiscreteExemplar> generateDataSet() {
-        final List<DiscreteExemplar> exemplars = discreteExemplarGenerator.getExemplars();
+    public List<DiscreteExemplar<Double>> generateDataSet() {
+        final List<DiscreteExemplar<Double>> exemplars = discreteExemplarGenerator.getExemplars();
         final List<DiscreteExemplar> scaledExemplars = new ArrayList<>();
         exemplars.forEach(exemplar -> {
             for (int i = 0; i < exemplar.getFeatures().length; i++) {

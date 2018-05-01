@@ -1,6 +1,6 @@
 package com.mangione.continuous.observations;
 
-public class Observation<T> extends Observation<S> {
+public class Observation<T> implements ObservationInterface<T> {
     private final T[] features;
 
     public Observation(T[] features) {

@@ -2,28 +2,34 @@ package com.mangione.continuous.observations;
 
 import java.util.Arrays;
 
-public class DiscreteExemplar extends Observation {
-    private final double continuousValue;
-    private final int target;
-
-    public DiscreteExemplar(double[] features, double continuousValue, int target) {
-        super(features);
+public class DiscreteExemplar<T> implements ExemplarInterface<T, Integer> {
+    private final T[] features;
+    private final T continuousValue;
+    private final Integer target;
+    
+    public DiscreteExemplar(T[] features, T continuousValue, Integer target) {
+        this.features = features;
         this.continuousValue = continuousValue;
         this.target = target;
     }
 
-    public DiscreteExemplar(double[] features) {
-        super(Arrays.copyOfRange(features, 0, features.length - 1));
-        this.continuousValue = features[features.length - 1];
-        this.target = (int)features[features.length - 1];
-    }
-
-    public int getTarget() {
+    @Override
+    public Integer getTarget() {
         return target;
     }
 
-    public double getContinuousValue() {
+    public T getContinuousValue() {
         return continuousValue;
+    }
+
+    @Override
+    public T[] getExemplar() {
+        return Arrays.copyOfRange(features, 0, features.length -1);
+    }
+
+    @Override
+    public T[] getFeatures() {
+        return features;
     }
 
     @Override

@@ -16,11 +16,5 @@
 
 
 (defn ^Function as-function [f]
-  '(reify Function
-    (apply [arg] (f arg))))
-
-(defmacro jfn [& args]
-  `(as-function (fn ~@args)))
-
-
-
+  (reify Function
+    (apply [this arg] (f arg))))

@@ -31,7 +31,7 @@ public class ScaledDiscreteExemplarGeneratorTest {
 
         DescriptiveStatistics[] stats = {new DescriptiveStatistics(), new DescriptiveStatistics(), new DescriptiveStatistics(), new DescriptiveStatistics()};
         ScaledDiscreteExemplarGenerator sdeg = new ScaledDiscreteExemplarGenerator(numberOfExemplars, featureMeanAndSD, bias, sdEpsilon, twister);
-        List<DiscreteExemplar> exemplars = sdeg.generateDataSet();
+        List<DiscreteExemplar<Double>> exemplars = sdeg.generateDataSet();
         exemplars.forEach(exemplar -> {
             for (int i = 0; i < exemplar.getFeatures().length; i++) {
                 stats[i].addValue(exemplar.getFeatures()[i]);
@@ -60,7 +60,7 @@ public class ScaledDiscreteExemplarGeneratorTest {
 
     }
 
-    public static void writeFile(String fileName, List<DiscreteExemplar> exemplars) throws IOException {
+    public static void writeFile(String fileName, List<DiscreteExemplar<Double>> exemplars) throws IOException {
         BufferedWriter bos = new BufferedWriter(new FileWriter(
                 "/Users/carmine/projects/continuous/src/test/java/com/mangione/continuous/assignments/assignment2/" + fileName));
         exemplars.forEach(exemplar->{

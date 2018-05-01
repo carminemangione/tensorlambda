@@ -1,6 +1,7 @@
 package com.mangione.continuous.datagenerators;
 
 import com.mangione.continuous.observations.DiscreteExemplar;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.ejml.simple.SimpleMatrix;
 
@@ -8,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DiscreteExemplarGenerator {
+public class DiscreteExemplarGenerator{
     private final int numberOfDimensions;
     private final int numberExemplars;
     private final double bias;
@@ -16,11 +17,11 @@ public class DiscreteExemplarGenerator {
     private final RandomGenerator random;
 
     private int numberMiscategorized = 0;
-    private final List<DiscreteExemplar> exemplars;
+    private final List<DiscreteExemplar<Double>> exemplars;
 
     private double[][] observationVector;
 
-    public DiscreteExemplarGenerator(int numberOfDimensions, int numberExemplars, double bias, double sdEpsilon, RandomGenerator random) {
+    DiscreteExemplarGenerator(int numberOfDimensions, int numberExemplars, double bias, double sdEpsilon, RandomGenerator random) {
 
         this.numberOfDimensions = numberOfDimensions;
         this.numberExemplars = numberExemplars;
@@ -34,11 +35,11 @@ public class DiscreteExemplarGenerator {
         return numberMiscategorized;
     }
 
-    public List<DiscreteExemplar> getExemplars() {
+    public List<DiscreteExemplar<Double>> getExemplars() {
         return exemplars;
     }
 
-    private List<DiscreteExemplar> generateDataSet() {
+    private List<DiscreteExemplar<Double>> generateDataSet() {
 
         SimpleMatrix muMatrix = generateMuMatrix();
         SimpleMatrix designMatrix = generateDesignMatrix();
@@ -48,14 +49,15 @@ public class DiscreteExemplarGenerator {
         SimpleMatrix unjiggled = designMatrix.mult(muMatrix);
         SimpleMatrix jiggled = unjiggled.plus(epsilonMatrix);
 
-        List<DiscreteExemplar> exemplars = new ArrayList<>();
+        List<DiscreteExemplar<Double>> exemplars = new ArrayList<>();
 
         for (int i = 0; i < numberExemplars; i++) {
             final double jiggledY = jiggled.get(i, 0);
             final boolean didntFlip = (unjiggled.get(i, 0) < 0 && jiggledY < 0)
                     || (unjiggled.get(i, 0) > 0 && jiggledY > 0);
             numberMiscategorized += didntFlip ? 0 : 1;
-            exemplars.add(new DiscreteExemplar(observationVector[i],  jiggledY, jiggledY > 0 ? 1 : 0));
+            
+            exemplars.add(new DiscreteExemplar<>(ArrayUtils.toObject(observationVector[i]), jiggledY, jiggledY > 0 ? 1 : 0));
         }
         return Collections.unmodifiableList(exemplars);
     }
