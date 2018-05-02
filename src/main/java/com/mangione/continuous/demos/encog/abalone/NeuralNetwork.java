@@ -1,5 +1,7 @@
 package com.mangione.continuous.demos.encog.abalone;
 
+import com.mangione.continuous.observationproviders.CsvObservationProvider;
+import com.mangione.continuous.observations.ObservationInterface;
 import org.encog.ConsoleStatusReportable;
 import org.encog.Encog;
 import org.encog.app.analyst.AnalystFileFormat;
@@ -29,13 +31,30 @@ import org.encog.util.csv.ReadCSV;
 import org.encog.util.simple.EncogUtility;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Optional;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class NeuralNetwork {
 
-    private final static String DATA_FILENAME = "src/main/resources/NeuralNetwork/abalone.data";
-    private final static String EGA_FILENAME = "src/main/resources/NeuralNetwork/abalone.ega";
+    private final static String DATA_FILENAME = "src/main/resources/Abalone/abalone.data";
+    private final static String EGA_FILENAME = "src/main/resources/Abalone/abalone.ega";
     private final static char DATA_FILE_DELIMITER = ',';
+
+    private static String[] theInputHeadings = {"Sex", "Shell Length",
+            "Shell Diameter", "Shell Height", "Total Abalone Weight",
+            "Shucked Weight", "Viscera Weight", "Shell Weight", "Rings"};
+    private final static HashMap<String,Integer> columnNumber = new HashMap<>();
+    static{
+        IntStream.range(0,theInputHeadings.length-1)
+        .forEach((column)-> columnNumber.put(theInputHeadings[column],column));
+    }
+
+    private final static String targetName = theInputHeadings[theInputHeadings.length-1];
+
     private static EncogAnalyst ANALYST = new EncogAnalyst();
 
     private static File normalizeInputFile() {
@@ -61,11 +80,8 @@ public class NeuralNetwork {
             norm.analyze(inputFile, false, CSVFormat.ENGLISH, ANALYST);
 
             // Set input headings
-            norm.setInputHeadings(new String[] { "Sex", "Shell Length",
-                    "Shell Diameter", "Shell Height", "Total NeuralNetwork Weight",
-                    "Shucked Weight", "Viscera Weight", "Shell Weight", "Rings" });
-
-            // Ensure that there are no headers in the output
+            norm.setInputHeadings(theInputHeadings);
+           // Ensure that there are no headers in the output
             norm.setProduceOutputHeaders(true);
 
             // Normalize to the output file
@@ -82,11 +98,29 @@ public class NeuralNetwork {
         return normalizedFile;
     }
 
-    private static VersatileMLDataSet prepareDataset() {
+    private static VersatileMLDataSet prepareDataset() throws FileNotFoundException {
 
         // Create data source
         VersatileDataSource abaloneDataSource = new CSVDataSource(new File(
                 DATA_FILENAME), false, DATA_FILE_DELIMITER);
+        final CsvObservationProvider csv = new CsvObservationProvider(new File(DATA_FILENAME));
+        VersatileDataSource abaloneDataSourceNew = new VersatileDataSource() {
+            @Override
+            public String[] readLine() {
+                return csv.next().getFeatures();
+            }
+
+            @Override
+            public void rewind() {
+                csv.reset();
+
+            }
+
+            @Override
+            public int columnIndex(String name) {
+                return 0;
+            }
+        };
 
         // Create a dataset from the data source
         VersatileMLDataSet abaloneDataset = new VersatileMLDataSet(
@@ -96,23 +130,12 @@ public class NeuralNetwork {
         ColumnDefinition sexColumn = abaloneDataset.defineSourceColumn("Sex",
                 0, ColumnType.nominal);
         sexColumn.defineClass(new String[] { "M", "F" });
-
         // Define continuous columns
-        abaloneDataset.defineSourceColumn("Shell Length", 1,
-                ColumnType.continuous);
-        abaloneDataset.defineSourceColumn("Shell Diameter", 2,
-                ColumnType.continuous);
-        abaloneDataset.defineSourceColumn("Shell Height", 3,
-                ColumnType.continuous);
-        abaloneDataset.defineSourceColumn("Total NeuralNetwork Weight", 4,
-                ColumnType.continuous);
-        abaloneDataset.defineSourceColumn("Shucked Weight", 5,
-                ColumnType.continuous);
-        abaloneDataset.defineSourceColumn("Viscera Weight", 6,
-                ColumnType.continuous);
-        abaloneDataset.defineSourceColumn("Shell Weight", 7,
-                ColumnType.continuous);
-
+        IntStream.range(1,7)
+                .forEach(
+                        (c)->abaloneDataset.
+                                defineSourceColumn(theInputHeadings[c-1],c,ColumnType.continuous)
+                );
         // Define predicted column
         ColumnDefinition numRingsColumn = abaloneDataset.defineSourceColumn(
                 "Rings", 8, ColumnType.continuous);
@@ -162,13 +185,13 @@ public class NeuralNetwork {
         return network;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
 
         String trainingApproach = args[0];
 
         if (trainingApproach.equalsIgnoreCase("encog-model")) {
 
-            // Prepare the NeuralNetwork dataset
+            // Prepare the NeuralNetworkOriginal dataset
             VersatileMLDataSet preparedDataset = prepareDataset();
 
             // Prep the abalone model
@@ -192,38 +215,7 @@ public class NeuralNetwork {
 
             System.out.println("Final model: " + bestMethod);
 
-            ReadCSV csv = new ReadCSV(DATA_FILENAME, false,
-                    CSVFormat.DECIMAL_POINT);
-            String[] line = new String[9];
-            MLData input = helper.allocateInputVector();
-
-            while (csv.next()) {
-
-                StringBuilder result = new StringBuilder();
-                line[0] = csv.get(0);
-                line[1] = csv.get(1);
-                line[2] = csv.get(2);
-                line[3] = csv.get(3);
-                line[4] = csv.get(4);
-                line[5] = csv.get(5);
-                line[6] = csv.get(6);
-                line[7] = csv.get(7);
-                String correct = csv.get(8);
-
-                helper.normalizeInputVector(line, input.getData(), false);
-                MLData output = bestMethod.compute(input);
-                String ratingChosen = helper
-                        .denormalizeOutputVectorToString(output)[0];
-
-                result.append(Arrays.toString(line));
-                result.append(" -> predicted: ");
-                result.append(ratingChosen);
-                result.append("(correct: ");
-                result.append(correct);
-                result.append(")");
-
-                System.out.println(result.toString());
-            }
+            ScoreRecords(bestMethod, helper);
         }
 
         else if (trainingApproach.equalsIgnoreCase("basic-training")) {
@@ -299,5 +291,31 @@ public class NeuralNetwork {
         }
 
         Encog.getInstance().shutdown();
+    }
+
+    private static void ScoreRecords(MLRegression bestMethod, NormalizationHelper helper) throws FileNotFoundException {
+        CsvObservationProvider csvP = new CsvObservationProvider(new File(DATA_FILENAME));
+        ReadCSV csv = new ReadCSV(DATA_FILENAME, false,
+                CSVFormat.DECIMAL_POINT);
+        MLData input = helper.allocateInputVector();
+
+        while(csvP.hasNext()){
+            ObservationInterface<String> rec = csvP.next();
+
+            String[] line =Arrays
+                    .stream(rec.getFeatures(), 0, 7)
+                    .toArray(String[]::new);
+            String observation = rec.getFeatures()[8];
+
+            helper.normalizeInputVector(line, input.getData(), false);
+            MLData output = bestMethod.compute(input);
+            String prediction = helper
+                    .denormalizeOutputVectorToString(output)[0];
+
+            Stream<String> fields = Arrays.stream(line, 0, 7);
+            String comparison = String.format("-> predicted: %s (correct: %s)",observation,prediction);
+            Optional<String> result = Stream.concat(fields,Stream.of(comparison)).reduce((l, r)->l+","+r);
+            result.ifPresent(System.out::println);
+        }
     }
 }
