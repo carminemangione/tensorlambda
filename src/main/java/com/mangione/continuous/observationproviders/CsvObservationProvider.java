@@ -1,14 +1,9 @@
 package com.mangione.continuous.observationproviders;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
 import com.mangione.continuous.observations.Observation;
 import com.mangione.continuous.observations.ObservationInterface;
+
+import java.io.*;
 
 public class CsvObservationProvider implements ObservationProviderInterface<String, ObservationInterface<String>> {
 

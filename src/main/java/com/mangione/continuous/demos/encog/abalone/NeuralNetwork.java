@@ -19,7 +19,6 @@ import org.encog.ml.data.versatile.NormalizationHelper;
 import org.encog.ml.data.versatile.VersatileMLDataSet;
 import org.encog.ml.data.versatile.columns.ColumnDefinition;
 import org.encog.ml.data.versatile.columns.ColumnType;
-import org.encog.ml.data.versatile.sources.CSVDataSource;
 import org.encog.ml.data.versatile.sources.VersatileDataSource;
 import org.encog.ml.factory.MLMethodFactory;
 import org.encog.ml.model.EncogModel;
@@ -27,7 +26,6 @@ import org.encog.neural.networks.BasicNetwork;
 import org.encog.neural.networks.layers.BasicLayer;
 import org.encog.neural.networks.training.propagation.resilient.ResilientPropagation;
 import org.encog.util.csv.CSVFormat;
-import org.encog.util.csv.ReadCSV;
 import org.encog.util.simple.EncogUtility;
 
 import java.io.File;
@@ -101,26 +99,32 @@ public class NeuralNetwork {
     private static VersatileMLDataSet prepareDataset() throws FileNotFoundException {
 
         // Create data source
-        VersatileDataSource abaloneDataSource = new CSVDataSource(new File(
-                DATA_FILENAME), false, DATA_FILE_DELIMITER);
         final CsvObservationProvider csv = new CsvObservationProvider(new File(DATA_FILENAME));
-        VersatileDataSource abaloneDataSourceNew = new VersatileDataSource() {
+        VersatileDataSource abaloneDataSource = new VersatileDataSource() {
             @Override
             public String[] readLine() {
-                return csv.next().getFeatures();
+                if(csv.hasNext()){
+                    ObservationInterface<String> next = csv.next();
+                    return next.getFeatures();
+                }else{
+                    return null;
+                }
             }
 
             @Override
             public void rewind() {
                 csv.reset();
-
             }
 
             @Override
             public int columnIndex(String name) {
-                return 0;
+                return columnIndex(name);
             }
         };
+
+
+        //VersatileDataSource abaloneDataSource = new CSVDataSource(new File(
+        //        DATA_FILENAME), false, DATA_FILE_DELIMITER);
 
         // Create a dataset from the data source
         VersatileMLDataSet abaloneDataset = new VersatileMLDataSet(
@@ -293,10 +297,8 @@ public class NeuralNetwork {
         Encog.getInstance().shutdown();
     }
 
-    private static void ScoreRecords(MLRegression bestMethod, NormalizationHelper helper) throws FileNotFoundException {
+    public static void ScoreRecords(MLRegression bestMethod, NormalizationHelper helper) throws FileNotFoundException {
         CsvObservationProvider csvP = new CsvObservationProvider(new File(DATA_FILENAME));
-        ReadCSV csv = new ReadCSV(DATA_FILENAME, false,
-                CSVFormat.DECIMAL_POINT);
         MLData input = helper.allocateInputVector();
 
         while(csvP.hasNext()){
