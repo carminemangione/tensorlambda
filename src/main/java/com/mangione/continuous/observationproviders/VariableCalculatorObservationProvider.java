@@ -2,8 +2,13 @@ package com.mangione.continuous.observationproviders;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Spliterator;
+import java.util.function.Consumer;
+
+import javax.annotation.Nonnull;
 
 import com.mangione.continuous.observations.ObservationFactoryInterface;
 import com.mangione.continuous.observations.ObservationInterface;
@@ -22,6 +27,8 @@ public class VariableCalculatorObservationProvider<R, S, T extends ObservationIn
 		this(provider, defaultVariableCalculator, new HashMap<>(), arraySupplier, observationFactory);
 	}
 
+
+	@SuppressWarnings("WeakerAccess")
 	public VariableCalculatorObservationProvider(ObservationProviderInterface<R, ? extends ObservationInterface<R>> provider,
 			VariableCalculator<R, S> defaultVariableCalculator, Map<Integer, VariableCalculator<R, S>> indexToCalculator,
 			ArraySupplier<S> arraySupplier, ObservationFactoryInterface<S, T> observationFactory) {
@@ -33,21 +40,6 @@ public class VariableCalculatorObservationProvider<R, S, T extends ObservationIn
 		this.observationFactory = observationFactory;
 	}
 
-	@Override
-	public boolean hasNext() {
-		return provider.hasNext();
-	}
-
-	@Override
-	public T next() {
-		S[] translatedVariables = translateAllVariables(provider.next().getFeatures());
-		return observationFactory.create(translatedVariables);
-	}
-
-	@Override
-	public void reset() {
-
-	}
 
 	@Override
 	public long getNumberOfLines() {
@@ -56,6 +48,22 @@ public class VariableCalculatorObservationProvider<R, S, T extends ObservationIn
 
 	@Override
 	public T create(S[] data) {
+		return null;
+	}
+
+	@Override
+	@Nonnull
+	public Iterator<T> iterator() {
+		return new VariableCalculatorObservationProviderIterator();
+	}
+
+	@Override
+	public void forEach(Consumer<? super T> action) {
+		for (T t : this) action.accept(t);
+	}
+
+	@Override
+	public Spliterator<T> spliterator() {
 		return null;
 	}
 
@@ -71,6 +79,36 @@ public class VariableCalculatorObservationProvider<R, S, T extends ObservationIn
 		return indexToCalculator.get(index) != null ?
 				indexToCalculator.get(index).apply(variable) :
 				defaultCalculator.apply(variable);
+	}
+
+	private class VariableCalculatorObservationProviderIterator implements Iterator<T> {
+		private Iterator<? extends ObservationInterface<R>> iterator;
+
+		private VariableCalculatorObservationProviderIterator() {
+			iterator = provider.iterator();
+		}
+
+		@Override
+		public boolean hasNext() {
+			return iterator.hasNext();
+		}
+
+		@Override
+		public T next() {
+			S[] translatedVariables = translateAllVariables(iterator.next().getFeatures());
+			return observationFactory.create(translatedVariables);
+		}
+
+		@Override
+		public void remove() {
+			iterator.remove();
+		}
+
+		@Override
+		public void forEachRemaining(Consumer<? super T> action) {
+			while (hasNext())
+				action.accept(next());
+		}
 	}
 
 }

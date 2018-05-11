@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -101,10 +102,11 @@ public class NeuralNetwork {
         // Create data source
         final CsvObservationProvider csv = new CsvObservationProvider(new File(DATA_FILENAME));
         VersatileDataSource abaloneDataSource = new VersatileDataSource() {
+            Iterator<ObservationInterface<String>> iterator = csv.iterator();
             @Override
             public String[] readLine() {
-                if(csv.hasNext()){
-                    ObservationInterface<String> next = csv.next();
+                if(iterator.hasNext()){
+                    ObservationInterface<String> next = iterator.next();
                     return next.getFeatures();
                 }else{
                     return null;
@@ -113,7 +115,7 @@ public class NeuralNetwork {
 
             @Override
             public void rewind() {
-                csv.reset();
+                iterator = csv.iterator();
             }
 
             @Override
@@ -301,10 +303,8 @@ public class NeuralNetwork {
         CsvObservationProvider csvP = new CsvObservationProvider(new File(DATA_FILENAME));
         MLData input = helper.allocateInputVector();
 
-        while(csvP.hasNext()){
-            ObservationInterface<String> rec = csvP.next();
-
-            String[] line =Arrays
+        for (ObservationInterface<String> rec : csvP) {
+            String[] line = Arrays
                     .stream(rec.getFeatures(), 0, 7)
                     .toArray(String[]::new);
             String observation = rec.getFeatures()[8];
@@ -315,8 +315,8 @@ public class NeuralNetwork {
                     .denormalizeOutputVectorToString(output)[0];
 
             Stream<String> fields = Arrays.stream(line, 0, 7);
-            String comparison = String.format("-> predicted: %s (correct: %s)",observation,prediction);
-            Optional<String> result = Stream.concat(fields,Stream.of(comparison)).reduce((l, r)->l+","+r);
+            String comparison = String.format("-> predicted: %s (correct: %s)", observation, prediction);
+            Optional<String> result = Stream.concat(fields, Stream.of(comparison)).reduce((l, r) -> l + "," + r);
             result.ifPresent(System.out::println);
         }
     }

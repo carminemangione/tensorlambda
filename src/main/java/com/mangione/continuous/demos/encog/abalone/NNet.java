@@ -1,10 +1,14 @@
 package com.mangione.continuous.demos.encog.abalone;
 
-import com.mangione.continuous.demos.encog.ColumnDefinitionFunction;
-import com.mangione.continuous.demos.encog.ColumnDefinitionFunctionFactory;
-import com.mangione.continuous.demos.encog.NamedVersatileDataSource;
-import com.mangione.continuous.observationproviders.CsvObservationProvider;
-import com.mangione.continuous.observations.ObservationInterface;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.OptionalInt;
+import java.util.stream.IntStream;
+
 import org.encog.ConsoleStatusReportable;
 import org.encog.engine.network.activation.ActivationTANH;
 import org.encog.ml.MLRegression;
@@ -15,13 +19,11 @@ import org.encog.ml.model.EncogModel;
 import org.encog.neural.networks.BasicNetwork;
 import org.encog.neural.networks.layers.BasicLayer;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.OptionalInt;
-import java.util.stream.IntStream;
+import com.mangione.continuous.demos.encog.ColumnDefinitionFunction;
+import com.mangione.continuous.demos.encog.ColumnDefinitionFunctionFactory;
+import com.mangione.continuous.demos.encog.NamedVersatileDataSource;
+import com.mangione.continuous.observationproviders.CsvObservationProvider;
+import com.mangione.continuous.observations.ObservationInterface;
 
 public class NNet {
     private final static String DATA_FILENAME = "src/main/resources/Abalone/abalone.data";
@@ -90,7 +92,7 @@ public class NNet {
     }
 
 
-    public static HashMap<String, ColumnDefinitionFunction> createColumnDefinitionFunctionMap() {
+    private static HashMap<String, ColumnDefinitionFunction> createColumnDefinitionFunctionMap() {
         HashMap<String, ColumnDefinitionFunction> map = new HashMap<>();
         for (String name : theInputHeadings) {
             ColumnDefinitionFunction def;
@@ -104,7 +106,7 @@ public class NNet {
         return map;
     }
 
-    public static HashMap<String, Integer> createColumnNmberMap(String[] headers) {
+    private static HashMap<String, Integer> createColumnNmberMap(String[] headers) {
         HashMap<String, Integer> columnNumber = new HashMap<>();
         IntStream.range(0, theInputHeadings.length)
                 .forEach((column) -> columnNumber.put(headers[column], column));
@@ -113,8 +115,10 @@ public class NNet {
 
     private static NamedVersatileDataSource getVersatileDataSource(final CsvObservationProvider csvObservationProvider,
                                                                    final String[] columnNames) {
+
         final HashMap<String, Integer> columnNumber = createColumnNmberMap(columnNames);
         return new NamedVersatileDataSource() {
+            Iterator<ObservationInterface<String>> iterator = csvObservationProvider.iterator();
             @Override
             public String[] columnNames() {
                 return columnNames;
@@ -122,8 +126,8 @@ public class NNet {
 
             @Override
             public String[] readLine() {
-                if (csvObservationProvider.hasNext()) {
-                    ObservationInterface<String> next = csvObservationProvider.next();
+                if (iterator.hasNext()) {
+                    ObservationInterface<String> next = iterator.next();
                     return next.getFeatures();
                 } else {
                     return null;
@@ -132,7 +136,7 @@ public class NNet {
 
             @Override
             public void rewind() {
-                csvObservationProvider.reset();
+                iterator = csvObservationProvider.iterator();
             }
 
             @Override
