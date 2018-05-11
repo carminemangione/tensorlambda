@@ -9,18 +9,19 @@ import java.util.function.Consumer;
 import javax.annotation.Nonnull;
 
 import com.mangione.continuous.observationproviders.ObservationProvider;
+import com.mangione.continuous.observationproviders.ObservationProviderInterface;
 import com.mangione.continuous.observations.ObservationFactoryInterface;
 import com.mangione.continuous.observations.ObservationInterface;
 
 
 public class ZScaleObservationProvider<T extends ObservationInterface<Double>> extends ObservationProvider<Double, T> {
-    private final ObservationProvider<Double, T> observationProvider;
+    private final ObservationProviderInterface<Double, T> observationProvider;
     private final List<ColumnZScale> columnZScales = new ArrayList<>();
     private Integer numberOfColumns;
 
 
     @SuppressWarnings("WeakerAccess")
-    public ZScaleObservationProvider(ObservationProvider<Double, T> observationProvider,
+    public ZScaleObservationProvider(ObservationProviderInterface<Double, T> observationProvider,
             ObservationFactoryInterface<Double, T> observationFactory) {
         super(observationFactory);
         this.observationProvider = observationProvider;
@@ -31,6 +32,15 @@ public class ZScaleObservationProvider<T extends ObservationInterface<Double>> e
         columnList.forEach(list->columnZScales.add(new ColumnZScale(list)));
     }
 
+    public T scale(T nonScaled) {
+        Double[] scaled = new Double[numberOfColumns];
+        for (int i = 0; i < columnZScales.size(); i++) {
+            scaled[i] = columnZScales.get(i).zscale(nonScaled.getFeatures()[i]);
+        }
+        if (columnZScales.size() < numberOfColumns)
+            scaled[numberOfColumns - 1] = nonScaled.getFeatures()[numberOfColumns-2];
+        return create(scaled);
+    }
 
     @Override
     public long getNumberOfLines() {
@@ -40,7 +50,7 @@ public class ZScaleObservationProvider<T extends ObservationInterface<Double>> e
     @Override
     @Nonnull
     public Iterator<T> iterator() {
-        return new ZScaleObservationProviderIterator(observationProvider);
+        return new ZScaleObservationProviderIterator();
     }
 
     @Override
@@ -57,7 +67,7 @@ public class ZScaleObservationProvider<T extends ObservationInterface<Double>> e
 
         private final Iterator<T> iterator;
 
-        ZScaleObservationProviderIterator(ObservationProvider<Double, T> observationProvider) {
+        ZScaleObservationProviderIterator() {
             iterator = observationProvider.iterator();
         }
 
@@ -82,19 +92,9 @@ public class ZScaleObservationProvider<T extends ObservationInterface<Double>> e
             while(hasNext())
                 action.accept(next());
         }
-
-        private T scale(T nonScaled) {
-            Double[] scaled = new Double[numberOfColumns];
-            for (int i = 0; i < columnZScales.size(); i++) {
-                scaled[i] = columnZScales.get(i).zscale(nonScaled.getFeatures()[i]);
-            }
-            if (columnZScales.size() < numberOfColumns)
-                scaled[numberOfColumns - 1] = nonScaled.getFeatures()[numberOfColumns-2];
-            return create(scaled);
-        }
     }
 
-    private List<List<Double>> cruiseThroughProviderCollectingColumns(ObservationProvider<Double, T> observationProvider) {
+    private List<List<Double>> cruiseThroughProviderCollectingColumns(ObservationProviderInterface<Double, T> observationProvider) {
 
         List<List<Double>> columnList = null;
 

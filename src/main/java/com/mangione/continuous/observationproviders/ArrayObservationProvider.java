@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 import com.mangione.continuous.observations.ObservationFactoryInterface;
 import com.mangione.continuous.observations.ObservationInterface;
 
-public class ArrayObservationProvider<S, T extends ObservationInterface<S>> extends ObservationProvider<S, T> {
+public class ArrayObservationProvider<S, T extends ObservationInterface<S>> extends ObservationProvider<S, T> implements ObservationProviderInterface<S, T>{
     private final List<T> observations = new ArrayList<>();
 
 
@@ -23,7 +23,7 @@ public class ArrayObservationProvider<S, T extends ObservationInterface<S>> exte
     }
 
     @SuppressWarnings("WeakerAccess")
-    public ArrayObservationProvider(ObservationProvider<S, T> observationProvider,
+    public ArrayObservationProvider(ObservationProviderInterface<S, T> observationProvider,
             ObservationFactoryInterface<S, T> observationFactoryInterface) {
         super(observationFactoryInterface);
 
