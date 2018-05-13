@@ -1,42 +1,48 @@
 package com.mangione.continuous.observations;
 
-import java.util.Arrays;
+import java.util.List;
 
-public class DiscreteExemplar<T> implements ExemplarInterface<T, Integer> {
-    private final T[] features;
-    private final T continuousValue;
-    private final Integer target;
-    
-    public DiscreteExemplar(T[] features, T continuousValue, Integer target) {
-        this.features = features;
-        this.continuousValue = continuousValue;
-        this.target = target;
-    }
+public class DiscreteExemplar<T extends Number> implements ExemplarInterface<T, Integer> {
+	private final List<T> features;
+	private final T continuousValue;
+	private final Integer target;
 
-    @Override
-    public Integer getTarget() {
-        return target;
-    }
+	public DiscreteExemplar(List<T> features, T continuousValue, int target) {
+		this.features = features;
+		this.continuousValue = continuousValue;
+		this.target = target;
+	}
 
-    public T getContinuousValue() {
-        return continuousValue;
-    }
+	public DiscreteExemplar(List<T> features) {
+		this.features = features.subList(0, features.size() - 1);
+		this.continuousValue = features.get(features.size() - 1);
+		this.target = this.continuousValue.intValue();
+	}
 
-    @Override
-    public T[] getExemplar() {
-        return Arrays.copyOfRange(features, 0, features.length -1);
-    }
+	@Override
+	public Integer getTarget() {
+		return target;
+	}
 
-    @Override
-    public T[] getFeatures() {
-        return features;
-    }
+	public T getContinuousValue() {
+		return continuousValue;
+	}
 
-    @Override
-    public String toString() {
-        return "DiscreteExemplar{" +
-                "target=" + target +
-                ", continuousValue=" + continuousValue +
-                '}';
-    }
+	@Override
+	public List<T> getExemplar() {
+		return features.subList(0, features.size() - 1);
+	}
+
+	@Override
+	public List<T> getFeatures() {
+		return features;
+	}
+
+	@Override
+	public String toString() {
+		return "DiscreteExemplar{" +
+				"target=" + target +
+				", continuousValue=" + continuousValue +
+				'}';
+	}
 }

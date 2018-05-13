@@ -1,11 +1,16 @@
 package com.mangione.continuous.observations;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
-public class DiscreteExemplarFactory implements ExemplarFactoryInterface<Double, Integer, ExemplarInterface<Double, Integer>>  {
-    @Override
-    public DiscreteExemplar<Double> create(Double[] data) {
-        return new DiscreteExemplar<>(Arrays.copyOfRange(data, 0, data.length - 1), data[data.length - 1],
-                data[data.length - 1].intValue());
-    }
+public class DiscreteExemplarFactory implements ExemplarFactoryInterface<Double, ExemplarInterface<Double, Integer>> {
+	@Override
+	public DiscreteExemplar<Double> create(List<Double> data) {
+		final List<Double> doubles = new ArrayList<>(data);
+		
+		final Double target = doubles.get(data.size() - 1);
+		return new DiscreteExemplar<>(doubles.subList(0, data.size() - 1), target, target.intValue());
+	}
+
+
 }

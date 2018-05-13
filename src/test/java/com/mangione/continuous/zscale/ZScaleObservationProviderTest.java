@@ -1,18 +1,16 @@
 package com.mangione.continuous.zscale;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Iterator;
-
+import com.mangione.continuous.observationproviders.ArrayObservationProvider;
+import com.mangione.continuous.observations.DoubleObservationFactory;
+import com.mangione.continuous.observations.ObservationInterface;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.mangione.continuous.observationproviders.ArrayObservationProvider;
-import com.mangione.continuous.observations.DoubleObservationFactory;
-import com.mangione.continuous.observations.ObservationInterface;
+import java.util.Iterator;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 public class ZScaleObservationProviderTest {
 
@@ -36,10 +34,15 @@ public class ZScaleObservationProviderTest {
 		Iterator<ObservationInterface<Double>> iterator = singleColumnObservationProvider.iterator();
 		for (double aColumn1 : singleColumn) {
 			assertTrue(iterator.hasNext());
-			final Double[] features = iterator.next().getFeatures();
+			final Double[] features = toArray(iterator);
 			assertEquals(1, features.length);
 			assertEquals(singleColumnZScale.zscale(aColumn1), features[0], 0.0);
 		}
+	}
+
+	private Double[] toArray(Iterator<ObservationInterface<Double>> iterator) {
+		final List<Double> scaled = iterator.next().getFeatures();
+		return scaled.toArray(new Double[scaled.size()]);
 	}
 
 	@Test
@@ -61,7 +64,7 @@ public class ZScaleObservationProviderTest {
 		Iterator<ObservationInterface<Double>> iterator = observationProvider.iterator();
 		for (int i = 0; i < column1.length; i++) {
 			assertTrue(iterator.hasNext());
-			final Double[] features = iterator.next().getFeatures();
+			final Double[] features = toArray(iterator);
 			assertEquals(2, features.length);
 			assertEquals(czs1.zscale(column1[i]), features[0], 0.0);
 			assertEquals(czs2.zscale(column2[i]), features[1], 0.0);
@@ -74,7 +77,7 @@ public class ZScaleObservationProviderTest {
 		final int[] i = {0};
 		singleColumnObservationProvider.forEach(doubleObservationInterface ->
 				assertEquals(singleColumnZScale.zscale(singleColumn[i[0]++]),
-						doubleObservationInterface.getFeatures()[0], 0));
+						doubleObservationInterface.getFeatures().get(0), 0));
 		assertEquals(singleColumn.length, i[0]);
 	}
 
@@ -92,7 +95,7 @@ public class ZScaleObservationProviderTest {
 			if (i == 1)
 				i++;
 			assertEquals(singleColumnZScale.zscale(singleColumn[i++]),
-					iteratorWithSecondElementRemoved.next().getFeatures()[0], 0);
+					iteratorWithSecondElementRemoved.next().getFeatures().get(0), 0);
 		}
 		assertEquals(singleColumn.length, i);
 	}
@@ -102,10 +105,10 @@ public class ZScaleObservationProviderTest {
 		final int[] i = {0};
 		singleColumnObservationProvider.forEach(doubleObservationInterface -> {
 			assertEquals(singleColumnZScale.zscale(singleColumn[i[0]++]),
-					doubleObservationInterface.getFeatures()[0], 0);
+					doubleObservationInterface.getFeatures().get(0), 0);
 			final int[] inner = {0};
 			singleColumnObservationProvider.forEach(innerObs -> assertEquals(singleColumnZScale.zscale(singleColumn[inner[0]++]),
-					innerObs.getFeatures()[0], 0));
+					innerObs.getFeatures().get(0), 0));
 		});
 		assertEquals(singleColumn.length, i[0]);
 	}

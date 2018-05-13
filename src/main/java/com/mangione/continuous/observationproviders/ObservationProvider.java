@@ -3,16 +3,19 @@ package com.mangione.continuous.observationproviders;
 import com.mangione.continuous.observations.ObservationFactoryInterface;
 import com.mangione.continuous.observations.ObservationInterface;
 
-public abstract class ObservationProvider<S, T extends ObservationInterface<S>> implements ObservationProviderInterface<S, T> {
+import java.util.List;
 
-    private final ObservationFactoryInterface<S, T> factory;
+public abstract class ObservationProvider<S, T extends ObservationInterface<S>> implements ObservationProviderInterface<S,T> {
 
-    protected ObservationProvider(ObservationFactoryInterface<S, T> factory) {
+    private final ObservationFactoryInterface<S, ? extends T> factory;
+
+    protected ObservationProvider(ObservationFactoryInterface<S,  ? extends T> factory) {
         this.factory = factory;
     }
 
-	@Override
-	public T create(S data[]) {
-        return factory.create(data);
+	public T create(List<S> data) {
+
+		return factory.create(data);
     }
+
 }

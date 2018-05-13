@@ -33,8 +33,8 @@ public class ScaledDiscreteExemplarGeneratorTest {
         ScaledDiscreteExemplarGenerator sdeg = new ScaledDiscreteExemplarGenerator(numberOfExemplars, featureMeanAndSD, bias, sdEpsilon, twister);
         List<DiscreteExemplar<Double>> exemplars = sdeg.generateDataSet();
         exemplars.forEach(exemplar -> {
-            for (int i = 0; i < exemplar.getFeatures().length; i++) {
-                stats[i].addValue(exemplar.getFeatures()[i]);
+            for (int i = 0; i < exemplar.getFeatures().size(); i++) {
+                stats[i].addValue(exemplar.getFeatures().get(i));
             }
         });
 
@@ -65,8 +65,8 @@ public class ScaledDiscreteExemplarGeneratorTest {
                 "/Users/carmine/projects/continuous/src/test/java/com/mangione/continuous/assignments/assignment2/" + fileName));
         exemplars.forEach(exemplar->{
             StringBuffer sb = new StringBuffer();
-            for (int i = 0; i < exemplar.getFeatures().length; i++) {
-                sb.append(exemplar.getFeatures()[i]).append(',');
+            for (int i = 0; i < exemplar.getFeatures().size(); i++) {
+                sb.append(exemplar.getFeatures().get(i)).append(',');
             }
             sb.append(exemplar.getTarget());
             try {

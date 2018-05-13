@@ -1,31 +1,33 @@
 package com.mangione.continuous.classifiers;
 
-import com.mangione.cse151.observationproviders.ObservationProvider;
-import com.mangione.cse151.observations.DiscreteExemplar;
+
+import com.mangione.continuous.observationproviders.ObservationProviderInterface;
+import com.mangione.continuous.observations.ExemplarInterface;
+
+import java.util.Iterator;
 
 public class NaiveBayesClassifier {
 	private double[] priorProbabilities;
 	private double[][] conditionalProbabilities;
 
-	public NaiveBayesClassifier(ObservationProvider<DiscreteExemplar> exemplars, int numberOfCategories) throws Exception {
-		if (exemplars.hasNext()) {
-			DiscreteExemplar next = exemplars.next();
-			int numberOfFeatures = next.getFeatures().length;
+	public NaiveBayesClassifier(ObservationProviderInterface<Double, ExemplarInterface<Double, Integer>> exemplars, int numberOfCategories) throws Exception {
+		final Iterator<ExemplarInterface<Double, Integer>> iterator = exemplars.iterator();
+		if (iterator.hasNext()) {
+			ExemplarInterface<Double, Integer> next = iterator.next();
+			int numberOfFeatures = next.getFeatures().size();
 			conditionalProbabilities = new double[numberOfFeatures][numberOfCategories];
 			final double[] exemplarsPerCategory = new double[numberOfCategories];
 			final double[] featureCountPerCategory = new double[numberOfCategories];
 
-			exemplars.reset();
-			for (DiscreteExemplar exemplar : exemplars) {
-				int target = (int) exemplar.getTarget();
+			for (ExemplarInterface<Double, Integer> exemplar : exemplars) {
+				int target =  exemplar.getTarget();
 				exemplarsPerCategory[target]++;
-				for (int i = 0; i < exemplar.getFeatures().length; i++) {
-					featureCountPerCategory[target] += exemplar.getFeatures()[i];
-					conditionalProbabilities[i][target] += exemplar.getFeatures()[i];
+				for (int i = 0; i < exemplar.getFeatures().size(); i++) {
+					featureCountPerCategory[target] += exemplar.getFeatures().get(i);
+					conditionalProbabilities[i][target] += exemplar.getFeatures().get(i);
 				}
 			}
 
-			exemplars.reset();
 
 			long numObservations = exemplars.getNumberOfLines();
 			priorProbabilities = new double[numberOfCategories];
@@ -41,13 +43,13 @@ public class NaiveBayesClassifier {
 		}
 	}
 
-	public int classify(DiscreteExemplar discreteExemplar) {
+	public int classify(ExemplarInterface<Double, Integer> discreteExemplar) {
 		double maximumLikelihood = Double.NEGATIVE_INFINITY;
 		int category = -1;
 		for (int i = 0; i < priorProbabilities.length; i++) {
 			double currentLikelihood = priorProbabilities[i];
 			for (int j = 0; j < conditionalProbabilities.length; j++) {
-				currentLikelihood += conditionalProbabilities[j][i] * discreteExemplar.getFeatures()[j];
+				currentLikelihood += conditionalProbabilities[j][i] * discreteExemplar.getFeatures().get(j);
 			}
 			if (currentLikelihood > maximumLikelihood) {
 				category = i;

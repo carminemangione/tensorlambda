@@ -1,14 +1,11 @@
 package com.mangione.continuous.demos.encog.abalone;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.OptionalInt;
-import java.util.stream.IntStream;
-
+import com.mangione.continuous.demos.encog.ColumnDefinitionFunction;
+import com.mangione.continuous.demos.encog.ColumnDefinitionFunctionFactory;
+import com.mangione.continuous.demos.encog.NamedVersatileDataSource;
+import com.mangione.continuous.observationproviders.CsvObservationProvider;
+import com.mangione.continuous.observations.Observation;
+import com.mangione.continuous.observations.ObservationInterface;
 import org.encog.ConsoleStatusReportable;
 import org.encog.engine.network.activation.ActivationTANH;
 import org.encog.ml.MLRegression;
@@ -19,11 +16,12 @@ import org.encog.ml.model.EncogModel;
 import org.encog.neural.networks.BasicNetwork;
 import org.encog.neural.networks.layers.BasicLayer;
 
-import com.mangione.continuous.demos.encog.ColumnDefinitionFunction;
-import com.mangione.continuous.demos.encog.ColumnDefinitionFunctionFactory;
-import com.mangione.continuous.demos.encog.NamedVersatileDataSource;
-import com.mangione.continuous.observationproviders.CsvObservationProvider;
-import com.mangione.continuous.observations.ObservationInterface;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class NNet {
     private final static String DATA_FILENAME = "src/main/resources/Abalone/abalone.data";
@@ -128,7 +126,7 @@ public class NNet {
             public String[] readLine() {
                 if (iterator.hasNext()) {
                     ObservationInterface<String> next = iterator.next();
-                    return next.getFeatures();
+                    return next.getFeatures().toArray(new String[next.getFeatures().size()]);
                 } else {
                     return null;
                 }
@@ -184,7 +182,12 @@ public class NNet {
 
     public static void main(String[] args) throws IOException {
         File file = new File(DATA_FILENAME);
-        final CsvObservationProvider csvObservationProvider = new CsvObservationProvider(file);
+        final CsvObservationProvider csvObservationProvider = new CsvObservationProvider(file, data -> {
+			final List<String> strings = data.stream()
+					.map(x -> (String) x)
+					.collect(Collectors.toList());
+			return new Observation<>(strings);
+		});
         NNet nnet = new NNet(getVersatileDataSource(csvObservationProvider, theInputHeadings), "Rings");
     }
 }

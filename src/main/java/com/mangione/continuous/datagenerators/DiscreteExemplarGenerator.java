@@ -6,6 +6,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.ejml.simple.SimpleMatrix;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -57,7 +58,7 @@ public class DiscreteExemplarGenerator{
                     || (unjiggled.get(i, 0) > 0 && jiggledY > 0);
             numberMiscategorized += didntFlip ? 0 : 1;
             
-            exemplars.add(new DiscreteExemplar<>(ArrayUtils.toObject(observationVector[i]), jiggledY, jiggledY > 0 ? 1 : 0));
+            exemplars.add(new DiscreteExemplar<>(Arrays.asList(ArrayUtils.toObject(observationVector[i])), jiggledY, jiggledY > 0 ? 1 : 0));
         }
         return Collections.unmodifiableList(exemplars);
     }

@@ -1,17 +1,14 @@
 package com.mangione.continuous.observationproviders;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Iterator;
-
+import com.mangione.continuous.observations.DoubleObservationFactory;
+import com.mangione.continuous.observations.ObservationInterface;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.mangione.continuous.observations.DoubleObservationFactory;
-import com.mangione.continuous.observations.ObservationInterface;
+import java.util.Iterator;
+
+import static org.junit.Assert.*;
 
 public class SampledObservationProviderTest {
 	private static final Double[][] DATA = new Double[][]{{3d}, {5d}, {6d}, {7d}, {9d}};
@@ -46,7 +43,7 @@ public class SampledObservationProviderTest {
 
 		int i = 0;
 		for (ObservationInterface<Double> observation : sampler) {
-			assertEquals(testExpected[i++], observation.getFeatures()[0], 0);
+			assertEquals(testExpected[i++], observation.getFeatures().get(0), 0);
 		}
 		assertEquals(2, i);
 	}
@@ -55,7 +52,7 @@ public class SampledObservationProviderTest {
 	public void iteratorTrain() throws Exception {
 		int i = 0;
 		for (ObservationInterface<Double> aSampler : trainsSampler) {
-			assertEquals(trainExpected[i++], aSampler.getFeatures()[0], 0);
+			assertEquals(trainExpected[i++], aSampler.getFeatures().get(0), 0);
 		}
 		assertEquals(2, i);
 	}
@@ -63,7 +60,7 @@ public class SampledObservationProviderTest {
 	@Test
 	public void forEach() throws Exception {
 		final int[] i = {0};
-		trainsSampler.forEach(observation -> assertEquals(trainExpected[i[0]++], observation.getFeatures()[0], 0));
+		trainsSampler.forEach(observation -> assertEquals(trainExpected[i[0]++], observation.getFeatures().get(0), 0));
 		assertEquals(2, i[0]);
 	}
 
@@ -81,9 +78,9 @@ public class SampledObservationProviderTest {
 	public void forEachRemaining() throws Exception {
 		Iterator<ObservationInterface<Double>> iterator = trainsSampler.iterator();
 		assertTrue(iterator.hasNext());
-		assertEquals(5d, iterator.next().getFeatures()[0], 0);
+		assertEquals(5d, iterator.next().getFeatures().get(0), 0);
 		final int[] i = {1};
-		iterator.forEachRemaining(observation -> assertEquals(trainExpected[i[0]++], observation.getFeatures()[0], 0));
+		iterator.forEachRemaining(observation -> assertEquals(trainExpected[i[0]++], observation.getFeatures().get(0), 0));
 	}
 
 
@@ -102,9 +99,9 @@ public class SampledObservationProviderTest {
 		final int[] i = {0};
 		trainsSampler.forEach(observation ->
 		{
-			assertEquals(trainExpected[i[0]++], observation.getFeatures()[0], 0);
+			assertEquals(trainExpected[i[0]++], observation.getFeatures().get(0), 0);
 			final int[] inner = {0};
-			trainsSampler.forEach(innerObs -> assertEquals(trainExpected[inner[0]++], innerObs.getFeatures()[0], 0));
+			trainsSampler.forEach(innerObs -> assertEquals(trainExpected[inner[0]++], innerObs.getFeatures().get(0), 0));
 			assertEquals(2, inner[0]);
 		});
 		assertEquals(2, i[0]);

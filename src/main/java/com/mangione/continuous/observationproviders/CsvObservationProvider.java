@@ -1,27 +1,24 @@
 package com.mangione.continuous.observationproviders;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import com.mangione.continuous.observations.ObservationFactoryInterface;
+import com.mangione.continuous.observations.ObservationInterface;
+
+import javax.annotation.Nonnull;
+import java.io.*;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
-import javax.annotation.Nonnull;
-
-import com.mangione.continuous.observations.Observation;
-import com.mangione.continuous.observations.ObservationInterface;
-
 public class CsvObservationProvider implements ObservationProviderInterface<String, ObservationInterface<String>> {
 
 	private final File file;
+	private final ObservationFactoryInterface<String, ObservationInterface<String>> factory;
 
-	public CsvObservationProvider(File file) throws FileNotFoundException {
+	public CsvObservationProvider(File file, ObservationFactoryInterface<String, ObservationInterface<String>> factory) throws FileNotFoundException {
 		this.file = file;
 
+		this.factory = factory;
 	}
 
 	@Override
@@ -30,11 +27,6 @@ public class CsvObservationProvider implements ObservationProviderInterface<Stri
 
 		forEach(stringObservationInterface -> numberOfLines[0]++);
 		return numberOfLines[0];
-	}
-
-	@Override
-	public ObservationInterface<String> create(String[] data) {
-		return new Observation<>(data);
 	}
 
 	@Override
@@ -88,7 +80,7 @@ public class CsvObservationProvider implements ObservationProviderInterface<Stri
 				throw new ProviderException(e);
 			}
 
-			return create(nextLine);
+			return factory.create(Arrays.asList(nextLine));
 		}
 
 		@Override

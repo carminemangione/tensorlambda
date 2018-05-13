@@ -1,14 +1,14 @@
 package com.mangione.assignments.assignment1;
 
-import java.io.File;
-import java.net.URL;
-
+import com.mangione.continuous.observationproviders.CsvObservationProvider;
+import com.mangione.continuous.observations.StringObservationFactory;
+import com.mangione.continuous.sampling.SamplingWithoutReplacement;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 
-import com.mangione.continuous.observationproviders.CsvObservationProvider;
-import com.mangione.continuous.sampling.SamplingWithoutReplacement;
+import java.io.File;
+import java.net.URL;
 
 public class Assignment1 {
     public static void main(String[] args) throws Exception {
@@ -16,7 +16,7 @@ public class Assignment1 {
 
         assert abaloneURL != null;
         long totalNumberOfLines =
-                new CsvObservationProvider(new File(abaloneURL.toURI())).getNumberOfLines();
+                new CsvObservationProvider(new File(abaloneURL.toURI()), new StringObservationFactory()).getNumberOfLines();
 
         MersenneTwister random = new MersenneTwister(198273);
 

@@ -1,42 +1,36 @@
 package com.mangione.continuous.observationproviders;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Spliterator;
-import java.util.function.Consumer;
-
-import javax.annotation.Nonnull;
-
 import com.mangione.continuous.observations.ObservationFactoryInterface;
 import com.mangione.continuous.observations.ObservationInterface;
+
+import javax.annotation.Nonnull;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 public class VariableCalculatorObservationProvider<R, S, T extends ObservationInterface<S>> implements ObservationProviderInterface<S, T> {
 
 	private final ObservationProviderInterface<R, ? extends ObservationInterface<R>> provider;
 	private final VariableCalculator<R, S> defaultCalculator;
 	private final Map<Integer, VariableCalculator<R, S>> indexToCalculator;
-	private final ArraySupplier<S> arraySupplier;
 	private final ObservationFactoryInterface<S, T> observationFactory;
 
+	@SuppressWarnings("unused")
 	public VariableCalculatorObservationProvider(ObservationProviderInterface<R, ? extends ObservationInterface<R>> provider,
-			VariableCalculator<R, S> defaultVariableCalculator, ArraySupplier<S> arraySupplier,
+			VariableCalculator<R, S> defaultVariableCalculator,
 			ObservationFactoryInterface<S, T> observationFactory) {
-		this(provider, defaultVariableCalculator, new HashMap<>(), arraySupplier, observationFactory);
+		this(provider, defaultVariableCalculator, new HashMap<>(), observationFactory);
 	}
 
 
 	@SuppressWarnings("WeakerAccess")
 	public VariableCalculatorObservationProvider(ObservationProviderInterface<R, ? extends ObservationInterface<R>> provider,
 			VariableCalculator<R, S> defaultVariableCalculator, Map<Integer, VariableCalculator<R, S>> indexToCalculator,
-			ArraySupplier<S> arraySupplier, ObservationFactoryInterface<S, T> observationFactory) {
+			ObservationFactoryInterface<S, T> observationFactory) {
 
 		this.provider = provider;
 		this.defaultCalculator = defaultVariableCalculator;
 		this.indexToCalculator = indexToCalculator;
-		this.arraySupplier = arraySupplier;
 		this.observationFactory = observationFactory;
 	}
 
@@ -46,10 +40,6 @@ public class VariableCalculatorObservationProvider<R, S, T extends ObservationIn
 		return 0;
 	}
 
-	@Override
-	public T create(S[] data) {
-		return null;
-	}
 
 	@Override
 	@Nonnull
@@ -67,15 +57,20 @@ public class VariableCalculatorObservationProvider<R, S, T extends ObservationIn
 		return null;
 	}
 
-	private S[] translateAllVariables(R[] features) {
-		List<S> translatedVariables = new ArrayList<>();
-		for (int i = 0; i < features.length; i++) {
-			translatedVariables.addAll(calculateVariableWithIndexedCalcuatorOrDefault(features[i], i));
-		}
-		return translatedVariables.toArray(arraySupplier.get(translatedVariables.size()));
+	private List<S> translateAllVariables(List<R> features) {
+		AtomicInteger i = new AtomicInteger();
+
+		final List<S> translatedVariables = new ArrayList<>();
+
+
+		features.stream()
+				.map(x -> calculateVariableWithIndexedCalculatorOrDefault(x, i.getAndIncrement()))
+				.forEach(translatedVariables::addAll);
+
+		return translatedVariables;
 	}
 
-	private List<S> calculateVariableWithIndexedCalcuatorOrDefault(R variable, int index) {
+	private List<S> calculateVariableWithIndexedCalculatorOrDefault(R variable, int index) {
 		return indexToCalculator.get(index) != null ?
 				indexToCalculator.get(index).apply(variable) :
 				defaultCalculator.apply(variable);
@@ -95,7 +90,7 @@ public class VariableCalculatorObservationProvider<R, S, T extends ObservationIn
 
 		@Override
 		public T next() {
-			S[] translatedVariables = translateAllVariables(iterator.next().getFeatures());
+			List<S> translatedVariables = translateAllVariables(iterator.next().getFeatures());
 			return observationFactory.create(translatedVariables);
 		}
 

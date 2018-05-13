@@ -5,6 +5,7 @@ import org.apache.commons.math3.random.MersenneTwister;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ScaledDiscreteExemplarGenerator {
 
@@ -20,13 +21,17 @@ public class ScaledDiscreteExemplarGenerator {
 
     public List<DiscreteExemplar<Double>> generateDataSet() {
         final List<DiscreteExemplar<Double>> exemplars = discreteExemplarGenerator.getExemplars();
-        final List<DiscreteExemplar> scaledExemplars = new ArrayList<>();
+        final List<DiscreteExemplar<Double>> scaledExemplars = new ArrayList<>();
         exemplars.forEach(exemplar -> {
-            for (int i = 0; i < exemplar.getFeatures().length; i++) {
-                exemplar.getFeatures()[i] = exemplar.getFeatures()[i] * featureMeanAndSD[i][1] + featureMeanAndSD[i][0];
-                scaledExemplars.add(new DiscreteExemplar(exemplar.getFeatures(), exemplar.getContinuousValue(), exemplar.getTarget()));
-            }
+
+            final int[] scaledIndex = {0};
+            final List<Double> scaled = exemplar.getFeatures()
+                    .stream()
+                    .map(x -> x * featureMeanAndSD[scaledIndex[0]][1] + featureMeanAndSD[scaledIndex[0]++][0])
+                    .collect(Collectors.toList());
+
+            scaledExemplars.add(new DiscreteExemplar<>(scaled, exemplar.getContinuousValue(), exemplar.getTarget()));
         });
-        return exemplars;
+        return scaledExemplars;
     }
 }

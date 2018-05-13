@@ -1,8 +1,12 @@
 package com.mangione.continuous.observations;
 
+import java.util.List;
+
 public class DoubleObservationFactory implements ObservationFactoryInterface<Double, ObservationInterface<Double>> {
+
+
     @Override
-    public Observation<Double> create(Double[] data) {
-        return new Observation<>(data);
+    public ObservationInterface<Double> create(List<Double> data) {
+        return  new Observation<>(data);
     }
 }

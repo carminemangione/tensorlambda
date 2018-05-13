@@ -1,16 +1,13 @@
 package com.mangione.continuous.observationproviders;
 
-import java.util.Iterator;
+import com.mangione.continuous.observations.ObservationInterface;
 
 import javax.annotation.Nonnull;
-
-import com.mangione.continuous.observations.ObservationInterface;
+import java.util.Iterator;
 
 public interface ObservationProviderInterface <S, T extends ObservationInterface<S>> extends Iterable<T> {
 
 	long getNumberOfLines();
-
-	T create(S data[]);
 
 	@Override
 	@Nonnull

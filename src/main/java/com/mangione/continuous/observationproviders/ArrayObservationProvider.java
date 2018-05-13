@@ -1,30 +1,32 @@
 package com.mangione.continuous.observationproviders;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Spliterator;
-import java.util.function.Consumer;
-
-import javax.annotation.Nonnull;
-
 import com.mangione.continuous.observations.ObservationFactoryInterface;
 import com.mangione.continuous.observations.ObservationInterface;
 
-public class ArrayObservationProvider<S, T extends ObservationInterface<S>> extends ObservationProvider<S, T> implements ObservationProviderInterface<S, T>{
+import javax.annotation.Nonnull;
+import java.util.*;
+import java.util.function.Consumer;
+
+public class ArrayObservationProvider<S , T extends ObservationInterface<S>>
+		extends ObservationProvider<S, T> implements ObservationProviderInterface<S, T>{
     private final List<T> observations = new ArrayList<>();
 
 
     public ArrayObservationProvider(S[][] data, ObservationFactoryInterface<S, T> observationFactoryInterface) {
         super(observationFactoryInterface);
         for (S[] doubles : data) {
-            observations.add(create(doubles));
+            observations.add(create(Arrays.asList(doubles)));
         }
     }
 
+	public ArrayObservationProvider(List<? extends T> data, ObservationFactoryInterface<S, ? extends T> observationFactoryInterface) {
+     super(observationFactoryInterface);
+     observations.addAll(data);
+ }
+
     @SuppressWarnings("WeakerAccess")
-    public ArrayObservationProvider(ObservationProviderInterface<S, T> observationProvider,
-            ObservationFactoryInterface<S, T> observationFactoryInterface) {
+    public ArrayObservationProvider(ObservationProviderInterface<S, ? extends T> observationProvider,
+            ObservationFactoryInterface<S, ? extends T> observationFactoryInterface) {
         super(observationFactoryInterface);
 
         for (T anObservationProvider : observationProvider) {
@@ -32,7 +34,7 @@ public class ArrayObservationProvider<S, T extends ObservationInterface<S>> exte
         }
     }
 
-    @Override
+	@Override
     public long getNumberOfLines()  {
         return observations.size();
     }

@@ -1,14 +1,8 @@
 package com.mangione.continuous.demos.encog.abalone;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
+import com.mangione.continuous.observationproviders.CsvObservationProvider;
+import com.mangione.continuous.observations.Observation;
+import com.mangione.continuous.observations.ObservationInterface;
 import org.encog.ConsoleStatusReportable;
 import org.encog.Encog;
 import org.encog.app.analyst.AnalystFileFormat;
@@ -35,8 +29,12 @@ import org.encog.neural.networks.training.propagation.resilient.ResilientPropaga
 import org.encog.util.csv.CSVFormat;
 import org.encog.util.simple.EncogUtility;
 
-import com.mangione.continuous.observationproviders.CsvObservationProvider;
-import com.mangione.continuous.observations.ObservationInterface;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class NeuralNetwork {
 
@@ -102,7 +100,12 @@ public class NeuralNetwork {
 	private static VersatileMLDataSet prepareDataset() throws FileNotFoundException {
 
 		// Create data source
-		final CsvObservationProvider csv = new CsvObservationProvider(new File(DATA_FILENAME));
+		final CsvObservationProvider csv = new CsvObservationProvider(new File(DATA_FILENAME), data -> {
+					final List<String> strings = data.stream()
+										.map(x -> (String) x)
+										.collect(Collectors.toList());
+								return new Observation<>(strings);
+				});
 		VersatileDataSource abaloneDataSource = new VersatileDataSource() {
 			Iterator<ObservationInterface<String>> iterator = csv.iterator();
 
@@ -110,7 +113,7 @@ public class NeuralNetwork {
 			public String[] readLine() {
 				if (iterator.hasNext()) {
 					ObservationInterface<String> next = iterator.next();
-					return next.getFeatures();
+					return next.getFeatures().toArray(new String[next.getFeatures().size()]);
 				} else {
 					return null;
 				}
@@ -301,14 +304,19 @@ public class NeuralNetwork {
 	}
 
 	public static void ScoreRecords(MLRegression bestMethod, NormalizationHelper helper) throws FileNotFoundException {
-		CsvObservationProvider csvP = new CsvObservationProvider(new File(DATA_FILENAME));
+		CsvObservationProvider csvP = new CsvObservationProvider(new File(DATA_FILENAME), data -> {
+			final List<String> strings = data.stream()
+								.map(x -> (String) x)
+								.collect(Collectors.toList());
+						return new Observation<>(strings);
+		});
 		MLData input = helper.allocateInputVector();
 
 		for (ObservationInterface<String> rec : csvP) {
-			String[] line = Arrays
-					.stream(rec.getFeatures(), 0, 7)
-					.toArray(String[]::new);
-			String observation = rec.getFeatures()[8];
+			String[] line = rec.getFeatures()
+					.subList(0, 7)
+					.toArray(new String[0]);
+			String observation = rec.getFeatures().get(8);
 
 			helper.normalizeInputVector(line, input.getData(), false);
 			MLData output = bestMethod.compute(input);
@@ -321,4 +329,6 @@ public class NeuralNetwork {
 			result.ifPresent(System.out::println);
 		}
 	}
+
+
 }
