@@ -1,4 +1,4 @@
-package com.mangione.continuous.observationproviders;
+package com.mangione.continuous.sampling;
 
 import java.util.Iterator;
 import java.util.Spliterator;
@@ -6,6 +6,9 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 
+import com.mangione.continuous.observationproviders.ObservationProvider;
+import com.mangione.continuous.observationproviders.ObservationProviderInterface;
+import com.mangione.continuous.observationproviders.RandomGeneratorFactory;
 import com.mangione.continuous.observations.ObservationFactoryInterface;
 import com.mangione.continuous.observations.ObservationInterface;
 import com.mangione.continuous.sampling.SamplingWithoutReplacement;

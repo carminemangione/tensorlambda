@@ -3,7 +3,7 @@ package com.mangione.continuous.observations;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DiscreteExemplarFactory implements ExemplarFactoryInterface<Double, ExemplarInterface<Double, Integer>> {
+public class DiscreteExemplarFactory implements ExemplarFactoryInterface<Double, DiscreteExemplar<Double>> {
 	@Override
 	public DiscreteExemplar<Double> create(List<Double> data) {
 		final List<Double> doubles = new ArrayList<>(data);

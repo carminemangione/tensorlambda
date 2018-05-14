@@ -1,4 +1,4 @@
-package com.mangione.continuous.zscale;
+package com.mangione.continuous.calculators.zscale;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 

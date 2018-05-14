@@ -1,7 +1,11 @@
-package com.mangione.continuous.observationproviders;
+package com.mangione.continuous.sampling;
 
+import com.mangione.continuous.observationproviders.ArrayObservationProvider;
+import com.mangione.continuous.observationproviders.ObservationProviderInterface;
+import com.mangione.continuous.observationproviders.RandomGeneratorFactory;
 import com.mangione.continuous.observations.DoubleObservationFactory;
 import com.mangione.continuous.observations.ObservationInterface;
+
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.Before;
 import org.junit.Test;

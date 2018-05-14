@@ -1,4 +1,4 @@
-package com.mangione.continuous.zscale;
+package com.mangione.continuous.calculators.zscale;
 
 import org.junit.Test;
 

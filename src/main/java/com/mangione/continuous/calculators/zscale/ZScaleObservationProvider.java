@@ -1,4 +1,4 @@
-package com.mangione.continuous.zscale;
+package com.mangione.continuous.calculators.zscale;
 
 import com.mangione.continuous.observationproviders.ObservationProvider;
 import com.mangione.continuous.observationproviders.ObservationProviderInterface;
