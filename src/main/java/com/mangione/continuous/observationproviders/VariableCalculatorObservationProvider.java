@@ -12,7 +12,7 @@ public class VariableCalculatorObservationProvider<R, S, T extends ObservationIn
 
 	private final ObservationProviderInterface<R, ? extends ObservationInterface<R>> provider;
 	private final VariableCalculator<R, S> defaultCalculator;
-	private final Map<Integer, VariableCalculator<R, S>> indexToCalculator;
+	private final Map<Integer, ? extends VariableCalculator<R, S>> indexToCalculator;
 	private final ObservationFactoryInterface<S, ? extends T> observationFactory;
 
 	@SuppressWarnings("unused")
@@ -25,7 +25,7 @@ public class VariableCalculatorObservationProvider<R, S, T extends ObservationIn
 
 	@SuppressWarnings("WeakerAccess")
 	public VariableCalculatorObservationProvider(ObservationProviderInterface<R, ? extends ObservationInterface<R>> provider,
-			VariableCalculator<R, S> defaultVariableCalculator, Map<Integer, VariableCalculator<R, S>> indexToCalculator,
+			VariableCalculator<R, S> defaultVariableCalculator, Map<Integer, ? extends VariableCalculator<R, S>> indexToCalculator,
 			ObservationFactoryInterface<S, ? extends T> observationFactory) {
 
 		this.provider = provider;
@@ -62,7 +62,6 @@ public class VariableCalculatorObservationProvider<R, S, T extends ObservationIn
 
 		final List<S> translatedVariables = new ArrayList<>();
 
-
 		features.stream()
 				.map(x -> calculateVariableWithIndexedCalculatorOrDefault(x, i.getAndIncrement()))
 				.forEach(translatedVariables::addAll);
@@ -90,7 +89,7 @@ public class VariableCalculatorObservationProvider<R, S, T extends ObservationIn
 
 		@Override
 		public T next() {
-			List<S> translatedVariables = translateAllVariables(iterator.next().getFeatures());
+			List<S> translatedVariables = translateAllVariables(iterator.next().getAllColumns());
 			return observationFactory.create(translatedVariables);
 		}
 

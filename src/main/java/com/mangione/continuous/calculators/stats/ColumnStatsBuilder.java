@@ -1,6 +1,7 @@
 package com.mangione.continuous.calculators.stats;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,6 +12,7 @@ import com.mangione.continuous.observations.ObservationInterface;
 
 public class ColumnStatsBuilder implements Serializable {
 
+	private static final long serialVersionUID = 2584705314151370296L;
 	private final List<ColumnStats> columnStats;
 
 	public ColumnStatsBuilder(ObservationProviderInterface<Double, ObservationInterface<Double>> provider) {
@@ -26,9 +28,13 @@ public class ColumnStatsBuilder implements Serializable {
 		return columnStats.get(value);
 	}
 
+	public List<ColumnStats> getStats() {
+		return Collections.unmodifiableList(columnStats);
+	}
+
 	private List<ColumnStats> calculateColumnStats(ObservationProviderInterface<Double, ObservationInterface<Double>> provider) {
 
-		int numberOfColumns = provider.iterator().next().getFeatures().size();
+		int numberOfColumns = provider.iterator().next().getAllColumns().size();
 
 		List<ColumnStats.Builder> builders = IntStream.range(0, numberOfColumns)
 				.mapToObj(x -> new ColumnStats.Builder())
@@ -37,6 +43,6 @@ public class ColumnStatsBuilder implements Serializable {
 		provider.forEach(observation -> IntStream.range(0, numberOfColumns)
 				.forEach(index -> builders.get(index).add(observation.getFeatures().get(index))));
 
-		return builders.stream().map(builder -> builder.build()).collect(Collectors.toList());
+		return builders.stream().map(ColumnStats.Builder::build).collect(Collectors.toList());
 	}
 }

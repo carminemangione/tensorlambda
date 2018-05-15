@@ -14,7 +14,7 @@ public class SexVariableCalculator implements VariableCalculator<String, Double>
         else if ("F".equals(feature))
             out[1] = 1.0;
         else
-            out[3] = 1.0;
+            out[2] = 1.0;
         return Arrays.asList(out);
     }
 }

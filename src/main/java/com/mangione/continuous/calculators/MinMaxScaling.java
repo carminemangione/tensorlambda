@@ -1,11 +1,13 @@
 package com.mangione.continuous.calculators;
 
 import java.io.Serializable;
-import java.util.function.Function;
+import java.util.Collections;
+import java.util.List;
 
 import com.mangione.continuous.calculators.stats.ColumnStats;
+import com.mangione.continuous.observationproviders.VariableCalculator;
 
-public class MinMaxScaling implements Function<Double, Double>, Serializable {
+public class MinMaxScaling implements VariableCalculator<Double, Double>, Serializable {
 	private static final long serialVersionUID = -5847082838258864601L;
 	private final ColumnStats stats;
 
@@ -15,7 +17,7 @@ public class MinMaxScaling implements Function<Double, Double>, Serializable {
 	}
 
 	@Override
-	public Double apply(Double valueToScale) {
-		return (valueToScale - stats.min()) / (stats.max() - stats.min());
+	public List<Double> apply(Double valueToScale) {
+		return Collections.singletonList(valueToScale - stats.min() / (stats.max() - stats.min()));
 	}
 }

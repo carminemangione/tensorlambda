@@ -15,7 +15,7 @@ public class ObservationToExemplarProvider extends ObservationProvider<Double,Di
 
 	private final ObservationProviderInterface<Double, ObservationInterface<Double>> provider;
 
-	protected ObservationToExemplarProvider(ObservationProviderInterface<Double, ObservationInterface<Double>> provider,
+	public ObservationToExemplarProvider(ObservationProviderInterface<Double, ObservationInterface<Double>> provider,
 			ObservationFactoryInterface<Double, ? extends DiscreteExemplar<Double>> factory) {
 		super(factory);
 		this.provider = provider;

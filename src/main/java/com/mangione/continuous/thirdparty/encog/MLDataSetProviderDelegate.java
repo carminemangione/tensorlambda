@@ -12,19 +12,21 @@ import org.encog.ml.data.MLDataSet;
 import org.encog.ml.data.basic.BasicMLData;
 import org.encog.ml.data.basic.BasicMLDataPair;
 import org.encog.ml.data.basic.BasicMLDataPairCentroid;
+import org.encog.ml.data.versatile.VersatileMLDataSet;
 import org.encog.util.kmeans.Centroid;
 
 import com.mangione.continuous.observationproviders.ArrayObservationProvider;
-import com.mangione.continuous.observationproviders.ObservationProvider;
+import com.mangione.continuous.observationproviders.ObservationProviderInterface;
 import com.mangione.continuous.observations.DiscreteExemplar;
 import com.mangione.continuous.observations.DiscreteExemplarFactory;
 
-public class MLDataSetProviderDelegate implements MLDataSet {
+public class MLDataSetProviderDelegate extends VersatileMLDataSet {
 
 	private final ArrayObservationProvider<Double, DiscreteExemplar<Double>> provider;
 	private final int inputSize;
 
-	public MLDataSetProviderDelegate(@Nonnull ObservationProvider<Double, DiscreteExemplar<Double>> provider) {
+	public MLDataSetProviderDelegate(@Nonnull ObservationProviderInterface<Double, DiscreteExemplar<Double>> provider) {
+		super(null);
 		if (!provider.iterator().hasNext()) {
 			throw new IllegalArgumentException("Nothing to train on... Provider is empty.");
 		}
@@ -60,7 +62,10 @@ public class MLDataSetProviderDelegate implements MLDataSet {
 
 	@Override
 	public void getRecord(long index, MLDataPair pair) {
-
+		DiscreteExemplar<Double> exemplar = provider.getByIndex((int) index);
+		ExemplarMLDataPair exemplarMLDataPair = new ExemplarMLDataPair(exemplar);
+		pair.setIdealArray(exemplarMLDataPair.getIdealArray());
+		pair.setInputArray(exemplarMLDataPair.getInputArray());
 	}
 
 	@Override
@@ -109,6 +114,7 @@ public class MLDataSetProviderDelegate implements MLDataSet {
 	}
 
 	@Override
+	@Nonnull
 	public Iterator<MLDataPair> iterator() {
 		return new Iterator<MLDataPair>() {
 			private Iterator<DiscreteExemplar<Double>> iterator =  provider.iterator();
@@ -184,4 +190,6 @@ public class MLDataSetProviderDelegate implements MLDataSet {
 			return new BasicMLDataPairCentroid(new BasicMLDataPair(getInput(), getIdeal()));
 		}
 	}
+
+
 }

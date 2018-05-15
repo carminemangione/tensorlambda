@@ -12,4 +12,9 @@ public class Observation<T> implements ObservationInterface<T> {
     public List<T> getFeatures() {
         return features;
     }
+
+    @Override
+    public List<T> getAllColumns() {
+        return features;
+    }
 }

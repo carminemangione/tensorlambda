@@ -23,9 +23,9 @@ public class MinMaxScalingTest {
 		ColumnStats stats = builder.build();
 		MinMaxScaling minMaxScaling = new MinMaxScaling(stats);
 
-		assertEquals(0, minMaxScaling.apply(2.), Double.MIN_VALUE);
-		assertEquals(1, minMaxScaling.apply(4.), Double.MIN_VALUE);
-		assertEquals(0.5, minMaxScaling.apply(3.), Double.MIN_VALUE);
+		assertEquals(0, minMaxScaling.apply(2.).get(0), Double.MIN_VALUE);
+		assertEquals(1, minMaxScaling.apply(4.).get(0), Double.MIN_VALUE);
+		assertEquals(0.5, minMaxScaling.apply(3.).get(0), Double.MIN_VALUE);
 	}
 
 	@Test
@@ -47,8 +47,9 @@ public class MinMaxScalingTest {
 		MinMaxScaling reconstituted = (MinMaxScaling) new ObjectInputStream(
 				new ByteArrayInputStream(baos.toByteArray())).readObject();
 
-		assertEquals(0, reconstituted.apply(2.), Double.MIN_VALUE);
-		assertEquals(1, reconstituted.apply(4.), Double.MIN_VALUE);
-		assertEquals(0.5, reconstituted.apply(3.), Double.MIN_VALUE);	}
+		assertEquals(0, reconstituted.apply(2.).get(0), Double.MIN_VALUE);
+		assertEquals(1, reconstituted.apply(4.).get(0), Double.MIN_VALUE);
+		assertEquals(0.5, reconstituted.apply(3.).get(0), Double.MIN_VALUE);
+	}
 
 }

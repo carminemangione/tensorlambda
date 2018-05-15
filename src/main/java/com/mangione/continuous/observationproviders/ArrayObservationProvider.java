@@ -39,7 +39,7 @@ public class ArrayObservationProvider<S, T extends ObservationInterface<S>>
 		super(observationFactoryInterface);
 
 		for (T anObservationProvider : observationProvider) {
-			observations.add(create(anObservationProvider.getFeatures()));
+			observations.add(create(anObservationProvider.getAllColumns()));
 		}
 	}
 
