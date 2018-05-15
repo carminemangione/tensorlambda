@@ -3,10 +3,12 @@ package com.mangione.continuous.abalone;
 import java.util.Arrays;
 import java.util.List;
 
-import com.mangione.continuous.observationproviders.VariableCalculator;
+import com.mangione.continuous.calculators.VariableCalculator;
 
 public class SexVariableCalculator implements VariableCalculator<String, Double> {
-    @Override
+	private static final long serialVersionUID = 6749301243808080519L;
+
+	@Override
     public List<Double> apply(String feature) {
         Double[] out = new Double[]{0., 0., 0.};
         if ("M".equals(feature))

@@ -1,22 +1,24 @@
 package com.mangione.continuous.observationproviders;
 
-import com.mangione.continuous.observations.DoubleObservationFactory;
-import com.mangione.continuous.observations.Observation;
-import com.mangione.continuous.observations.ObservationInterface;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.mangione.continuous.calculators.VariableCalculations;
+import com.mangione.continuous.calculators.VariableCalculator;
+import com.mangione.continuous.observations.DoubleObservationFactory;
+import com.mangione.continuous.observations.Observation;
+import com.mangione.continuous.observations.ObservationInterface;
 
 public class VariableCalculatorObservationProviderTest {
-
 
 	private Double[][] CONVERTED = new Double[][]{{1d, 0d, 0d, 234d}, {0d, 1d, 0d, 321d}, {0d, 0d, 1d, 987d}};
 	private VariableCalculatorObservationProvider<String, Double, ObservationInterface<Double>> variableCalculatorProvider;
@@ -26,8 +28,9 @@ public class VariableCalculatorObservationProviderTest {
 		Map<Integer, VariableCalculator<String, Double>> calculators = new HashMap<>();
 
 		//noinspection Convert2Diamond
-		ArrayObservationProvider<String, ObservationInterface<String>> abcObservationProvider = new ArrayObservationProvider<String,
-				ObservationInterface<String>>(new String[][]{{"a", "234"}, {"b", "321"}, {"c", "987"}},
+
+		ArrayObservationProvider<String, ? extends ObservationInterface<String>> abcObservationProvider
+				= new ArrayObservationProvider<String, ObservationInterface<String>>(new String[][]{{"a", "234"}, {"b", "321"}, {"c", "987"}},
 				Observation::new);
 
 		calculators.put(0, feature -> {
@@ -46,7 +49,8 @@ public class VariableCalculatorObservationProviderTest {
 			return Arrays.asList(out);
 		});
 		variableCalculatorProvider = new VariableCalculatorObservationProvider<>(abcObservationProvider,
-				new StringToDoubleVariableCalculator(), calculators, new DoubleObservationFactory());
+				new VariableCalculations<>(calculators, new StringToDoubleVariableCalculator()),
+				new DoubleObservationFactory());
 	}
 
 	@Test
