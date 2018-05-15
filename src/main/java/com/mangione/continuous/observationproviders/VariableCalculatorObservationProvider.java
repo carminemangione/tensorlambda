@@ -13,12 +13,12 @@ public class VariableCalculatorObservationProvider<R, S, T extends ObservationIn
 	private final ObservationProviderInterface<R, ? extends ObservationInterface<R>> provider;
 	private final VariableCalculator<R, S> defaultCalculator;
 	private final Map<Integer, VariableCalculator<R, S>> indexToCalculator;
-	private final ObservationFactoryInterface<S, T> observationFactory;
+	private final ObservationFactoryInterface<S, ? extends T> observationFactory;
 
 	@SuppressWarnings("unused")
 	public VariableCalculatorObservationProvider(ObservationProviderInterface<R, ? extends ObservationInterface<R>> provider,
-			VariableCalculator<R, S> defaultVariableCalculator,
-			ObservationFactoryInterface<S, T> observationFactory) {
+			VariableCalculator<R,  S> defaultVariableCalculator,
+			ObservationFactoryInterface<S, ? extends T> observationFactory) {
 		this(provider, defaultVariableCalculator, new HashMap<>(), observationFactory);
 	}
 
@@ -26,7 +26,7 @@ public class VariableCalculatorObservationProvider<R, S, T extends ObservationIn
 	@SuppressWarnings("WeakerAccess")
 	public VariableCalculatorObservationProvider(ObservationProviderInterface<R, ? extends ObservationInterface<R>> provider,
 			VariableCalculator<R, S> defaultVariableCalculator, Map<Integer, VariableCalculator<R, S>> indexToCalculator,
-			ObservationFactoryInterface<S, T> observationFactory) {
+			ObservationFactoryInterface<S, ? extends T> observationFactory) {
 
 		this.provider = provider;
 		this.defaultCalculator = defaultVariableCalculator;
