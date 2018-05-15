@@ -17,7 +17,6 @@ public class CsvObservationProvider implements ObservationProviderInterface<Stri
 
 	public CsvObservationProvider(File file, ObservationFactoryInterface<String, ObservationInterface<String>> factory) throws FileNotFoundException {
 		this.file = file;
-
 		this.factory = factory;
 	}
 
