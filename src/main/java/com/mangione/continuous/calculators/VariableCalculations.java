@@ -29,9 +29,16 @@ public class VariableCalculations<R, S> implements Serializable {
 		return translatedVariables;
 	}
 
+	public  VariableCalculator<R, S> getCalculator(int index) {
+		final VariableCalculator<R, S> variableCalculator = indexToCalculator.get(index);
+		return variableCalculator !=null ? variableCalculator : defaultCalculator;
+	}
+
 	private List<S> calculateVariableWithIndexedCalculatorOrDefault(R variable, int index) {
 		return indexToCalculator.get(index) != null ?
 				indexToCalculator.get(index).apply(variable) :
 				defaultCalculator.apply(variable);
 	}
+
+
 }

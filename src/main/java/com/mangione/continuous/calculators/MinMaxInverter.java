@@ -1,0 +1,18 @@
+package com.mangione.continuous.calculators;
+
+import com.mangione.continuous.calculators.stats.ColumnStats;
+
+import java.util.Collections;
+import java.util.List;
+
+public class MinMaxInverter implements VariableCalculator<Double, Double> {
+	private final ColumnStats stats;
+
+	public MinMaxInverter(VariableCalculator<Double, Double> stats) {
+		this.stats = stats;
+	}
+	@Override
+	public List<Double> apply(Double feature) {
+		return Collections.singletonList(feature * (stats.max() - stats.min()) + stats.min());
+	}
+}

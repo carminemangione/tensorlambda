@@ -8,6 +8,7 @@ public class DiscreteExemplar<T extends Number> implements ExemplarInterface<T, 
 	private final T continuousValue;
 	private final Integer target;
 	private final List<T> allColumns;
+	private final int targetColumnIndex;
 
 	public DiscreteExemplar(List<T> features, T continuousValue, int target) {
 		this.allColumns = new ArrayList<>(features);
@@ -15,18 +16,25 @@ public class DiscreteExemplar<T extends Number> implements ExemplarInterface<T, 
 		this.features = features;
 		this.continuousValue = continuousValue;
 		this.target = target;
+		targetColumnIndex = features.size();
 	}
 
 	public DiscreteExemplar(List<T> features) {
 		this.allColumns = features;
-		this.features = features.subList(0, features.size() - 1);
-		this.continuousValue = features.get(features.size() - 1);
+		this .targetColumnIndex = features.size() - 1;
+		this.features = features.subList(0, targetColumnIndex);
+		this.continuousValue = features.get(targetColumnIndex);
 		this.target = this.continuousValue.intValue();
 	}
 
 	@Override
 	public Integer getTarget() {
 		return target;
+	}
+
+	@Override
+	public int getTargetIndex() {
+		return targetColumnIndex;
 	}
 
 	public T getContinuousValue() {
@@ -46,8 +54,9 @@ public class DiscreteExemplar<T extends Number> implements ExemplarInterface<T, 
 	@Override
 	public String toString() {
 		return "DiscreteExemplar{" +
-				"target=" + target +
 				", continuousValue=" + continuousValue +
+				", target=" + target +
+				", targetColumnIndex=" + targetColumnIndex +
 				'}';
 	}
 }

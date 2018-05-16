@@ -1,32 +1,22 @@
 package com.mangione.continuous.abalone;
 
+import com.mangione.continuous.calculators.MinMaxScaling;
+import com.mangione.continuous.calculators.VariableCalculations;
+import com.mangione.continuous.calculators.VariableCalculator;
+import com.mangione.continuous.calculators.stats.ColumnStatsBuilder;
+import com.mangione.continuous.observationproviders.*;
+import com.mangione.continuous.observations.*;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.mangione.continuous.calculators.MinMaxScaling;
-import com.mangione.continuous.calculators.VariableCalculations;
-import com.mangione.continuous.calculators.VariableCalculator;
-import com.mangione.continuous.calculators.stats.ColumnStatsBuilder;
-import com.mangione.continuous.observationproviders.ArrayObservationProvider;
-import com.mangione.continuous.observationproviders.CsvObservationProvider;
-import com.mangione.continuous.observationproviders.ObservationProviderInterface;
-import com.mangione.continuous.observationproviders.ObservationToExemplarProvider;
-import com.mangione.continuous.observationproviders.StringToDoubleVariableCalculator;
-import com.mangione.continuous.observationproviders.VariableCalculatorObservationProvider;
-import com.mangione.continuous.observations.DiscreteExemplar;
-import com.mangione.continuous.observations.DiscreteExemplarFactory;
-import com.mangione.continuous.observations.DoubleObservationFactory;
-import com.mangione.continuous.observations.ObservationInterface;
-import com.mangione.continuous.observations.StringObservationFactory;
-
 public class AbaloneObservationProviderFactory {
 	private final static String DATA_FILENAME = "Abalone/abalone.data";
 
 	private final ObservationProviderInterface<Double, DiscreteExemplar<Double>> abaloneProvider;
-	private final VariableCalculations<String, Double> sexAndDoubleCalculators;
 	private final VariableCalculations<Double, Double> minMaxScaleCalculations;
 
 	public AbaloneObservationProviderFactory() throws Exception {
@@ -41,7 +31,7 @@ public class AbaloneObservationProviderFactory {
 		Map<Integer, VariableCalculator<String, Double>> calculators = new HashMap<>();
 		calculators.put(0, new SexVariableCalculator());
 
-		sexAndDoubleCalculators = new VariableCalculations<>(calculators, new StringToDoubleVariableCalculator());
+		VariableCalculations<String, Double> sexAndDoubleCalculators = new VariableCalculations<>(calculators, new StringToDoubleVariableCalculator());
 
 
 		VariableCalculatorObservationProvider<String, Double, ObservationInterface<Double>> doubleAndSexMappedVariableCalculator
@@ -66,9 +56,6 @@ public class AbaloneObservationProviderFactory {
 		return abaloneProvider;
 	}
 
-	public VariableCalculations<String, Double> getSexAndDoubleCalculators() {
-		return sexAndDoubleCalculators;
-	}
 
 	public VariableCalculations<Double, Double> getMinMaxScaleCalculations() {
 		return minMaxScaleCalculations;
