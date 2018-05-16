@@ -31,12 +31,11 @@ public class AbaloneLinearRegression {
 				new SampledObservationProvider<>(.30, providerFactory.getAbaloneProvider(),
 						new DiscreteExemplarFactory(), new MersenneTwisterFactory(), 1001, true);
 
-		final VariableCalculator<Double, Double>[] invertTarget = {null};
+		VariableCalculator<Double, Double> invertTarget = getInvertTarget(providerFactory, testSet.iterator().next().getTargetIndex());;
 
 		testSet.forEach(x -> {
 			try {
-				if (invertTarget[0] == null)
-					invertTarget[0] = getInvertTarget(providerFactory, x.getTargetIndex());
+
 				bw.write(String.format("%f,%f", linearRegression.score(x), x.getContinuousValue()));
 			} catch (IOException e) {
 				throw new RuntimeException(e);
