@@ -4,6 +4,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.function.Consumer;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.mangione.continuous.calculators.VariableCalculator;
 import com.mangione.continuous.observationproviders.MersenneTwisterFactory;
@@ -17,9 +20,11 @@ public class AbaloneLinearRegression {
 	public static void main(String[] args) throws Exception {
 		AbaloneObservationProviderFactory providerFactory = new AbaloneObservationProviderFactory();
 
-				SampledObservationProvider<Double, DiscreteExemplar<Double>> trainingSet =
+		SampledObservationProvider<Double, DiscreteExemplar<Double>> trainingSet =
 				new SampledObservationProvider<>(.30, providerFactory.getAbaloneProvider(),
 						new DiscreteExemplarFactory(), new MersenneTwisterFactory(), 1001, false);
+
+		providerFactory.getAbaloneProvider().forEach(exemplar -> System.out.println(StringUtils.join(exemplar.getAllColumns(), ", ")));
 
 		LinearRegression linearRegression = new LinearRegression();
 		linearRegression.train(trainingSet);
@@ -31,11 +36,11 @@ public class AbaloneLinearRegression {
 				new SampledObservationProvider<>(.30, providerFactory.getAbaloneProvider(),
 						new DiscreteExemplarFactory(), new MersenneTwisterFactory(), 1001, true);
 
-		VariableCalculator<Double, Double> invertTarget = providerFactory.getInvertedScaling(testSet.iterator().next().getTargetIndex());
+		VariableCalculator<Double, Double> invertTarget = providerFactory.getInvertedScaling(
+				testSet.iterator().next().getTargetIndex());
 
 		testSet.forEach(x -> {
 			try {
-
 				String resultString = String.format("%f,%f", invertTarget.apply(linearRegression.score(x)).get(0),
 						invertTarget.apply(x.getContinuousValue()).get(0));
 				bw.write(resultString);
