@@ -18,6 +18,7 @@ public class AbaloneObservationProviderFactory {
 
 	private final ObservationProviderInterface<Double, DiscreteExemplar<Double>> abaloneProvider;
 	private final VariableCalculations<Double, Double> minMaxScaleCalculations;
+	private final Map<Integer, MinMaxScaling> columnStatsMap;
 
 	public AbaloneObservationProviderFactory() throws Exception {
 		URL resource = EncogNeuralNet.class.getClassLoader().getResource(DATA_FILENAME);
@@ -44,7 +45,7 @@ public class AbaloneObservationProviderFactory {
 				new ArrayObservationProvider<>(discreteExemplars, new DiscreteExemplarFactory());
 
 		ColumnStatsBuilder columnStatsBuilder = new ColumnStatsBuilder(doubleAndSexMappedVariableCalculator);
-		Map<Integer, VariableCalculator<Double, Double>> columnStatsMap = MinMaxScaling.toIndexedMap(columnStatsBuilder);
+		columnStatsMap = MinMaxScaling.toIndexedMap(columnStatsBuilder);
 		minMaxScaleCalculations = new VariableCalculations<>(columnStatsMap, null);
 
 
@@ -56,8 +57,7 @@ public class AbaloneObservationProviderFactory {
 		return abaloneProvider;
 	}
 
-
-	public VariableCalculations<Double, Double> getMinMaxScaleCalculations() {
-		return minMaxScaleCalculations;
+	public VariableCalculator<Double, Double> getInvertedScaling(int index) {
+		return columnStatsMap.get(index).getInvertedCalculator();
 	}
 }

@@ -34,14 +34,14 @@ public class LinearRegression implements SupervisedModelInterace<Double, Integer
 		linearRegression.newSampleData(targets, inputs);
 		coe = linearRegression.estimateRegressionParameters();
 		RSquared = linearRegression.calculateRSquared();
-
 	}
 
 	@Override
 	public double score(ObservationInterface<Double> observation) {
 		double result = 0;
-		for (int i = 0; i < coe.length; i++)
-			result +=  coe[i] * Math.pow(observation.getFeatures().get(i), i);
+		for (int i = 0; i < coe.length - 1; i++)
+			result +=  coe[i] *observation.getFeatures().get(i);
+		result += coe[coe.length - 1];
 		return result;
 	}
 

@@ -39,10 +39,6 @@ public class SampledObservationProvider<S, T extends ObservationInterface<S>> ex
 
 	}
 
-	@Override
-	public long getNumberOfLines() {
-		return provider.getNumberOfLines();
-	}
 
 	@Override
 	@Nonnull

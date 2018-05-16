@@ -11,19 +11,12 @@ import com.mangione.continuous.observations.ObservationFactoryInterface;
 import com.mangione.continuous.observations.ObservationInterface;
 
 public class ObservationToExemplarProvider extends ObservationProvider<Double,DiscreteExemplar<Double>> {
-
-
 	private final ObservationProviderInterface<Double, ObservationInterface<Double>> provider;
 
 	public ObservationToExemplarProvider(ObservationProviderInterface<Double, ObservationInterface<Double>> provider,
 			ObservationFactoryInterface<Double, ? extends DiscreteExemplar<Double>> factory) {
 		super(factory);
 		this.provider = provider;
-	}
-
-	@Override
-	public long getNumberOfLines() {
-		return provider.getNumberOfLines();
 	}
 
 	@Nonnull

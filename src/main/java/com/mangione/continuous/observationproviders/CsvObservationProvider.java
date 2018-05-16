@@ -21,14 +21,6 @@ public class CsvObservationProvider implements ObservationProviderInterface<Stri
 	}
 
 	@Override
-	public long getNumberOfLines() {
-		final long[] numberOfLines = {0};
-
-		forEach(stringObservationInterface -> numberOfLines[0]++);
-		return numberOfLines[0];
-	}
-
-	@Override
 	@Nonnull
 	public Iterator<ObservationInterface<String>> iterator() {
 		return new CsvObservationIterator();

@@ -1,6 +1,10 @@
 package com.mangione.continuous.abalone;
 
-import com.mangione.continuous.calculators.MinMaxInverter;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import com.mangione.continuous.calculators.VariableCalculator;
 import com.mangione.continuous.observationproviders.MersenneTwisterFactory;
 import com.mangione.continuous.observations.DiscreteExemplar;
@@ -8,16 +12,12 @@ import com.mangione.continuous.observations.DiscreteExemplarFactory;
 import com.mangione.continuous.sampling.SampledObservationProvider;
 import com.mangione.continuous.thirdparty.apache.LinearRegression;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
 public class AbaloneLinearRegression {
 
 	public static void main(String[] args) throws Exception {
 		AbaloneObservationProviderFactory providerFactory = new AbaloneObservationProviderFactory();
-		SampledObservationProvider<Double, DiscreteExemplar<Double>> trainingSet =
+
+				SampledObservationProvider<Double, DiscreteExemplar<Double>> trainingSet =
 				new SampledObservationProvider<>(.30, providerFactory.getAbaloneProvider(),
 						new DiscreteExemplarFactory(), new MersenneTwisterFactory(), 1001, false);
 
@@ -31,12 +31,15 @@ public class AbaloneLinearRegression {
 				new SampledObservationProvider<>(.30, providerFactory.getAbaloneProvider(),
 						new DiscreteExemplarFactory(), new MersenneTwisterFactory(), 1001, true);
 
-		VariableCalculator<Double, Double> invertTarget = getInvertTarget(providerFactory, testSet.iterator().next().getTargetIndex());;
+		VariableCalculator<Double, Double> invertTarget = providerFactory.getInvertedScaling(testSet.iterator().next().getTargetIndex());
 
 		testSet.forEach(x -> {
 			try {
 
-				bw.write(String.format("%f,%f", invertTarget.apply(linearRegression.score(x)).get(0), x.getContinuousValue()));
+				String resultString = String.format("%f,%f", invertTarget.apply(linearRegression.score(x)).get(0),
+						invertTarget.apply(x.getContinuousValue()).get(0));
+				bw.write(resultString);
+				System.out.println(resultString);
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
@@ -44,8 +47,5 @@ public class AbaloneLinearRegression {
 
 	}
 
-	private static MinMaxInverter getInvertTarget(AbaloneObservationProviderFactory providerFactory, int index) {
-		return new MinMaxInverter(providerFactory
-				.getMinMaxScaleCalculations().getCalculator(index));
-	}
+
 }

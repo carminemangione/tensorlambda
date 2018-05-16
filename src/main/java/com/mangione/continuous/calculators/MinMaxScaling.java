@@ -10,11 +10,13 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import org.apache.commons.math3.analysis.function.Min;
+
 public class MinMaxScaling implements VariableCalculator<Double, Double>, Serializable {
 	private static final long serialVersionUID = -5847082838258864601L;
 	private final ColumnStats stats;
 
-	public static Map<Integer, VariableCalculator<Double, Double>> toIndexedMap(ColumnStatsBuilder columnStatsBuilder) {
+	public static Map<Integer, MinMaxScaling> toIndexedMap(ColumnStatsBuilder columnStatsBuilder) {
 		AtomicInteger index = new AtomicInteger();
 		return columnStatsBuilder.getStats()
 				.stream()
@@ -26,7 +28,7 @@ public class MinMaxScaling implements VariableCalculator<Double, Double>, Serial
 		this.stats = stats;
 	}
 
-	VariableCalculator<Double, Double> getInvertedCalculator() {
+	public VariableCalculator<Double, Double> getInvertedCalculator() {
 		return new MinMaxInverter(stats);
 	}
 

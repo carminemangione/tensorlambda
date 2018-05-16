@@ -27,13 +27,6 @@ public class VariableCalculatorObservationProvider<R, S, T extends ObservationIn
 		this.variableCalculations = variableCalculations;
 	}
 
-
-	@Override
-	public long getNumberOfLines() {
-		return 0;
-	}
-
-
 	@Override
 	@Nonnull
 	public Iterator<T> iterator() {
