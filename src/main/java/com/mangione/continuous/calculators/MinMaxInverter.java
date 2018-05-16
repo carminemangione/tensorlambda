@@ -8,7 +8,7 @@ import java.util.List;
 public class MinMaxInverter implements VariableCalculator<Double, Double> {
 	private final ColumnStats stats;
 
-	public MinMaxInverter(VariableCalculator<Double, Double> stats) {
+	public MinMaxInverter(ColumnStats stats) {
 		this.stats = stats;
 	}
 	@Override

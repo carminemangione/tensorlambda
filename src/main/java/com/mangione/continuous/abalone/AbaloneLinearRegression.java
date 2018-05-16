@@ -36,7 +36,7 @@ public class AbaloneLinearRegression {
 		testSet.forEach(x -> {
 			try {
 
-				bw.write(String.format("%f,%f", linearRegression.score(x), x.getContinuousValue()));
+				bw.write(String.format("%f,%f", invertTarget.apply(linearRegression.score(x)).get(0), x.getContinuousValue()));
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
