@@ -37,7 +37,7 @@ public class ColumnStatsBuilder implements Serializable {
 		int numberOfColumns = provider.iterator().next().getAllColumns().size();
 
 		List<ColumnStats.Builder> builders = IntStream.range(0, numberOfColumns)
-				.mapToObj(x -> new ColumnStats.Builder())
+				.mapToObj(x -> new ColumnStats.Builder(20))
 				.collect(Collectors.toList());
 
 		provider.forEach(observation -> IntStream.range(0, numberOfColumns)

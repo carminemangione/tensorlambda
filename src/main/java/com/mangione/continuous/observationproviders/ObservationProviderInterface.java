@@ -1,11 +1,11 @@
 package com.mangione.continuous.observationproviders;
 
-import com.mangione.continuous.observations.ObservationInterface;
-
-import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
+
+import javax.annotation.Nonnull;
+
+import com.mangione.continuous.observations.ObservationInterface;
 
 public interface ObservationProviderInterface <S, T extends ObservationInterface<S>> extends Iterable<T> {
 

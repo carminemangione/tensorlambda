@@ -11,8 +11,6 @@ import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.sun.corba.se.impl.orbutil.ObjectWriter;
-
 
 public class ColumnStatsTest {
 
@@ -22,7 +20,7 @@ public class ColumnStatsTest {
 	public void setUp() throws Exception {
 		Double[] doubles = {1.0, 2.0, 4.0, 1.0};
 
-		ColumnStats.Builder builder = new ColumnStats.Builder();
+		ColumnStats.Builder builder = new ColumnStats.Builder(20);
 		Arrays.stream(doubles)
 				.forEach(builder::add);
 

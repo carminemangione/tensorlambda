@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.function.Consumer;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -51,6 +50,4 @@ public class AbaloneLinearRegression {
 		});
 
 	}
-
-
 }

@@ -16,7 +16,7 @@ public class MinMaxScalingTest {
 
 	@Test
 	public void minMaxScale() throws Exception {
-		ColumnStats.Builder builder = new ColumnStats.Builder();
+		ColumnStats.Builder builder = new ColumnStats.Builder(20);
 		builder.add(2);
 		builder.add(4);
 
@@ -30,7 +30,7 @@ public class MinMaxScalingTest {
 
 	@Test
 	public void serialize() throws Exception {
-		ColumnStats.Builder builder = new ColumnStats.Builder();
+		ColumnStats.Builder builder = new ColumnStats.Builder(20);
 		builder.add(2);
 		builder.add(4);
 

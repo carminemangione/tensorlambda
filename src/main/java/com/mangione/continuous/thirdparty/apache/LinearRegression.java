@@ -19,11 +19,9 @@ public class LinearRegression implements SupervisedModelInterace<Double, Integer
 	private static final long serialVersionUID = 5422020901503909935L;
 
 
-	private  int N;        // number of
-	private  int p;        // number of dependent variables
-	private  Matrix beta;  // regression coefficients
-	private double SSE;         // sum of squared
-	private double SST;         // sum of squared
+	private  Matrix beta;
+	private double SSE;
+	private double SST;
 
 	@Override
 	public void train(ObservationProviderInterface<Double, DiscreteExemplar<Double>> provider) {
@@ -57,41 +55,30 @@ public class LinearRegression implements SupervisedModelInterace<Double, Integer
 		return doubles;
 	}
 
-	public double getRSquared() {
-		return SSE;
-	}
-
 	private void linearRegression(double[][] x, double[] y) {
-		if (x.length != y.length) throw new RuntimeException("dimensions don't agree");
-		N = y.length;
-		p = x[0].length;
+		int numberOfRows = y.length;
 
 		Matrix X = new Matrix(x);
+		Matrix Y = new Matrix(y, numberOfRows);
 
-		// create matrix from vector
-		Matrix Y = new Matrix(y, N);
-
-		// find least squares solution
 		QRDecomposition qr = new QRDecomposition(X);
 		beta = qr.solve(Y);
 
-
-		// mean of y[] values
 		double sum = 0.0;
-		for (int i = 0; i < N; i++)
-			sum += y[i];
-		double mean = sum / N;
+		for (double aY : y) sum += aY;
+
+
+		double mean = sum / numberOfRows;
 
 		// total variation to be accounted for
-		for (int i = 0; i < N; i++) {
-			double dev = y[i] - mean;
-			SST += dev*dev;
+		for (double aY : y) {
+			double dev = aY - mean;
+			SST += dev * dev;
 		}
 
 		// variation not accounted for
 		Matrix residuals = X.times(beta).minus(Y);
 		SSE = residuals.norm2() * residuals.norm2();
-
 	}
 
 	public double beta(int j) {
