@@ -8,5 +8,3 @@
 
 (deftest codger_test
   (is (=  ["Get off my lawn, Sam" (first_model/codger "Sam")] )))
-
-(run-tests)
