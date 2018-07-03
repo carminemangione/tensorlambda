@@ -4,6 +4,7 @@
   (:import (com.mangione.continuous.variables BoundVariable)))
 
 (defn myfunc [var] (inc var))
+
 (deftest bound_variable-create
   (print (create "var_name" 2 myfunc))
   (is ["var_name" 2 myfunc] (create "var_name" 2 (resolve 'myfunc))))
@@ -12,8 +13,11 @@
   (is "var_name" (bound_variable/name (create "var_name" 2 myfunc))))
 
 (deftest apply-test
-  (is 4 (bound_variable/calc (create "var_name" 2 myfunc) 3)))
+  (is 4 (bound_variable/calc ["var_name" 2 myfunc] 3)))
 
-(doto (BoundVariable.) (.execute (bound_variable/my-function)))
+
+(.execute (BoundVariable.) (bound_variable/my-function))
+
+
 
 (run-tests)
