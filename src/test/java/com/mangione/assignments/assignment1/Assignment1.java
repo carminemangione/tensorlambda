@@ -16,7 +16,7 @@ public class Assignment1 {
 
         assert abaloneURL != null;
         long totalNumberOfLines =
-                new CsvObservationProvider(new File(abaloneURL.toURI()), new StringObservationFactory()).getNumberOfLines();
+                new CsvObservationProvider(new File(abaloneURL.toURI()), new StringObservationFactory(), false).getNumberOfLines();
 
         MersenneTwister random = new MersenneTwister(198273);
 

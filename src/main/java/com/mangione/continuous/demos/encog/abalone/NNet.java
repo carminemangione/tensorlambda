@@ -188,7 +188,7 @@ public class NNet {
 					.map(x -> (String) x)
 					.collect(Collectors.toList());
 			return new Observation<>(strings);
-		});
+		}, false);
 		NNet nnet = new NNet(getVersatileDataSource(csvObservationProvider, theInputHeadings), "Rings");
 	}
 }

@@ -1,5 +1,6 @@
 package com.mangione.continuous.observationproviders;
 
+import com.mangione.continuous.observations.NamedColumns;
 import com.mangione.continuous.observations.ObservationInterface;
 import com.mangione.continuous.observations.StringObservationFactory;
 import org.apache.commons.io.FileUtils;
@@ -36,7 +37,7 @@ public class CsvObservationProviderTest {
         }
         bufferedWriter.close();
 
-        CsvObservationProvider op = new CsvObservationProvider(file, new StringObservationFactory());
+        CsvObservationProvider op = new CsvObservationProvider(file, new StringObservationFactory(), false);
 
         assertEquals(3, op.getNumberOfLines());
         ensureFileIsClosed();
@@ -46,7 +47,7 @@ public class CsvObservationProviderTest {
     public void readLinesInInput() throws Exception {
 	    fillFileWithNumbers();
 
-        CsvObservationProvider op = new CsvObservationProvider(file, new StringObservationFactory());
+        CsvObservationProvider op = new CsvObservationProvider(file, new StringObservationFactory(), false);
 		AtomicInteger index = new AtomicInteger();
         op.forEach(observation -> validateFeatures(index.getAndIncrement(), observation));
 	   	assertEquals(3, index.get());
@@ -56,7 +57,7 @@ public class CsvObservationProviderTest {
     public void iterator() throws Exception {
 	    fillFileWithNumbers();
 
-	    CsvObservationProvider op = new CsvObservationProvider(file, new StringObservationFactory());
+	    CsvObservationProvider op = new CsvObservationProvider(file, new StringObservationFactory(), false);
 
 	    int i = 0;
 	    for (ObservationInterface<String> observation : op) {
@@ -68,7 +69,7 @@ public class CsvObservationProviderTest {
 	public void forEach() throws Exception {
 		fillFileWithNumbers();
 
-		CsvObservationProvider op = new CsvObservationProvider(file, new StringObservationFactory());
+		CsvObservationProvider op = new CsvObservationProvider(file, new StringObservationFactory(), false);
 		final int[] i = {0};
 		op.forEach(stringObservationInterface ->
 				validateFeatures(i[0]++, stringObservationInterface));
@@ -79,7 +80,7 @@ public class CsvObservationProviderTest {
 	public void multipleIterators() throws Exception {
 		fillFileWithNumbers();
 
-		CsvObservationProvider op = new CsvObservationProvider(file, new StringObservationFactory());
+		CsvObservationProvider op = new CsvObservationProvider(file, new StringObservationFactory(), false);
 
 		int i = 0;
 		for (ObservationInterface<String> observation : op) {
@@ -95,13 +96,13 @@ public class CsvObservationProviderTest {
 
 	@Test(expected = UnsupportedOperationException.class)
 	public void iteratorRemoveNotSupported() throws Exception {
-		new CsvObservationProvider(file, new StringObservationFactory()).iterator().remove();
+		new CsvObservationProvider(file, new StringObservationFactory(), false).iterator().remove();
 	}
 
 	@Test
 	public void forRemaining() throws Exception {
 		fillFileWithNumbers();
-		Iterator<ObservationInterface<String>> iterator = new CsvObservationProvider(file, new StringObservationFactory()).iterator();
+		Iterator<ObservationInterface<String>> iterator = new CsvObservationProvider(file, new StringObservationFactory(), false).iterator();
 		iterator.next();
 		final int[] i = {1};
 		iterator.forEachRemaining(stringObservationInterface ->
@@ -112,7 +113,26 @@ public class CsvObservationProviderTest {
 
 	@Test(expected = UnsupportedOperationException.class)
 	public void spliteratorNotSupported() throws Exception {
-		new CsvObservationProvider(file, new StringObservationFactory()).spliterator();
+		new CsvObservationProvider(file, new StringObservationFactory(), false).spliterator();
+	}
+
+	@Test
+	public void getNamedColumnsFromHeader() throws Exception {
+		BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+		writer.write("one,two,three");
+		writer.newLine();
+		writer.write("1,2,3");
+		writer.close();
+
+		CsvObservationProvider provider = new CsvObservationProvider(file, new StringObservationFactory(), true);
+
+		NamedColumns namedColumns = provider.getNamedColumns();
+
+		assertEquals("one", namedColumns.getName(0));
+		assertEquals("two", namedColumns.getName(1));
+		assertEquals("three", namedColumns.getName(2));
+
+
 	}
 
 	private void validateFeatures(int i, ObservationInterface<String> next) {

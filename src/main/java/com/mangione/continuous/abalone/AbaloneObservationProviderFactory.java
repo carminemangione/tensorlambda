@@ -26,7 +26,7 @@ public class AbaloneObservationProviderFactory {
 			throw new FileNotFoundException(DATA_FILENAME + " is on on resource path.");
 		File inputFile = new File(resource.getFile());
 		ObservationProviderInterface<String, ObservationInterface<String>>
-				csvObservationProvider = new CsvObservationProvider(inputFile, new StringObservationFactory());
+				csvObservationProvider = new CsvObservationProvider(inputFile, new StringObservationFactory(), false);
 
 
 		Map<Integer, VariableCalculator<String, Double>> calculators = new HashMap<>();

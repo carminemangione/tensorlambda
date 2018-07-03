@@ -105,7 +105,7 @@ public class NeuralNetwork {
 										.map(x -> (String) x)
 										.collect(Collectors.toList());
 								return new Observation<>(strings);
-				});
+				}, false);
 		VersatileDataSource abaloneDataSource = new VersatileDataSource() {
 			Iterator<ObservationInterface<String>> iterator = csv.iterator();
 
@@ -309,7 +309,7 @@ public class NeuralNetwork {
 								.map(x -> (String) x)
 								.collect(Collectors.toList());
 						return new Observation<>(strings);
-		});
+		}, false);
 		MLData input = helper.allocateInputVector();
 
 		for (ObservationInterface<String> rec : csvP) {
