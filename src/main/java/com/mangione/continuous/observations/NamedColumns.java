@@ -17,4 +17,9 @@ public class NamedColumns {
 	public String getName(int i) {
 		return mapOfColumns.get(i);
 	}
+
+	@Override
+	public String toString(){
+		return mapOfColumns.toString();
+	}
 }

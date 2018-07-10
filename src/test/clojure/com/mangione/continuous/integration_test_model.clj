@@ -8,7 +8,7 @@
 
 (defn csv_provider [filename] (CsvObservationProvider.
                                 (File. (.toURI (io/resource filename)))
-                                (StringObservationFactory.)))
+                                (StringObservationFactory.) true))
 (def provider (csv_provider "sdlc_test_execution.csv"))
 
 (deftest test-open-csv (is 50006 (.getNumberOfLines provider)))
