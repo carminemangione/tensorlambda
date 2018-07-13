@@ -52,7 +52,7 @@ public class CsvObservationProvider implements ObservationProviderInterface<Stri
 	}
 
 	public NamedColumns getNamedColumns() {
-		return this.namedColumns;
+		return namedColumns;
 	}
 
 	private class CsvObservationIterator implements Iterator<ObservationInterface<String>> {

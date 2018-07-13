@@ -71,8 +71,6 @@ public class VariableCalculatorObservationProvider<R, S, T extends ObservationIn
 	private class VariableCalculatorObservationProviderIterator implements Iterator<T> {
 		private Iterator<? extends ObservationInterface<R>> iterator;
 
-		private int counter = 0;
-
 		private VariableCalculatorObservationProviderIterator() {
 			iterator = provider.iterator();
 		}
