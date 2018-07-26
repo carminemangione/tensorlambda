@@ -2,9 +2,13 @@ package com.mangione.continuous.observationproviders;
 
 import com.mangione.continuous.observations.DoubleObservationFactory;
 import com.mangione.continuous.observations.ObservationInterface;
+import com.mangione.continuous.observations.StringObservationFactory;
+
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 

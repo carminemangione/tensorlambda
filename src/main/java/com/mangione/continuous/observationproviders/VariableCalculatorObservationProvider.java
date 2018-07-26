@@ -39,15 +39,6 @@ public class VariableCalculatorObservationProvider<R, S, T extends ObservationIn
 			Integer value = entry.getValue();
 			namedColumns.addColumn(value, key);
 		}
-		System.out.println(namedColumns);
-	}
-
-	public void setFeatureMap(PersistentVector map){
-		featureMap = map;
-		for(Object val : map){
-			System.out.println(val);
-		}
-		
 	}
 
 

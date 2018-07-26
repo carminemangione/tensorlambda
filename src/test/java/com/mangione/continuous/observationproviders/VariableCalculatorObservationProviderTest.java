@@ -7,6 +7,7 @@ import static org.junit.Assert.assertFalse;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
@@ -33,7 +34,7 @@ public class VariableCalculatorObservationProviderTest {
 				= new ArrayObservationProvider<String, ObservationInterface<String>>(new String[][]{{"a", "234"}, {"b", "321"}, {"c", "987"}},
 				Observation::new);
 
-		calculators.put(0, feature -> {
+		calculators.put(0, (feature, features) -> {
 			Double[] out = new Double[]{0d, 0d, 0d};
 			switch (feature) {
 				case "a":

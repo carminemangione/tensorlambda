@@ -40,8 +40,8 @@ public class AbaloneLinearRegression {
 
 		testSet.forEach(x -> {
 			try {
-				String resultString = String.format("%f,%f", invertTarget.apply(linearRegression.score(x)).get(0),
-						invertTarget.apply(x.getContinuousValue()).get(0));
+				String resultString = String.format("%f,%f", invertTarget.apply(linearRegression.score(x), null).get(0),
+						invertTarget.apply(x.getContinuousValue(), null).get(0));
 				bw.write(resultString);
 				System.out.println(resultString);
 			} catch (IOException e) {

@@ -10,8 +10,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import org.apache.commons.math3.analysis.function.Min;
-
 public class MinMaxScaling implements VariableCalculator<Double, Double>, Serializable {
 	private static final long serialVersionUID = -5847082838258864601L;
 	private final ColumnStats stats;
@@ -33,7 +31,7 @@ public class MinMaxScaling implements VariableCalculator<Double, Double>, Serial
 	}
 
 	@Override
-	public List<Double> apply(Double valueToScale) {
+	public List<Double> apply(Double valueToScale, List<Double> features) {
 		return Collections.singletonList((valueToScale - stats.min()) / (stats.max() - stats.min()));
 	}
 }

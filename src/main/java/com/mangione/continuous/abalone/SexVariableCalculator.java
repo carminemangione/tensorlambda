@@ -9,7 +9,7 @@ public class SexVariableCalculator implements VariableCalculator<String, Double>
 	private static final long serialVersionUID = 6749301243808080519L;
 
 	@Override
-    public List<Double> apply(String feature) {
+    public List<Double> apply(String feature, List<String> features) {
         Double[] out = new Double[]{0., 0., 0.};
         if ("M".equals(feature))
             out[0] = 1.0;

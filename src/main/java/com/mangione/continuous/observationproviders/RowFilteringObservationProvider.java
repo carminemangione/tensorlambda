@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 import com.mangione.continuous.observations.ObservationInterface;
 
-public class RowFilteringObservationProvider<S, T extends ObservationInterface<S>> implements ObservationProviderInterface<S, T>{
+public class RowFilteringObservationProvider<S, T extends ObservationInterface<S>> implements ObservationProviderInterface<S, T> {
 
 	ObservationProviderInterface<S, T> provider;
 

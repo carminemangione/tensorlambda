@@ -2,6 +2,7 @@ package com.mangione.continuous.observationproviders;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
@@ -30,7 +31,12 @@ public class ArrayObservationProvider<S, T extends ObservationInterface<S>>
 	}
 
 	public T getByIndex(int index) {
-		return observations.get(index);
+		try {
+			return observations.get(index);
+		} catch (Throwable e) {
+			System.out.println("Index: " + index);
+			return null;
+		}
 	}
 
 	@SuppressWarnings("WeakerAccess")
@@ -41,6 +47,29 @@ public class ArrayObservationProvider<S, T extends ObservationInterface<S>>
 		for (T anObservationProvider : observationProvider) {
 			observations.add(create(anObservationProvider.getAllColumns()));
 		}
+	}
+
+
+
+	public ArrayObservationProvider(ObservationProviderInterface<S, ? extends T> observationProvider,
+	                                ObservationFactoryInterface<S, ? extends T> observationFactoryInterface, Comparator<ObservationInterface<S>> comp) {
+		super(observationFactoryInterface);
+
+		int counter = 0;
+		System.out.println("Reading CSV");
+		for (T anObservationProvider : observationProvider) {
+			counter++;
+
+			if(counter > 10000)
+				break;
+
+			if(counter % 100000 == 0)
+				System.out.println(counter);
+			observations.add(create(anObservationProvider.getAllColumns()));
+		}
+		System.out.println("About to Sort");
+		observations.sort(comp);
+		System.out.println("Sorted!");
 	}
 
 	@Override

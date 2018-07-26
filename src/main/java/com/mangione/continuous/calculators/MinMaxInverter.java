@@ -12,7 +12,7 @@ public class MinMaxInverter implements VariableCalculator<Double, Double> {
 		this.stats = stats;
 	}
 	@Override
-	public List<Double> apply(Double feature) {
+	public List<Double> apply(Double feature, List<Double> features) {
 		return Collections.singletonList(feature * (stats.max() - stats.min()) + stats.min());
 	}
 }

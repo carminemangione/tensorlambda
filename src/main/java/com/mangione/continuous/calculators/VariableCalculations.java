@@ -23,7 +23,7 @@ public class VariableCalculations<R, S> implements Serializable {
 		final List<S> translatedVariables = new ArrayList<>();
 
 		features.stream()
-				.map(x -> calculateVariableWithIndexedCalculatorOrDefault(x, i.getAndIncrement()))
+				.map(x -> calculateVariableWithIndexedCalculatorOrDefault(x, i.getAndIncrement(), features))
 				.forEach(translatedVariables::addAll);
 
 		return translatedVariables;
@@ -34,10 +34,11 @@ public class VariableCalculations<R, S> implements Serializable {
 		return variableCalculator !=null ? variableCalculator : defaultCalculator;
 	}
 
-	private List<S> calculateVariableWithIndexedCalculatorOrDefault(R variable, int index) {
+	private List<S> calculateVariableWithIndexedCalculatorOrDefault(R variable, int index, List<R> feature) {
 		return indexToCalculator.get(index) != null ?
-				indexToCalculator.get(index).apply(variable) :
-				defaultCalculator.apply(variable);
+				indexToCalculator.get(index).apply(variable, feature) :
+				//defaultCalculator.apply(variable, feature);
+				new ArrayList<>();
 	}
 
 
