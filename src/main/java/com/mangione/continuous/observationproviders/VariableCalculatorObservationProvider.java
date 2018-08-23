@@ -2,22 +2,20 @@ package com.mangione.continuous.observationproviders;
 
 import clojure.lang.PersistentVector;
 import com.mangione.continuous.calculators.VariableCalculations;
-import com.mangione.continuous.calculators.VariableCalculator;
-import com.mangione.continuous.observations.NamedColumns;
+import com.mangione.continuous.observations.ProxyValues;
 import com.mangione.continuous.observations.ObservationFactoryInterface;
 import com.mangione.continuous.observations.ObservationInterface;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.IntStream;
 
 public class VariableCalculatorObservationProvider<R, S, T extends ObservationInterface<S>> implements ObservationProviderInterface<S, T> {
 
 	private final ObservationProviderInterface<R, ? extends ObservationInterface<R>> provider;
 	private final ObservationFactoryInterface<S, ? extends T> observationFactory;
 	private final VariableCalculations<R, S> variableCalculations;
-	private final NamedColumns namedColumns = new NamedColumns();
+	private final ProxyValues namedColumns = new ProxyValues();
 	private PersistentVector featureMap;
 
 
@@ -37,7 +35,7 @@ public class VariableCalculatorObservationProvider<R, S, T extends ObservationIn
 		for (Map.Entry<String, Integer> entry : mapOfTracks.entrySet()) {
 			String key = entry.getKey();
 			Integer value = entry.getValue();
-			namedColumns.addColumn(value, key);
+			namedColumns.addPair(value, key);
 		}
 	}
 

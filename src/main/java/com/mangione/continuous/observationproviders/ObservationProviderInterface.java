@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.Nonnull;
 
-import com.mangione.continuous.observations.NamedColumns;
+import com.mangione.continuous.observations.ProxyValues;
 import com.mangione.continuous.observations.ObservationInterface;
 
 public interface ObservationProviderInterface <S, T extends ObservationInterface<S>> extends Iterable<T> {
@@ -15,8 +15,8 @@ public interface ObservationProviderInterface <S, T extends ObservationInterface
 		return count.get();
 	}
 
-	default NamedColumns getNamedColumns() {
-		return new NamedColumns();
+	default ProxyValues getNamedColumns() {
+		return new ProxyValues();
 	}
 
 	@Override

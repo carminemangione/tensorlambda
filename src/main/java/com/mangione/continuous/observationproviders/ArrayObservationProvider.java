@@ -59,13 +59,10 @@ public class ArrayObservationProvider<S, T extends ObservationInterface<S>>
 		System.out.println("Reading CSV");
 		for (T anObservationProvider : observationProvider) {
 			counter++;
-
-			if(counter > 10000)
-				break;
-
 			if(counter % 100000 == 0)
 				System.out.println(counter);
-			observations.add(create(anObservationProvider.getAllColumns()));
+			if(anObservationProvider != null)
+				observations.add(create(anObservationProvider.getAllColumns()));
 		}
 		System.out.println("About to Sort");
 		observations.sort(comp);
@@ -83,6 +80,10 @@ public class ArrayObservationProvider<S, T extends ObservationInterface<S>>
 		return new ArrayObservationProviderIterator();
 	}
 
+	public Iterator<T> iterator(int curr) {
+		return new ArrayObservationProviderIterator(curr);
+	}
+
 
 	@Override
 	public void forEach(Consumer<? super T> action) {
@@ -98,6 +99,13 @@ public class ArrayObservationProvider<S, T extends ObservationInterface<S>>
 
 	private class ArrayObservationProviderIterator implements Iterator<T> {
 		private int current;
+
+		public ArrayObservationProviderIterator(int curr) {
+			current = curr;
+		}
+
+		public ArrayObservationProviderIterator() {
+		}
 
 		@Override
 		public boolean hasNext() {

@@ -16,7 +16,7 @@ public class RowFilteringObservationProviderTest {
 	@Test
 	public void testRowFiltering() throws FileNotFoundException {
 		CsvObservationProvider ob = new CsvObservationProvider(new File("src/test/resource/hi.csv"), new StringObservationFactory(), false);
-		RowFilteringObservationProvider rfop = new RowFilteringObservationProvider(ob);
+		RowFilteringObservationProvider rfop = new RowFilteringObservationProvider(ob, null);
 		Iterator it = rfop.iterator();
 		int counter = 0;
 		while(it.hasNext()){

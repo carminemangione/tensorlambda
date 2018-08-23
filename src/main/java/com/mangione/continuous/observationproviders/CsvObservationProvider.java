@@ -1,6 +1,6 @@
 package com.mangione.continuous.observationproviders;
 
-import com.mangione.continuous.observations.NamedColumns;
+import com.mangione.continuous.observations.ProxyValues;
 import com.mangione.continuous.observations.ObservationFactoryInterface;
 import com.mangione.continuous.observations.ObservationInterface;
 
@@ -10,14 +10,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class CsvObservationProvider implements ObservationProviderInterface<String, ObservationInterface<String>> {
 
 	private final File file;
 	private final ObservationFactoryInterface<String, ObservationInterface<String>> factory;
-	private final NamedColumns namedColumns = new NamedColumns();
+	private final ProxyValues namedColumns = new ProxyValues();
 
 	public CsvObservationProvider(File file, ObservationFactoryInterface<String, ObservationInterface<String>> factory, boolean hasColumnHeader) throws FileNotFoundException {
 		this.file = file;
@@ -29,7 +28,7 @@ public class CsvObservationProvider implements ObservationProviderInterface<Stri
 	private void fillNamedColumns() {
 		CsvObservationIterator iterator = new CsvObservationIterator();
 		ObservationInterface<String> next = iterator.next();
-		IntStream.range(0, next.getFeatures().size()).forEach(i -> namedColumns.addColumn(i, next.getFeatures().get(i)));
+		IntStream.range(0, next.getFeatures().size()).forEach(i -> namedColumns.addPair(i, next.getFeatures().get(i)));
 	}
 
 
@@ -51,7 +50,7 @@ public class CsvObservationProvider implements ObservationProviderInterface<Stri
 		throw new UnsupportedOperationException("Spliterator is not supported...");
 	}
 
-	public NamedColumns getNamedColumns() {
+	public ProxyValues getNamedColumns() {
 		return namedColumns;
 	}
 

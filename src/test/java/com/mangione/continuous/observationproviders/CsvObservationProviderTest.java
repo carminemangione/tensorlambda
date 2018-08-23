@@ -1,6 +1,6 @@
 package com.mangione.continuous.observationproviders;
 
-import com.mangione.continuous.observations.NamedColumns;
+import com.mangione.continuous.observations.ProxyValues;
 import com.mangione.continuous.observations.ObservationInterface;
 import com.mangione.continuous.observations.StringObservationFactory;
 import org.apache.commons.io.FileUtils;
@@ -126,7 +126,7 @@ public class CsvObservationProviderTest {
 
 		CsvObservationProvider provider = new CsvObservationProvider(file, new StringObservationFactory(), true);
 
-		NamedColumns namedColumns = provider.getNamedColumns();
+		ProxyValues namedColumns = provider.getNamedColumns();
 
 		assertEquals("one", namedColumns.getName(0));
 		assertEquals("two", namedColumns.getName(1));

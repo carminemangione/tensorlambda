@@ -1,6 +1,6 @@
 (ns com.mangione.continuous.tools.proxy
   (:require [clojure.java.io :as io])
-  (:import (com.mangione.continuous.observations StringObservationFactory NamedColumns Observation)
+  (:import (com.mangione.continuous.observations StringObservationFactory ProxyValues Observation)
            (com.mangione.continuous.calculators VariableCalculator VariableCalculations)
            (com.mangione.continuous.observationproviders CsvObservationProvider VariableCalculatorObservationProvider RowFilteringObservationProvider)
            (java.io File)))
