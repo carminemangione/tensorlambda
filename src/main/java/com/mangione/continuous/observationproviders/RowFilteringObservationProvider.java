@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import com.mangione.continuous.observations.ObservationInterface;
 
 public class RowFilteringObservationProvider<S, T extends ObservationInterface<S>> implements ObservationProviderInterface<S, T> {
@@ -28,6 +30,7 @@ public class RowFilteringObservationProvider<S, T extends ObservationInterface<S
 
 	}
 
+	@Nonnull
 	@Override
 	public Iterator<T> iterator() {
 		return new RowFilteringObservationProviderIterator();

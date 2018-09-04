@@ -39,7 +39,6 @@ public class VariableCalculatorObservationProvider<R, S, T extends ObservationIn
 		}
 	}
 
-
 	@Override
 	@Nonnull
 	public Iterator<T> iterator() {

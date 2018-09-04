@@ -1,5 +1,6 @@
-package com.mangione.continuous.classifiers;
+package com.mangione.continuous.classifiers.supervised;
 
+import com.mangione.continuous.classifiers.supervised.NaiveBayesClassifier;
 import com.mangione.continuous.observationproviders.ArrayObservationProvider;
 import com.mangione.continuous.observationproviders.ObservationProvider;
 import com.mangione.continuous.observations.DiscreteExemplar;

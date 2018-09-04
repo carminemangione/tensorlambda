@@ -1,8 +1,10 @@
-package com.mangione.continuous.classifiers;
+package com.mangione.continuous.classifiers.supervised;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+
+import com.mangione.continuous.classifiers.supervised.SortedArray;
 
 public class SortedArrayTest {
     @Test

@@ -1,4 +1,4 @@
-package com.mangione.continuous.classifiers;
+package com.mangione.continuous.classifiers.supervised;
 
 import java.util.ArrayList;
 import java.util.Collections;

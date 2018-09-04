@@ -1,4 +1,4 @@
-package com.mangione.continuous.classifiers;
+package com.mangione.continuous.classifiers.supervised;
 
 
 import com.mangione.continuous.observationproviders.ObservationProviderInterface;
