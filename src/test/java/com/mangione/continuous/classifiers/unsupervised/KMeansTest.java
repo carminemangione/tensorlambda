@@ -35,22 +35,9 @@ public class KMeansTest {
     @Test
     public void testMultiThreading() throws Exception {
     	long initialTime = System.currentTimeMillis();
-	    int n = 100000;
+	    int n = 1000;
 	    Double[][] data = new Double[n][1];
 	    Random rand = new Random();
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	    for (int i = 0; i < n; i++) {
 		    data[i][0] = (double) i;

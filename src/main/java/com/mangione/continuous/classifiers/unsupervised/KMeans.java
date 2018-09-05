@@ -15,15 +15,16 @@ public class KMeans<T extends Observation> {
 
 	public KMeans(int numberOfClusters, DoubleUnsupervisedModelProvider provider, KMeansListener<T> listener) throws Exception {
         this.listener = listener;
+		this.provider = provider;
         initializeClusters(numberOfClusters);
 
-        this.provider = provider;
+
         clusters.forEach(Cluster::updateCentroid);
 
         if (listener != null)
             listener.reassignmentCompleted(clusters);
 
-        addThePointsToTheInitialClusters(0, provider.getNumberOfLines());
+        addThePointsToTheInitialClusters(numberOfClusters, provider.getNumberOfLines());
 
         loopThroughJigglingOnCentroidsAndReCluster(1);
     }
