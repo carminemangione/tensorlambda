@@ -1,7 +1,6 @@
 package com.mangione.continuous.classifiers.unsupervised;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.mangione.continuous.model.modelproviders.DoubleUnsupervisedModelProvider;
@@ -12,22 +11,51 @@ public class KMeans<T extends Observation> {
 
     private final List<Cluster> clusters = new ArrayList<>();
     private final KMeansListener<T> listener;
+	private final DoubleUnsupervisedModelProvider provider;
 
-    public KMeans(int numberOfClusters, DoubleUnsupervisedModelProvider provider, KMeansListener<T> listener) throws Exception {
+	public KMeans(int numberOfClusters, DoubleUnsupervisedModelProvider provider, KMeansListener<T> listener) throws Exception {
         this.listener = listener;
+        initializeClusters(numberOfClusters);
 
-        initializeClusters(numberOfClusters, provider);
+        this.provider = provider;
         clusters.forEach(Cluster::updateCentroid);
 
         if (listener != null)
             listener.reassignmentCompleted(clusters);
-        addThePointsToTheInitialClusters(provider);
 
-        loopThroughJigglingOnCentroidsAndReCluster();
+        addThePointsToTheInitialClusters(0, provider.getNumberOfLines());
+
+        loopThroughJigglingOnCentroidsAndReCluster(1);
     }
 
     public KMeans(int numberOfClusters, DoubleUnsupervisedModelProvider provider) throws Exception {
         this(numberOfClusters, provider, null);
+    }
+
+    public KMeans(int numberOfClusters, DoubleUnsupervisedModelProvider provider, int numThreads) throws Exception {
+    	listener = null;
+    	ArrayList<Thread> threads = new ArrayList<>();
+    	this.provider = provider;
+
+    	initializeClusters(numberOfClusters);
+
+    	clusters.forEach(Cluster::updateCentroid);
+
+    	int initial = numberOfClusters;
+    	System.out.println("Adding");
+    	for(int i = 0; i < numThreads; i++) {
+    		Thread thread = new Thread(new MultiThreadingHelper(initial, provider.getNumberOfLines() / numThreads));
+    		threads.add(thread);
+    		thread.start();
+			initial += provider.getNumberOfLines() / numThreads;
+	    }
+
+		for(Thread thread : threads) {
+    		thread.join();
+		}
+		System.out.println("Jiggling");
+	    loopThroughJigglingOnCentroidsAndReCluster(numThreads);
+
     }
 
     public double getWithinClusterSumOfSquares() {
@@ -52,14 +80,17 @@ public class KMeans<T extends Observation> {
         return index;
     }
 
-    private void loopThroughJigglingOnCentroidsAndReCluster() {
+    private void loopThroughJigglingOnCentroidsAndReCluster(int numThreads) throws InterruptedException {
         boolean rejiggled = false;
         do {
+        	rejiggled = false;
+        	//System.out.println("Looping");
             clusters.forEach(Cluster::updateCentroid);
 
             for (int i = 0; i < clusters.size(); i++) {
-                rejiggled = processTheObservationsForThisCluster(rejiggled, i);
+                rejiggled = processTheObservationsForThisCluster(i) || rejiggled;
             }
+
             if (listener != null)
                 listener.reassignmentCompleted(clusters);
 
@@ -67,16 +98,16 @@ public class KMeans<T extends Observation> {
 
     }
 
-    private boolean processTheObservationsForThisCluster(boolean rejiggled, int i) {
+    private boolean processTheObservationsForThisCluster(int i) {
+		boolean rejiggled = false;
         final Cluster currentCluster = clusters.get(i);
         List<double[]> observationsToMove = currentCluster.getObservations();
         for (double[] observation : observationsToMove) {
             double currentDistance = currentCluster.distanceToCentroid(observation);
             Cluster closest = findCloserClusterIfExists(i, observation, currentDistance);
-            rejiggled = moveObservationToCloserCluster(currentCluster, observation, closest);
+            rejiggled = moveObservationToCloserCluster(currentCluster, observation, closest) || rejiggled;
             if (rejiggled && listener != null)
                 listener.reassignmentCompleted(clusters);
-
         }
         return rejiggled;
     }
@@ -105,10 +136,10 @@ public class KMeans<T extends Observation> {
         return closest;
     }
 
-    private void addThePointsToTheInitialClusters(DoubleUnsupervisedModelProvider provider) throws Exception {
-	    Iterator<double[]> iter = provider.iterator();
-        while (iter.hasNext()) {
-            double[] nextObservation = iter.next();
+    private synchronized void addThePointsToTheInitialClusters(int start, int length) throws Exception {
+
+		for(int i = start; i < start + length && i < provider.getNumberOfLines(); i++) {
+            double[] nextObservation = provider.get(i);
 
             Cluster closest = null;
             double distance = Double.MAX_VALUE;
@@ -124,13 +155,32 @@ public class KMeans<T extends Observation> {
         }
     }
 
-    private void initializeClusters(int numberOfClusters, DoubleUnsupervisedModelProvider provider) throws Exception {
-        Iterator<double[]> iterator = provider.iterator();
-        for (int i = 0; i < numberOfClusters && iterator.hasNext(); i++) {
-            final double[] next = iterator.next();
+    private void initializeClusters(int numberOfClusters) throws Exception {
+        for (int i = 0; i < numberOfClusters; i++) {
+            final double[] next = provider.get(i);
             final Cluster cluster = new Cluster(next.length);
             cluster.add(next);
             clusters.add(cluster);
         }
     }
+
+	private class MultiThreadingHelper implements Runnable {
+
+		private final int start;
+		private final int length;
+
+		public MultiThreadingHelper(int start, int length) {
+			this.start = start;
+			this.length = length;
+		}
+
+		@Override
+		public void run() {
+			try {
+				addThePointsToTheInitialClusters(start, length);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

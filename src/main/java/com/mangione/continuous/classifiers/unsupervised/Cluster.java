@@ -1,6 +1,7 @@
 package com.mangione.continuous.classifiers.unsupervised;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.math3.ml.distance.EuclideanDistance;
@@ -36,7 +37,12 @@ public class Cluster {
     }
 
     public double distanceToCentroid(double[] observation) {
-        return euclideanDistance.compute(centroid, observation);
+    	try {
+		    return euclideanDistance.compute(centroid, observation);
+	    } catch (Throwable e) {
+		    System.out.println("HI");
+	    }
+	    return 0.0;
     }
 
     public double withinClusterSumOfSquares() {
@@ -54,10 +60,25 @@ public class Cluster {
             double[] sumsOfDimensions = new double[numDimensions];
             observations.forEach(x -> {
                 for (int i = 0; i < sumsOfDimensions.length; i++) {
-                    sumsOfDimensions[i] += x[i] / observations.size();
+	                try {
+		                sumsOfDimensions[i] += x[i] / observations.size();
+	                } catch (Throwable e) {
+						if(x == null)
+							continue;
+	                }
                 }
             });
             centroid = sumsOfDimensions;
         }
+    }
+
+    @Override
+	public String toString() {
+    	String ans = "";
+    	for(double[] elem : observations) {
+    		ans += Arrays.toString(elem) + " ";
+	    }
+	    ans += "Centroid: " + Arrays.toString(centroid);
+    	return ans;
     }
 }
