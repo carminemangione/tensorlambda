@@ -43,7 +43,6 @@ public class KMeans<T extends Observation> {
     	clusters.forEach(Cluster::updateCentroid);
 
     	int initial = numberOfClusters;
-    	System.out.println("Adding");
     	for(int i = 0; i < numThreads; i++) {
     		Thread thread = new Thread(new MultiThreadingHelper(initial, provider.getNumberOfLines() / numThreads));
     		threads.add(thread);
@@ -54,7 +53,6 @@ public class KMeans<T extends Observation> {
 		for(Thread thread : threads) {
     		thread.join();
 		}
-		System.out.println("Jiggling");
 	    loopThroughJigglingOnCentroidsAndReCluster(numThreads);
 
     }
