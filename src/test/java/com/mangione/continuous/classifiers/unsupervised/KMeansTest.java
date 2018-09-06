@@ -35,40 +35,64 @@ public class KMeansTest {
     @Test
     public void testMultiThreading() throws Exception {
     	long initialTime = System.currentTimeMillis();
-	    int n = 1000;
+	    int n = 10000;
 	    Double[][] data = new Double[n][1];
 	    Random rand = new Random();
 
 	    for (int i = 0; i < n; i++) {
-		    data[i][0] = (double) i;
+		    data[i][0] = (double) rand.nextInt(n);
 	    }
-	    for(int numThreads = 1; numThreads < 4; numThreads++) {
-		    for (int numClusters = 4; numClusters < 5; numClusters++) {
-			    initialTime = System.currentTimeMillis();
+		int numThreads = 4;
+	    double minError = 1000000000;
+	    int minK = 0;
+	    for (int numClusters = 1; numClusters < 20; numClusters++) {
+		    initialTime = System.currentTimeMillis();
 
-			    ArrayObservationProvider<Double, ObservationInterface<Double>> provider = new ArrayObservationProvider<>(data, new DoubleObservationFactory());
-			    KMeans<Observation> kmeans = new KMeans<>(numClusters, new DoubleUnsupervisedModelProvider(provider), numThreads);
-			    List<Cluster> clusters = kmeans.getClusters();
-			    assertEquals(numClusters, clusters.size());
+		    ArrayObservationProvider<Double, ObservationInterface<Double>> provider = new ArrayObservationProvider<>(data, new DoubleObservationFactory());
+		    KMeans<Observation> kmeans = new KMeans<>(numClusters, new DoubleUnsupervisedModelProvider(provider), numThreads);
+		    List<Cluster> clusters = kmeans.getClusters();
+		    assertEquals(numClusters, clusters.size());
 
-				System.out.println("Checking ");
-			    for (int i = 0; i < clusters.size(); i++) {
-				    for (double[] elem : clusters.get(i).getObservations()) {
-					    double dist = clusters.get(i).distanceToCentroid(elem);
-					    for (int j = 0; j < clusters.size(); j++) {
-						    assertTrue(clusters.get(i).distanceToCentroid(elem) >= dist);
-					    }
+			//System.out.println("Checking ");
+		    for (int i = 0; i < clusters.size(); i++) {
+			    for (double[] elem : clusters.get(i).getObservations()) {
+				    double dist = clusters.get(i).distanceToCentroid(elem);
+				    for (int j = 0; j < clusters.size(); j++) {
+					    assertTrue(clusters.get(i).distanceToCentroid(elem) >= dist);
 				    }
 			    }
-
-			    System.out.println("Time: " + (System.currentTimeMillis() - initialTime) + " Number Of Threads: " + numThreads + " Number of Clusters: " + numClusters);
-		        clusters.forEach(x -> System.out.println(x.getCentroid()[0]));
 		    }
 
+		    double totalError = 0;
+		    for(Cluster clus : clusters) {
+			    totalError += calculateError(clus);
+		    }
+		    System.out.println(numClusters + " " + totalError);
+		    if(totalError < minError) {
+			    minK = numClusters;
+			    minError = totalError;
+		    }
+
+		    //System.out.println("Time: " + (System.currentTimeMillis() - initialTime) + " Number Of Threads: " + numThreads + " Number of Clusters: " + numClusters);
+	        //clusters.forEach(x -> System.out.println(x.getCentroid()[0]));
 	    }
+	    System.out.println("MIN K: " + minK + ", MIN ERROR: " + minError);
     }
 
-    public double[][] convertDoubleArrayUsingStream(Double[][] data) {
+	private double calculateError(Cluster clus) {
+		if(clus.getObservations().size() == 0)
+			return 0.0;
+
+		double error = 0;
+
+		for(int i = 0; i < clus.getObservations().size(); i++) {
+			error += Math.pow(clus.distanceToCentroid(clus.getObservations().get(i)),2);
+		}
+		return error/clus.getObservations().size();
+	}
+
+
+	public double[][] convertDoubleArrayUsingStream(Double[][] data) {
         return stream(data)
                 .map(row -> stream(row)
                         .mapToDouble(Number::doubleValue).toArray())
