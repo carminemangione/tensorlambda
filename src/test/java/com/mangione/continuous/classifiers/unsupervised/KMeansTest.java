@@ -35,7 +35,7 @@ public class KMeansTest {
     @Test
     public void testMultiThreading() throws Exception {
     	long initialTime = System.currentTimeMillis();
-	    int n = 100000;
+	    int n = 1000;
 	    Double[][] data = new Double[n][1];
 	    Random rand = new Random();
 
@@ -45,7 +45,7 @@ public class KMeansTest {
 		int numThreads = 4;
 	    double minError = 1000000000;
 	    int minK = 0;
-	    for (int numClusters = 1; numClusters < 2; numClusters++) {
+	    for (int numClusters = 1000; numClusters < 1001; numClusters++) {
 		    initialTime = System.currentTimeMillis();
 
 		    ArrayObservationProvider<Double, ObservationInterface<Double>> provider = new ArrayObservationProvider<>(data, new DoubleObservationFactory());

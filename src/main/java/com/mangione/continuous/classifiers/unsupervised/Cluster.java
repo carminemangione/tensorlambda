@@ -2,6 +2,7 @@ package com.mangione.continuous.classifiers.unsupervised;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.math3.ml.distance.EuclideanDistance;
@@ -10,7 +11,7 @@ import org.apache.commons.math3.ml.distance.EuclideanDistance;
 public class Cluster {
     private final int numDimensions;
     private double[] centroid;
-    private final List<double[]> observations = new ArrayList<>();
+    private final List<double[]> observations = Collections.synchronizedList(new ArrayList<>());
     private final EuclideanDistance euclideanDistance = new EuclideanDistance();
 
     public Cluster(int numDimensions) {
@@ -37,12 +38,7 @@ public class Cluster {
     }
 
     public double distanceToCentroid(double[] observation) {
-    	try {
-		    return euclideanDistance.compute(centroid, observation);
-	    } catch (Throwable e) {
-		    System.out.println("HI");
-	    }
-	    return 0.0;
+		return euclideanDistance.compute(centroid, observation);
     }
 
     public double withinClusterSumOfSquares() {
