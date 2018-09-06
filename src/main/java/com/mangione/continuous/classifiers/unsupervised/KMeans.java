@@ -38,10 +38,13 @@ public class KMeans<T extends Observation> {
     	ArrayList<Thread> threads = new ArrayList<>();
     	this.provider = provider;
 
+
+	System.out.println("Initializing Clusters");
     	initializeClusters(numberOfClusters);
 
     	clusters.forEach(Cluster::updateCentroid);
 
+	System.out.println("Initializing Threads");
     	int initial = numberOfClusters;
     	for(int i = 0; i < numThreads; i++) {
     		Thread thread = new Thread(new MultiThreadingHelper(initial, provider.getNumberOfLines() / numThreads));
@@ -49,10 +52,10 @@ public class KMeans<T extends Observation> {
     		thread.start();
 			initial += provider.getNumberOfLines() / numThreads;
 	    }
-
 		for(Thread thread : threads) {
     		thread.join();
 		}
+	
 	    loopThroughJigglingOnCentroidsAndReCluster(numThreads);
 
     }
@@ -82,8 +85,8 @@ public class KMeans<T extends Observation> {
     private void loopThroughJigglingOnCentroidsAndReCluster(int numThreads) throws InterruptedException {
         boolean rejiggled = false;
         do {
-        	rejiggled = false;
-        	//System.out.println("Looping");
+     	  	rejiggled = false;
+        	System.out.println("Looping");
             clusters.forEach(Cluster::updateCentroid);
 
             for (int i = 0; i < clusters.size(); i++) {
@@ -137,7 +140,8 @@ public class KMeans<T extends Observation> {
 
     private synchronized void addThePointsToTheInitialClusters(int start, int length) throws Exception {
 
-		for(int i = start; i < start + length && i < provider.getNumberOfLines(); i++) {
+	System.out.println("STARTED");
+	for(int i = start; i < start + length && i < provider.getNumberOfLines(); i++) {
             double[] nextObservation = provider.get(i);
 
             Cluster closest = null;
@@ -152,6 +156,7 @@ public class KMeans<T extends Observation> {
             //noinspection ConstantConditions
             closest.add(nextObservation);
         }
+	System.out.println("COMPLETE");
     }
 
     private void initializeClusters(int numberOfClusters) throws Exception {
