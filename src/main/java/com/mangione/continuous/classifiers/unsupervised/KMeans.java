@@ -39,12 +39,10 @@ public class KMeans<T extends Observation> {
 		this.provider = provider;
 
 
-		System.out.println("Initializing Clusters");
 		initializeClusters(numberOfClusters);
 
 		clusters.forEach(Cluster::updateCentroid);
 
-		System.out.println("Initializing Threads");
 		int initial = numberOfClusters;
 		for(int i = 0; i < numThreads; i++) {
 			Thread thread = new Thread(new MultiThreadingHelper(initial, provider.getNumberOfLines() / numThreads));
@@ -86,7 +84,6 @@ public class KMeans<T extends Observation> {
 		boolean rejiggled = false;
 		do {
 			rejiggled = false;
-			System.out.println("Looping");
 			clusters.forEach(Cluster::updateCentroid);
 
 			for (int i = 0; i < clusters.size(); i++) {
@@ -142,7 +139,6 @@ public class KMeans<T extends Observation> {
 
 	private void addThePointsToTheInitialClusters(int start, int length) throws Exception {
 
-		System.out.println("STARTED");
 		for(int i = start; i < start + length && i < provider.getNumberOfLines(); i++) {
 			double[] nextObservation = provider.get(i);
 			if(nextObservation == null)
@@ -160,7 +156,6 @@ public class KMeans<T extends Observation> {
 
 			closest.add(nextObservation);
 		}
-		System.out.println("COMPLETE");
 	}
 
 	private void initializeClusters(int numberOfClusters) throws Exception {
