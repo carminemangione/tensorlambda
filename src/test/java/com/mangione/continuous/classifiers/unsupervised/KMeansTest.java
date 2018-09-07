@@ -79,6 +79,7 @@ public class KMeansTest {
 	    System.out.println("MIN K: " + minK + ", MIN ERROR: " + minError);
     }
 
+
 	private double calculateError(Cluster clus) {
 		if(clus.getObservations().size() == 0)
 			return 0.0;

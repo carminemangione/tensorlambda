@@ -38,7 +38,15 @@ public class Cluster {
     }
 
     public double distanceToCentroid(double[] observation) {
-		return euclideanDistance.compute(centroid, observation);
+    	try {
+		    return euclideanDistance.compute(centroid, observation);
+	    } catch(Throwable e) {
+		    System.out.println(centroid);
+		    System.out.println(observation);
+		    e.printStackTrace();
+		    System.exit(0);
+	    }
+	    return 0.0;
     }
 
     public double withinClusterSumOfSquares() {
@@ -70,11 +78,6 @@ public class Cluster {
 
     @Override
 	public String toString() {
-    	String ans = "";
-    	for(double[] elem : observations) {
-    		ans += Arrays.toString(elem) + " ";
-	    }
-	    ans += "Centroid: " + Arrays.toString(centroid);
-    	return ans;
+    	return observations.size() + "";
     }
 }

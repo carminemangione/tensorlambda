@@ -137,6 +137,16 @@ public class KMeans<T extends Observation> {
 		return closest;
 	}
 
+	private String valueOfVec(double[] arr) {
+		ArrayList<Integer> list = new ArrayList<>();
+		for(int i = 0; i < arr.length; i++) {
+			if(arr[i] != 0) {
+				list.add(i);
+			}
+		}
+		return list.toString();
+	}
+
 	private void addThePointsToTheInitialClusters(int start, int length) throws Exception {
 
 		for(int i = start; i < start + length && i < provider.getNumberOfLines(); i++) {
