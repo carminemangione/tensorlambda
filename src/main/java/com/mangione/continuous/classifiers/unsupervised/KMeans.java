@@ -129,7 +129,7 @@ public class KMeans<T extends Observation> {
 		Cluster closest = null;
 		for (int j = 0; j < clusters.size(); j++) {
 			if (i != j) {
-				if (clusters.get(j).distanceToCentroid(observation) < currentDistance) {
+				if (clusters.get(j).getObservations().size() > 1 && clusters.get(j).distanceToCentroid(observation) < currentDistance) {
 					closest = clusters.get(j);
 				}
 			}
