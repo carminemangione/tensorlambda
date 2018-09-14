@@ -125,7 +125,8 @@ public class ArrayObservationProvider<S, T extends ObservationInterface<S>>
 		@Override
 		public void forEachRemaining(Consumer<? super T> action) {
 			while (hasNext()) {
-				action.accept(next());
+				T next = next();
+				action.accept(next);
 			}
 		}
 

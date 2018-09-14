@@ -9,7 +9,9 @@ import org.apache.commons.math3.ml.distance.EuclideanDistance;
 
 
 public class Cluster {
-    private final int numDimensions;
+
+
+	private final int numDimensions;
     private double[] centroid;
     private final List<double[]> observations = Collections.synchronizedList(new ArrayList<>());
     private final EuclideanDistance euclideanDistance = new EuclideanDistance();
@@ -80,4 +82,12 @@ public class Cluster {
 	public String toString() {
     	return observations.size() + "";
     }
+
+	public void setCentroid(double[] obs) {
+		this.centroid = obs;
+	}
+
+	public int getNumDimensions() {
+		return numDimensions;
+	}
 }

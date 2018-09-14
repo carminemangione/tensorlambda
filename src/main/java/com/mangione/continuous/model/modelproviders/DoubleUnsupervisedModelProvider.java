@@ -35,10 +35,10 @@ public class DoubleUnsupervisedModelProvider{
 
 	private double[][] buildDoubleArrayFromProvider(ObservationProvider<? extends Number,
 			? extends ObservationInterface<? extends Number>> observationProvider) {
-		return iterableToStream(iteratorToIterable(observationProvider.iterator()))
+		Stream<double[]> stream = iterableToStream(iteratorToIterable(observationProvider.iterator()))
 				.map(ObservationInterface::getFeatures)
-				.map(features -> features.stream().mapToDouble(Number::doubleValue).toArray())
-				.toArray(double[][]::new);
+				.map(features -> features.stream().mapToDouble(Number::doubleValue).toArray());
+		return stream.toArray(double[][]::new);
 	}
 
 	public Iterator<double[]> iterator() {

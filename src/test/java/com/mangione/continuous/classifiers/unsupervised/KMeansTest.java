@@ -5,9 +5,6 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
@@ -24,7 +21,7 @@ public class KMeansTest {
     public void testTwoClustersTwoObservations() throws Exception {
         Double[][] data = {{2., 1.}, {4., 2.}};
         ArrayObservationProvider<Double, ObservationInterface<Double>> provider = new ArrayObservationProvider<>(data, new DoubleObservationFactory());
-        KMeans<Observation> kmeans = new KMeans<>(2, new DoubleUnsupervisedModelProvider(provider));
+        KClustering<Observation> kmeans = new KClustering<>(2, new DoubleUnsupervisedModelProvider(provider), new KMeans());
         List<Cluster> clusters = kmeans.getClusters();
         assertEquals(2, clusters.size());
         for (int i = 0; i < data.length; i++) {
@@ -49,19 +46,19 @@ public class KMeansTest {
 		    initialTime = System.currentTimeMillis();
 
 		    ArrayObservationProvider<Double, ObservationInterface<Double>> provider = new ArrayObservationProvider<>(data, new DoubleObservationFactory());
-		    KMeans<Observation> kmeans = new KMeans<>(numClusters, new DoubleUnsupervisedModelProvider(provider), numThreads);
+		    KClustering<Observation> kmeans = new KClustering<>(numClusters, new DoubleUnsupervisedModelProvider(provider), numThreads, new KMeans());
 		    List<Cluster> clusters = kmeans.getClusters();
 		    assertEquals(numClusters, clusters.size());
 
 			//System.out.println("Checking ");
-		    for (int i = 0; i < clusters.size(); i++) {
-			    for (double[] elem : clusters.get(i).getObservations()) {
-				    double dist = clusters.get(i).distanceToCentroid(elem);
-				    for (int j = 0; j < clusters.size(); j++) {
-					    assertTrue(clusters.get(i).distanceToCentroid(elem) >= dist);
-				    }
-			    }
-		    }
+//		    for (int i = 0; i < clusters.size(); i++) {
+//			    for (double[] elem : clusters.get(i).getObservations()) {
+//				    double dist = clusters.get(i).distanceToCentroid(elem);
+//				    for (int j = 0; j < clusters.size(); j++) {
+//					    assertTrue(clusters.get(i).distanceToCentroid(elem) >= dist);
+//				    }
+//			    }
+//		    }
 
 		    double totalError = 0;
 		    for(Cluster clus : clusters) {
@@ -105,7 +102,7 @@ public class KMeansTest {
         Double[][] data = {{0.}, {10.}, {1.}, {11.}};
 
         ArrayObservationProvider<Double, ObservationInterface<Double>> provider = new ArrayObservationProvider<>(data, new DoubleObservationFactory());
-        KMeans<Observation> kmeans = new KMeans<>(2, new DoubleUnsupervisedModelProvider(provider));
+        KClustering<Observation> kmeans = new KClustering<>(2, new DoubleUnsupervisedModelProvider(provider), new KMeans());
         List<Cluster> clusters = kmeans.getClusters();
         assertEquals(2, clusters.size());
         assertEquals(2, kmeans.getClusters().get(0).getObservations().size());
@@ -120,7 +117,7 @@ public class KMeansTest {
 
 
         ArrayObservationProvider<Double, ObservationInterface<Double>> provider = new ArrayObservationProvider<>(data, new DoubleObservationFactory());
-        KMeans<Observation> kmeans = new KMeans<>(2, new DoubleUnsupervisedModelProvider(provider));
+        KClustering<Observation> kmeans = new KClustering<>(2, new DoubleUnsupervisedModelProvider(provider), new KMeans());
         List<Cluster> clusters = kmeans.getClusters();
         assertEquals(2, clusters.size());
         assertEquals(4, kmeans.getClusters().get(0).getObservations().size());
@@ -140,7 +137,7 @@ public class KMeansTest {
 
 
         ArrayObservationProvider<Double, ObservationInterface<Double>> provider = new ArrayObservationProvider<>(data, new DoubleObservationFactory());
-        KMeans<Observation> kmeans = new KMeans<>(2, new DoubleUnsupervisedModelProvider(provider));
+        KClustering<Observation> kmeans = new KClustering<>(2, new DoubleUnsupervisedModelProvider(provider), new KMeans());
         assertEquals(0, kmeans.getClusterIndex(new double[]{2}));
         assertEquals(0, kmeans.getClusterIndex(new double[]{12}));
         assertEquals(0, kmeans.getClusterIndex(new double[]{20}));

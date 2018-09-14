@@ -46,7 +46,7 @@
 //		RefineryUtilities.centerFrameOnScreen(applicationFrame);
 //		applicationFrame.setVisible(true);
 //
-//		new KMeans<>(2, provider, this);
+//		new KClustering<>(2, provider, this);
 //
 //	}
 //
