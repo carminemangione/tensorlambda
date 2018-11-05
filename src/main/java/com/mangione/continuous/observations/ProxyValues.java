@@ -1,40 +1,45 @@
 package com.mangione.continuous.observations;
 
-import java.util.HashMap;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 public class ProxyValues {
 
-	private HashMap<Integer, String> mapOfVals1 = new HashMap<>();
-	private HashMap<String, Integer> mapOfVals2 = new HashMap<>();
+	private BiMap<String, Integer> biMap = HashBiMap.create();
 
-	boolean isNamed(Integer i) {
-		return mapOfVals1.containsKey(i);
+	boolean contains(Integer i) {
+		return biMap.inverse().containsKey(i);
 	}
 
-	boolean isNamed(String i) {
-		return mapOfVals2.containsKey(i);
+	boolean contains(String i) {
+		return biMap.containsKey(i);
 	}
 
 	public void addPair(Integer i, String val) {
-		mapOfVals1.put(i, val);
+		biMap.inverse().put(i, val);
 	}
 
 	public void addPair(String i, Integer val) {
-		mapOfVals2.put(i, val);
+		biMap.put(i, val);
+	}
+
+	public void add(String i) {
+		if(!contains(i))
+			biMap.put(i, biMap.size());
 	}
 
 	public String getName(Integer i) {
-		return mapOfVals1.get(i);
+		return biMap.inverse().get(i);
 	}
 
-	public Integer getName(String i) { return mapOfVals2.get(i); }
+	public Integer getName(String i) { return biMap.get(i); }
 
 	@Override
 	public String toString(){
-		return mapOfVals1.toString() + mapOfVals2.toString();
+		return biMap.toString();
 	}
 
 	public int size() {
-		return mapOfVals2.size();
+		return biMap.size();
 	}
 }

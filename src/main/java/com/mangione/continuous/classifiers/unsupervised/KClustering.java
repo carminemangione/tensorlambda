@@ -117,7 +117,7 @@ public class KClustering<T extends Observation> {
 
 	private boolean moveObservationToCloserCluster(Cluster currentCluster, double[] observation, Cluster closest) {
 		boolean rejiggled = false;
-		if (closest != null) {
+		if (closest != null && closest.getObservations().size() > 1) {
 			currentCluster.remove(observation);
 			closest.add(observation);
 			rejiggled = true;
