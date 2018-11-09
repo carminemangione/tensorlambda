@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 import java.util.Random;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.mangione.continuous.model.modelproviders.DoubleUnsupervisedModelProvider;
@@ -19,6 +20,7 @@ import com.mangione.continuous.observations.ObservationInterface;
 public class KModesTest {
 
 	@Test
+	@Ignore
 	public void testMultiThreading() throws Exception {
 		long initialTime = System.currentTimeMillis();
 		int n = 1000;
