@@ -1,7 +1,5 @@
 package com.mangione.continuous.observations;
 
-import java.util.Collections;
-
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 

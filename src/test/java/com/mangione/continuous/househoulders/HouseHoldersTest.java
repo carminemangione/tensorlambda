@@ -9,9 +9,6 @@ public class HouseHoldersTest {
         double[][] a = {{2, 2, 4, 2}, {1, 3, -2, 1}, {3, 1, 3, 2}};
         SimpleMatrix X = new SimpleMatrix(a);
         SimpleMatrix hx = houseHoldersOnX(X);
-
-
-
     }
 
     private SimpleMatrix houseHoldersOnX(SimpleMatrix x) {
