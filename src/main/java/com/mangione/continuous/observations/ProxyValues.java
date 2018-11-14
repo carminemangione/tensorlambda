@@ -1,11 +1,29 @@
 package com.mangione.continuous.observations;
 
+import java.util.Arrays;
+
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
 public class ProxyValues {
 
-	private BiMap<String, Integer> biMap = HashBiMap.create();
+	private final BiMap<String, Integer> biMap = HashBiMap.create();
+
+	public static ProxyValues fromString(String serializedByMap) {
+		return new ProxyValues(serializedByMap);
+	}
+
+	private ProxyValues(String serializedBiMap) {
+		String stripped = serializedBiMap.replace("{", "").replace("}", "");
+
+		String[] elements = stripped.split(",");
+		Arrays.stream(elements)
+				.map(keyValue->keyValue.trim().split("="))
+				.forEach(keyValue-> biMap.put(keyValue[0], Integer.valueOf(keyValue[1])));
+	}
+
+	public ProxyValues() {
+	}
 
 	synchronized boolean contains(Integer i) {
 		return biMap.inverse().containsKey(i);
@@ -32,7 +50,7 @@ public class ProxyValues {
 		return biMap.inverse().get(i);
 	}
 
-	synchronized public Integer getName(String i) { return biMap.get(i); }
+	synchronized public Integer getIndex(String i) { return biMap.get(i); }
 
 	@Override
 	synchronized public String toString(){
