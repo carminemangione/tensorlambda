@@ -15,12 +15,12 @@ public class DiscreteExemplarGeneratorTest {
     private MersenneTwister twister;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         twister = new MersenneTwister(9834);
     }
 
     @Test
-    public void testCorrectNumberOfExemplarsAndDimensions() throws Exception {
+    public void testCorrectNumberOfExemplarsAndDimensions() {
         int numberOfDimensions = 12;
         int numberOfExemplars = 100;
 
