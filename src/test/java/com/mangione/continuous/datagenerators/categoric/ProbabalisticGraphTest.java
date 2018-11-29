@@ -1,27 +1,25 @@
 package com.mangione.continuous.datagenerators.categoric;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class ProbabalisticGraphTest {
 
 	@Test
 	public void graphWithOneNode() {
-		double[] nonDependentProbabilities = {0.1};
-		fail();
+		double[] variableProbabilities = {0.1};
 
+		ProbabalisticGraph probabalisticGraph = new ProbabalisticGraph(variableProbabilities);
+		ProbabilityNode node = probabalisticGraph.getRootNode(0);
+		assertEquals(0.1, node.getProbability(), 0);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void invalidVariableIndex() throws Exception {
+	public void invalidVariableIndex() {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void wrongNumberOfDimensions() {
 	}
-
-
 }
