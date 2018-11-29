@@ -2,6 +2,8 @@ package com.mangione.continuous.datagenerators.categoric;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
+
 import org.junit.Test;
 
 public class ProbabalisticGraphTest {
@@ -11,10 +13,18 @@ public class ProbabalisticGraphTest {
 		double[] variableProbabilities = {0.1};
 
 		ProbabalisticGraph probabalisticGraph = new ProbabalisticGraph(variableProbabilities);
-		ProbabilityNode node = probabalisticGraph.getRootNode(0);
-		assertEquals(0.1, node.getProbability(), 0);
+		List<ProbabilityNode> nodes = probabalisticGraph.getRootNodes();
+		assertEquals(1, nodes.size());
+		assertEquals(0.1, nodes.get(0).getProbability(), 0);
 	}
 
+	@Test
+	public void twoNodesIndependent() {
+		double[] variableProbabilities = {0.1};
+
+	}
+	
+	
 	@Test(expected = IllegalArgumentException.class)
 	public void invalidVariableIndex() {
 	}

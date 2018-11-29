@@ -13,7 +13,7 @@ class ProbabalisticGraph {
 				.collect(Collectors.toList());
 	}
 
-	ProbabilityNode getRootNode(int variableIndex) {
-		return rootNodes.get(variableIndex);
+	public List<ProbabilityNode> getRootNodes() {
+		return rootNodes;
 	}
 }
