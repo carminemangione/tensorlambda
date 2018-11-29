@@ -13,7 +13,7 @@ public class ProxyValues {
 		return new ProxyValues(serializedByMap);
 	}
 
-	private ProxyValues(String serializedBiMap) {
+	public ProxyValues(String serializedBiMap) {
 		String stripped = serializedBiMap.replace("{", "").replace("}", "");
 
 		String[] elements = stripped.split(",");
