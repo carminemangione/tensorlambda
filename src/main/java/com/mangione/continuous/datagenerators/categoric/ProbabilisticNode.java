@@ -1,11 +1,17 @@
 package com.mangione.continuous.datagenerators.categoric;
 
-public class ProbabilityNode {
-	private final double probability;
+import java.util.ArrayList;
+import java.util.List;
 
-	ProbabilityNode(double probability)  {
+public class ProbabilisticNode {
+	private final double probability;
+	private final List<ProbabilisticNode> children = new ArrayList<>();
+
+	ProbabilisticNode(double probability)  {
 		this.probability = probability;
 	}
+
+
 
 	public void accept(Visitor  visitor) {
 		visitor.visit(this);

@@ -6,14 +6,14 @@ import java.util.List;
 
 import org.junit.Test;
 
-public class ProbabalisticGraphTest {
+public class ProbabalisticGraphBuilderTest {
 
 	@Test
 	public void graphWithOneNode() {
 		double[] variableProbabilities = {0.1};
 
-		ProbabalisticGraph probabalisticGraph = new ProbabalisticGraph(variableProbabilities);
-		List<ProbabilityNode> nodes = probabalisticGraph.getRootNodes();
+		ProbabalisticGraphBuilder probabalisticGraphBuilder = new ProbabalisticGraphBuilder(variableProbabilities);
+		List<ProbabilisticNode> nodes = probabalisticGraphBuilder.getRootNodes();
 		assertEquals(1, nodes.size());
 		assertEquals(0.1, nodes.get(0).getProbability(), 0);
 	}
