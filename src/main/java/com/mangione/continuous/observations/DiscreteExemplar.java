@@ -21,7 +21,7 @@ public class DiscreteExemplar<T extends Number> implements ExemplarInterface<T, 
 
 	public DiscreteExemplar(List<T> features) {
 		this.allColumns = features;
-		this .targetColumnIndex = features.size() - 1;
+		this.targetColumnIndex = features.size() - 1;
 		this.features = features.subList(0, targetColumnIndex);
 		this.continuousValue = features.get(targetColumnIndex);
 		this.target = this.continuousValue.intValue();

@@ -82,7 +82,7 @@ public class CsvObservationProvider implements ObservationProviderInterface<Stri
 		public ObservationInterface<String> next() {
 			String[] nextLine;
 			try {
-				nextLine = bufferedReader.readLine().split(",");
+				nextLine = bufferedReader.readLine().split(" ");
 			} catch (IOException e) {
 				throw new ProviderException(e);
 			}
