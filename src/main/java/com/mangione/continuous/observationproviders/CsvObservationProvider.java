@@ -17,6 +17,7 @@ public class CsvObservationProvider implements ObservationProviderInterface<Stri
 	private final File file;
 	private final ObservationFactoryInterface<String, ObservationInterface<String>> factory;
 	private final ProxyValues namedColumns = new ProxyValues();
+	private String charVal = ",";
 
 	public CsvObservationProvider(File file, ObservationFactoryInterface<String, ObservationInterface<String>> factory, boolean hasColumnHeader) throws FileNotFoundException {
 		this.file = file;
@@ -35,7 +36,13 @@ public class CsvObservationProvider implements ObservationProviderInterface<Stri
 	@Override
 	@Nonnull
 	public Iterator<ObservationInterface<String>> iterator() {
-		return new CsvObservationIterator();
+		CsvObservationIterator csvObservationIterator = new CsvObservationIterator();
+		csvObservationIterator.setChar(charVal);
+		return csvObservationIterator;
+	}
+
+	public void setChar(String val) {
+		this.charVal = val;
 	}
 
 	@Override
@@ -56,6 +63,7 @@ public class CsvObservationProvider implements ObservationProviderInterface<Stri
 
 	private class CsvObservationIterator implements Iterator<ObservationInterface<String>> {
 		BufferedReader bufferedReader;
+		private String splitVal = ",";
 
 		private CsvObservationIterator() {
 			try {
@@ -63,6 +71,10 @@ public class CsvObservationProvider implements ObservationProviderInterface<Stri
 			} catch (FileNotFoundException e) {
 				throw new ProviderException(e);
 			}
+		}
+
+		public void setChar(String val) {
+			splitVal = val;
 		}
 
 		@Override
@@ -82,7 +94,7 @@ public class CsvObservationProvider implements ObservationProviderInterface<Stri
 		public ObservationInterface<String> next() {
 			String[] nextLine;
 			try {
-				nextLine = bufferedReader.readLine().split(" ");
+				nextLine = bufferedReader.readLine().split(splitVal);
 			} catch (IOException e) {
 				throw new ProviderException(e);
 			}
