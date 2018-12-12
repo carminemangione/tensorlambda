@@ -11,6 +11,16 @@ public class DiscreteSparseExemplar implements ExemplarInterface<Integer, Intege
 	private final int[] values;
 	private final int[] columns;
 	private final int numberOfColumns;
+	private final int target;
+
+	public DiscreteSparseExemplar(int[] values, int[] columns, int numberOfColumns, int target) {
+		if (values.length != columns.length)
+			throw new IllegalArgumentException("Length of values must equal number of columns");
+		this.values = values;
+		this.columns = columns;
+		this.numberOfColumns = numberOfColumns;
+		this.target =  target;
+	}
 
 	public DiscreteSparseExemplar(int[] values, int[] columns, int numberOfColumns) {
 		if (values.length != columns.length + 1)
@@ -20,11 +30,12 @@ public class DiscreteSparseExemplar implements ExemplarInterface<Integer, Intege
 		this.values = values;
 		this.columns = columns;
 		this.numberOfColumns = numberOfColumns;
+		this.target =  values[values.length - 1];
 	}
 
 	@Override
 	public Integer getTarget() {
-		return values[values.length - 1];
+		return target;
 	}
 
 	@Override
@@ -35,7 +46,7 @@ public class DiscreteSparseExemplar implements ExemplarInterface<Integer, Intege
 	@Override
 	public List<Integer> getFeatures() {
 		List<Integer> features = new ArrayList<>(generateZeroFeatures());
-		IntStream.range(0, columns.length)
+		IntStream.range(0, featureLength())
 				.forEach(i -> features.set(columns[i], values[i]));
 		return features;
 	}

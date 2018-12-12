@@ -1,19 +1,16 @@
 package com.mangione.continuous.observationproviders;
 
-import com.mangione.continuous.observations.DoubleObservationFactory;
-import com.mangione.continuous.observations.ObservationInterface;
-import com.mangione.continuous.observations.StringObservationFactory;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
+import java.util.Iterator;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import com.mangione.continuous.observations.DoubleObservationFactory;
+import com.mangione.continuous.observations.ObservationInterface;
 
 public class ArrayObservationProviderTest {
 	private static final Double[][] DATA = new Double[][]{{3d}, {5d}, {6d}, {7d}};
@@ -21,13 +18,13 @@ public class ArrayObservationProviderTest {
 	private ArrayObservationProvider<Double, ObservationInterface<Double>> aop;
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		aop = new ArrayObservationProvider<>(DATA,
 				new DoubleObservationFactory());
 	}
 
 	@Test
-	public void iterator() throws Exception {
+	public void iterator() {
 		int number = 0;
 		for (ObservationInterface<Double> next : aop) {
 			validateData(DATA[number], next.getFeatures());
@@ -38,7 +35,7 @@ public class ArrayObservationProviderTest {
 
 
 	@Test
-	public void forEach() throws Exception {
+	public void forEach() {
 		final int[] number = {0};
 		aop.forEach(observation -> {
 			validateData(DATA[number[0]], observation.getFeatures());
@@ -49,7 +46,7 @@ public class ArrayObservationProviderTest {
 
 
 	@Test
-	public void fromProvider() throws Exception {
+	public void fromProvider() {
 		final int[] number = {0};
 
 		ArrayObservationProvider<Double, ObservationInterface<Double>> wrapped =
@@ -62,7 +59,7 @@ public class ArrayObservationProviderTest {
 	}
 
 	@Test
-	public void twoIteratorsWorks() throws Exception {
+	public void twoIteratorsWorks() {
 		final int[] number = {0};
 		aop.forEach(observation -> {
 			validateData(DATA[number[0]], observation.getFeatures());
@@ -80,7 +77,7 @@ public class ArrayObservationProviderTest {
 	}
 
 	@Test
-	public void remove() throws Exception {
+	public void remove() {
 		Iterator<ObservationInterface<Double>> iterator = aop.iterator();
 		iterator.next();
 		iterator.remove();
@@ -93,11 +90,11 @@ public class ArrayObservationProviderTest {
 
 	private Double[] toArray(Iterator<ObservationInterface<Double>> iterator) {
 		final List<Double> features = iterator.next().getFeatures();
-		return features.toArray(new Double[features.size()]);
+		return features.toArray(new Double[0]);
 	}
 
 	@Test
-	public void forEachRemaining() throws Exception {
+	public void forEachRemaining() {
 		Iterator<ObservationInterface<Double>> iterator = aop.iterator();
 		iterator.next();
 		final int[] innerNumber = {1};
@@ -109,7 +106,7 @@ public class ArrayObservationProviderTest {
 	}
 
 	@Test(expected = UnsupportedOperationException.class)
-	public void spliteratorNotSupported() throws Exception {
+	public void spliteratorNotSupported() {
 		aop.spliterator();
 	}
 
