@@ -15,8 +15,7 @@ public class RowFilteringObservationProvider<S, T extends ObservationInterface<S
 	private final Predicate<T> predicate;
 	private Integer numberOfLines;
 
-	public RowFilteringObservationProvider(ObservationProviderInterface<S, T> provider,
-			Predicate<T> predicate) {
+	public RowFilteringObservationProvider(ObservationProviderInterface<S, T> provider, Predicate<T> predicate) {
 		if (predicate == null)
 			throw new IllegalArgumentException("predicate can not be null");
 		this.provider = provider;

@@ -6,18 +6,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.mangione.continuous.observationproviders.ObservationProviderInterface;
 import com.mangione.continuous.observations.ExemplarInterface;
 
 public class ValueCounts {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ValueCounts.class);
 	private final List<Pair<Integer, Integer>> valueAndCounts;
 
 	public ValueCounts(ObservationProviderInterface<Integer, ? extends ExemplarInterface<Integer, Integer>> provider, int column) {
 		Map<Integer, Integer> valueToCount = new HashMap<>();
+		int linesProcessed = 0;
 		for (ExemplarInterface<Integer, Integer> next : provider) {
 			Integer value = next.getAllColumns().get(column);
 			int currentCount = valueToCount.computeIfAbsent(value, integer -> 0);
 			valueToCount.put(value, ++currentCount);
+			if (linesProcessed++ % 10000 == 0)
+				LOGGER.info(String.format("Lines processed: %d Values processed: %d",  linesProcessed, valueToCount.size()));
 		}
 		valueAndCounts = valueToCount.entrySet()
 				.stream()

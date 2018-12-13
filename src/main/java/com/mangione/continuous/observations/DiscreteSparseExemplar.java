@@ -2,12 +2,17 @@ package com.mangione.continuous.observations;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.IntBinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class DiscreteSparseExemplar implements ExemplarInterface<Integer, Integer> {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(DiscreteSparseExemplar.class);
 	private final int[] values;
 	private final int[] columns;
 	private final int numberOfColumns;
@@ -31,6 +36,10 @@ public class DiscreteSparseExemplar implements ExemplarInterface<Integer, Intege
 		this.columns = columns;
 		this.numberOfColumns = numberOfColumns;
 		this.target =  values[values.length - 1];
+		IntStream.range(0, columns.length)
+				.filter(i -> columns[i] >= numberOfColumns)
+				.forEach(x -> LOGGER.warn("Index out of bounds: " + x));
+
 	}
 
 	@Override
@@ -46,14 +55,15 @@ public class DiscreteSparseExemplar implements ExemplarInterface<Integer, Intege
 	@Override
 	public List<Integer> getFeatures() {
 		List<Integer> features = new ArrayList<>(generateZeroFeatures());
-		IntStream.range(0, featureLength())
+		IntStream.range(0, columns.length)
+				.filter(i -> columns[i] < numberOfColumns)
 				.forEach(i -> features.set(columns[i], values[i]));
 		return features;
 	}
 
 	private List<Integer> generateZeroFeatures() {
 		return Stream.generate(() -> 0)
-				.limit(featureLength())
+				.limit(numberOfColumns)
 				.collect(Collectors.toList());
 	}
 
