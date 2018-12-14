@@ -23,8 +23,12 @@ public class ValueCounts {
 			Integer value = next.getAllColumns().get(column);
 			int currentCount = valueToCount.computeIfAbsent(value, integer -> 0);
 			valueToCount.put(value, ++currentCount);
-			if (linesProcessed++ % 10000 == 0)
-				LOGGER.info(String.format("Lines processed: %d Values processed: %d",  linesProcessed, valueToCount.size()));
+			if (++linesProcessed % 100000 == 0) {
+				break;
+			}
+
+			if (linesProcessed % 1000 == 0)
+				LOGGER.info("Processed lines: " + linesProcessed);
 		}
 		valueAndCounts = valueToCount.entrySet()
 				.stream()

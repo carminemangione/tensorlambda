@@ -2,6 +2,11 @@ package com.mangione.continuous.observations;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+
 import org.junit.Test;
 
 public class ProxyValuesTest {
@@ -41,17 +46,20 @@ public class ProxyValuesTest {
 
 
 	@Test
-	public void toAndFromString() {
+	public void toAndFromString() throws IOException {
 		ProxyValues proxyValues = new ProxyValues();
 		proxyValues.add("one");
 		proxyValues.add("two");
 
-		ProxyValues reconstituted = ProxyValues.fromString(proxyValues.toString());
-		assertEquals(2, reconstituted.size());
-		assertEquals(Integer.valueOf(0), reconstituted.getIndex("one"));
-		assertEquals(Integer.valueOf(1), reconstituted.getIndex("two"));
-		assertEquals("one", reconstituted.getName(0));
-		assertEquals("two", reconstituted.getName(1));
+		try (ByteArrayInputStream bais = new ByteArrayInputStream(proxyValues.toString().getBytes())) {
+			try (Reader reader = new InputStreamReader(bais)) {
+				ProxyValues reconstituted = ProxyValues.fromReader(reader);
+				assertEquals(2, reconstituted.size());
+				assertEquals(Integer.valueOf(0), reconstituted.getIndex("one"));
+				assertEquals(Integer.valueOf(1), reconstituted.getIndex("two"));
+				assertEquals("one", reconstituted.getName(0));
+				assertEquals("two", reconstituted.getName(1));
+			}
+		}
 	}
-
 }

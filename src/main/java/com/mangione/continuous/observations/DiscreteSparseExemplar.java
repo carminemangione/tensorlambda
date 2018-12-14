@@ -27,7 +27,7 @@ public class DiscreteSparseExemplar implements ExemplarInterface<Integer, Intege
 		this.target =  target;
 	}
 
-	public DiscreteSparseExemplar(int[] values, int[] columns, int numberOfColumns) {
+	DiscreteSparseExemplar(int[] values, int[] columns, int numberOfColumns) {
 		if (values.length != columns.length + 1)
 			throw new IllegalArgumentException("Length of values must be one greater that columns for target value");
 		if (numberOfColumns < 1)
