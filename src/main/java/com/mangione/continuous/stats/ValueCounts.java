@@ -35,7 +35,7 @@ public class ValueCounts {
 		.map(entry -> new Pair<Integer, Integer>(entry.getKey(), entry.getValue()))
 		.collect(Collectors.toList());
 
-		valueAndCounts.sort(Comparator.comparing(Pair::getFirst));
+		valueAndCounts.sort(Comparator.comparing(Pair::getSecond));
 
 	}
 
