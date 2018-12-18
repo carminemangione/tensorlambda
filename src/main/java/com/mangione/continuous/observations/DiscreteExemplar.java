@@ -10,6 +10,14 @@ public class DiscreteExemplar<T extends Number> implements ExemplarInterface<T, 
 	private final List<T> allColumns;
 	private final int targetColumnIndex;
 
+	public static <F extends Number> DiscreteExemplar<F> getExemplarTargetLastColumn(List<F> features) {
+		return new DiscreteExemplar<>(features);
+	}
+
+	public static <F extends Number> DiscreteExemplar<F> getExemplarTargetWithColumn(List<F> allColumns, int targetColumnIndex) {
+		return new DiscreteExemplar<>(allColumns, targetColumnIndex);
+	}
+
 	public DiscreteExemplar(List<T> features, T continuousValue, int target) {
 		this.allColumns = new ArrayList<>(features);
 		this.allColumns.add(continuousValue);
@@ -19,11 +27,17 @@ public class DiscreteExemplar<T extends Number> implements ExemplarInterface<T, 
 		targetColumnIndex = features.size();
 	}
 
-	public DiscreteExemplar(List<T> features) {
-		this.allColumns = features;
-		this.targetColumnIndex = features.size() - 1;
-		this.features = features.subList(0, targetColumnIndex);
-		this.continuousValue = features.get(targetColumnIndex);
+	private DiscreteExemplar(List<T> allColumns) {
+		this(allColumns, allColumns.size() - 1);
+	}
+
+	private DiscreteExemplar(List<T> allColumns, int targetColumnIndex) {
+		if (targetColumnIndex < 0 || targetColumnIndex >= allColumns.size())
+			throw new IllegalArgumentException(String.format("Invalid column index %d as size is %d", targetColumnIndex, allColumns.size()));
+		this.allColumns = new ArrayList<>(allColumns);
+		this.features = new ArrayList<>(allColumns);
+		this.continuousValue = this.features.remove(targetColumnIndex);
+		this.targetColumnIndex = targetColumnIndex;
 		this.target = this.continuousValue.intValue();
 	}
 

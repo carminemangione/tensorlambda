@@ -7,24 +7,24 @@ import java.util.function.Consumer;
 import javax.annotation.Nonnull;
 
 import com.mangione.continuous.observations.DiscreteExemplar;
-import com.mangione.continuous.observations.ObservationFactoryInterface;
 import com.mangione.continuous.observations.ObservationInterface;
 
-public class ObservationToExemplarProvider extends ObservationProvider<Double,DiscreteExemplar<Double>> {
-	private final ObservationProviderInterface<Double, ObservationInterface<Double>> provider;
+public class ObservationToExemplarProvider<T extends Number> implements ObservationProviderInterface<T, DiscreteExemplar<T>> {
+	private final ObservationProviderInterface<T, ? extends ObservationInterface<T>> provider;
+	private final int targetColumnIndex;
 
-	public ObservationToExemplarProvider(ObservationProviderInterface<Double, ObservationInterface<Double>> provider,
-			ObservationFactoryInterface<Double, ? extends DiscreteExemplar<Double>> factory) {
-		super(factory);
+	public ObservationToExemplarProvider(ObservationProviderInterface<T, ? extends ObservationInterface<T>> provider,
+			int targetColumnIndex) {
 		this.provider = provider;
+		this.targetColumnIndex = targetColumnIndex;
 	}
 
 	@Nonnull
 	@Override
-	public Iterator<DiscreteExemplar<Double>> iterator() {
-		return new Iterator<DiscreteExemplar<Double>>() {
+	public Iterator<DiscreteExemplar<T>> iterator() {
+		return new Iterator<DiscreteExemplar<T>>() {
 
-			private final Iterator<ObservationInterface<Double>> iterator = provider.iterator();
+			private final Iterator<? extends ObservationInterface<T>> iterator = provider.iterator();
 
 			@Override
 			public boolean hasNext() {
@@ -32,19 +32,20 @@ public class ObservationToExemplarProvider extends ObservationProvider<Double,Di
 			}
 
 			@Override
-			public DiscreteExemplar<Double> next() {
-				return new DiscreteExemplar<>(iterator.next().getFeatures());
+			public DiscreteExemplar<T> next() {
+				return DiscreteExemplar.getExemplarTargetWithColumn(iterator.next().getFeatures(), targetColumnIndex);
 			}
 		};
 	}
 
 	@Override
-	public void forEach(Consumer<? super DiscreteExemplar<Double>> action) {
-		provider.iterator().forEachRemaining(observation -> action.accept(new DiscreteExemplar<>(observation.getFeatures())));
+	public void forEach(Consumer<? super DiscreteExemplar<T>> action) {
+		provider.iterator().forEachRemaining(observation -> action.accept(
+				DiscreteExemplar.getExemplarTargetWithColumn(observation.getFeatures(), targetColumnIndex)));
 	}
 
 	@Override
-	public Spliterator<DiscreteExemplar<Double>> spliterator() {
+	public Spliterator<DiscreteExemplar<T>> spliterator() {
 		throw new UnsupportedOperationException();
 	}
 }

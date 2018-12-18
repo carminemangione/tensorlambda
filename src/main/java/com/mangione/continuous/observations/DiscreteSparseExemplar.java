@@ -61,6 +61,13 @@ public class DiscreteSparseExemplar implements ExemplarInterface<Integer, Intege
 		return features;
 	}
 
+	@Override
+	public List<Integer> getAllColumns() {
+		List<Integer> features = getFeatures();
+		features.add(getTarget());
+		return features;
+	}
+
 	private List<Integer> generateZeroFeatures() {
 		return Stream.generate(() -> 0)
 				.limit(numberOfColumns)
@@ -69,12 +76,5 @@ public class DiscreteSparseExemplar implements ExemplarInterface<Integer, Intege
 
 	private int featureLength() {
 		return numberOfColumns - 1;
-	}
-
-	@Override
-	public List<Integer> getAllColumns() {
-		List<Integer> features = getFeatures();
-		features.add(getTarget());
-		return features;
 	}
 }
