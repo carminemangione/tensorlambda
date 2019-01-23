@@ -8,7 +8,7 @@ import java.util.stream.StreamSupport;
 import com.mangione.continuous.observationproviders.ObservationProvider;
 import com.mangione.continuous.observations.ObservationInterface;
 
-public class DoubleUnsupervisedModelProvider{
+public class DoubleUnsupervisedModelProvider implements DataProvider<double[]> {
 	private final double[][] inputArray;
 
 
@@ -25,13 +25,21 @@ public class DoubleUnsupervisedModelProvider{
 		return StreamSupport.stream(iterable.spliterator(), false);
 	}
 
+	@Override
+	public int getNumberOfLines() {
+		return inputArray.length;
+	}
+
+	@Override
 	public double[] get(int row) {
 		return inputArray[row];
 	}
 
-	public int getNumberOfLines() {
-		return inputArray.length;
+	@Override
+	public int getLengthOfObservation() {
+		return inputArray[0].length;
 	}
+
 
 	private double[][] buildDoubleArrayFromProvider(ObservationProvider<? extends Number,
 			? extends ObservationInterface<? extends Number>> observationProvider) {

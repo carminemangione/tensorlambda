@@ -4,13 +4,13 @@ import java.util.List;
 
 import org.apache.commons.math3.random.MersenneTwister;
 
-public class KModes implements DistanceMeasurer{
+public class KModes implements DistanceMeasurer<double[]>{
 
 
 	private MersenneTwister random = new MersenneTwister();
 
 	@Override
-	public double distanceToCentroid(Cluster cluster, double[] observation) {
+	public double distanceToCentroid(Cluster<double[]> cluster, double[] observation) {
 		double[] centroid = cluster.getCentroid();
 		int dist = 0;
 		for(int i = 0; i < observation.length; i++) {
@@ -21,7 +21,7 @@ public class KModes implements DistanceMeasurer{
 	}
 
 	@Override
-	public void updateCentroid(Cluster cluster) {
+	public void updateCentroid(Cluster<double[]> cluster) {
 		List<double[]> observations = cluster.getObservations();
 		if(observations.isEmpty()) {
 			cluster.setCentroid(null);

@@ -1,19 +1,17 @@
 package com.mangione.continuous.classifiers.unsupervised;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.math3.ml.distance.EuclideanDistance;
 
 
-public class Cluster {
+public class Cluster<S> {
 
 
 	private final int numDimensions;
-    private double[] centroid;
-    private final List<double[]> observations = Collections.synchronizedList(new ArrayList<>());
+    private S centroid;
+    private final List<S> observations = new ArrayList<>();
     private final EuclideanDistance euclideanDistance = new EuclideanDistance();
 
     public Cluster(int numDimensions) {
@@ -21,73 +19,73 @@ public class Cluster {
         this.numDimensions = numDimensions;
     }
 
-    public double[] getCentroid() {
+    public S getCentroid() {
         return centroid;
     }
 
-    public void add(double[] observation) {
+    public void add(S observation) {
         observations.add(observation);
        // updateCentroid();
     }
 
-    public List<double[]> getObservations() {
-        return new ArrayList<>(observations);
+    public List<S> getObservations() {
+        return observations;
     }
 
-    public void remove(double[] observation) {
+    public void remove(S observation) {
         observations.remove(observation);
        // updateCentroid();
     }
 
     public double distanceToCentroid(double[] observation) {
     	try {
-		    return euclideanDistance.compute(centroid, observation);
+		    return euclideanDistance.compute((double[]) centroid, observation);
 	    } catch(Throwable e) {
 		    System.out.println(centroid);
-		    System.out.println(observation);
+//		    System.out.println(observation);
 		    e.printStackTrace();
 		    System.exit(0);
 	    }
 	    return 0.0;
     }
 
-    public double withinClusterSumOfSquares() {
-        final double[] sumOfSquares = {0};
-        observations.forEach(x->
-                sumOfSquares[0] +=
-                        Math.pow(euclideanDistance.compute(centroid, x), 2));
-        return sumOfSquares[0];
-    }
+//    public double withinClusterSumOfSquares() {
+//        final double[] sumOfSquares = {0};
+//        observations.forEach(x->
+//                sumOfSquares[0] +=
+//                        Math.pow(euclideanDistance.compute(centroid, x), 2));
+//        return sumOfSquares[0];
+//    }
 
-    public void updateCentroid() {
-        if (observations.isEmpty()) {
-            centroid = null;
-        } else {
-            double[] sumsOfDimensions = new double[numDimensions];
-            observations.forEach(x -> {
-                for (int i = 0; i < sumsOfDimensions.length; i++) {
-	                try {
-		                sumsOfDimensions[i] += x[i] / observations.size();
-	                } catch (Throwable e) {
-						if(x == null)
-							continue;
-	                }
-                }
-            });
-            centroid = sumsOfDimensions;
-        }
-    }
+//    void updateCentroid() {
+//        if (observations.isEmpty()) {
+//            centroid = null;
+//        } else {
+//            double[] sumsOfDimensions = new double[numDimensions];
+//            observations.forEach(x -> {
+//                for (int i = 0; i < sumsOfDimensions.length; i++) {
+//	                try {
+//		                sumsOfDimensions[i] += x[i] / observations.size();
+//	                } catch (Throwable e) {
+//						if(x == null)
+//							continue;
+//	                }
+//                }
+//            });
+//            centroid = sumsOfDimensions;
+//        }
+//    }
 
     @Override
 	public String toString() {
     	return observations.size() + "";
     }
 
-	public void setCentroid(double[] obs) {
+	void setCentroid(S obs) {
 		this.centroid = obs;
 	}
 
-	public int getNumDimensions() {
+	int getNumDimensions() {
 		return numDimensions;
 	}
 }

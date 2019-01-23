@@ -3,18 +3,24 @@ package com.mangione.continuous.classifiers.unsupervised;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mangione.continuous.model.modelproviders.DoubleUnsupervisedModelProvider;
+import com.mangione.continuous.model.modelproviders.DataProvider;
 import com.mangione.continuous.observations.Observation;
 
 
-public class KClustering<T extends Observation> {
+public class KClustering<S, T extends Observation> {
 
-	private final List<Cluster> clusters = new ArrayList<>();
+	private final List<Cluster<S>> clusters = new ArrayList<>();
 	private final KMeansListener<T> listener;
-	private final DoubleUnsupervisedModelProvider provider;
+	private final DataProvider<S> provider;
 	private final DistanceMeasurer distanceMeasurer;
 
-	public KClustering(int numberOfClusters, DoubleUnsupervisedModelProvider provider, KMeansListener<T> listener, DistanceMeasurer distanceMeasurer) throws Exception {
+	public KClustering(){
+		this.listener = null;
+		this.provider = null;
+		this.distanceMeasurer = null;
+	}
+
+	private KClustering(int numberOfClusters, DataProvider provider, KMeansListener<T> listener, DistanceMeasurer distanceMeasurer) {
 		this.listener = listener;
 		this.provider = provider;
 		this.distanceMeasurer = distanceMeasurer;
@@ -22,19 +28,19 @@ public class KClustering<T extends Observation> {
 
 		clusters.forEach(distanceMeasurer::updateCentroid);
 
-		if (listener != null)
-			listener.reassignmentCompleted(clusters);
+		//if (listener != null)
+		//	listener.reassignmentCompleted(clusters);
 
 		addThePointsToTheInitialClusters(numberOfClusters, provider.getNumberOfLines());
 
 		loopThroughJigglingOnCentroidsAndReCluster(1);
 	}
 
-	public KClustering(int numberOfClusters, DoubleUnsupervisedModelProvider provider, DistanceMeasurer distanceMeasurer) throws Exception {
+	public KClustering(int numberOfClusters, DataProvider provider, DistanceMeasurer distanceMeasurer) {
 		this(numberOfClusters, provider, null, distanceMeasurer);
 	}
 
-	public KClustering(int numberOfClusters, DoubleUnsupervisedModelProvider provider, int numThreads, DistanceMeasurer distanceMeasurer) throws Exception {
+	public KClustering(int numberOfClusters, DataProvider provider, int numThreads, DistanceMeasurer distanceMeasurer) throws Exception {
 		listener = null;
 		this.distanceMeasurer = distanceMeasurer;
 		ArrayList<Thread> threads = new ArrayList<>();
@@ -60,17 +66,17 @@ public class KClustering<T extends Observation> {
 
 	}
 
-	public double getWithinClusterSumOfSquares() {
-		final double[] wcss = {0};
-		clusters.forEach(cluster-> wcss[0] += cluster.withinClusterSumOfSquares());
-		return wcss[0];
-	}
+//	public double getWithinClusterSumOfSquares() {
+//		final double[] wcss = {0};
+//		clusters.forEach(cluster-> wcss[0] += cluster.withinClusterSumOfSquares());
+//		return wcss[0];
+//	}
 
-	public List<Cluster> getClusters() {
+	public List<Cluster<S>> getClusters() {
 		return clusters;
 	}
 
-	public int getClusterIndex(double[] observation) {
+	int getClusterIndex(double[] observation) {
 		double distance = Double.MAX_VALUE;
 		int index = 0;
 		for (int j = 0; j < clusters.size(); j++) {
@@ -82,8 +88,8 @@ public class KClustering<T extends Observation> {
 		return index;
 	}
 
-	private void loopThroughJigglingOnCentroidsAndReCluster(int numThreads) throws InterruptedException {
-		boolean rejiggled = false;
+	private void loopThroughJigglingOnCentroidsAndReCluster(int numThreads) {
+		boolean rejiggled;
 		do {
 			rejiggled = false;
 			clusters.forEach(distanceMeasurer::updateCentroid);
@@ -92,8 +98,8 @@ public class KClustering<T extends Observation> {
 				rejiggled = processTheObservationsForThisCluster(i) || rejiggled;
 			}
 
-			if (listener != null)
-				listener.reassignmentCompleted(clusters);
+			//if (listener != null)
+			//	listener.reassignmentCompleted(clusters);
 
 		} while (rejiggled);
 
@@ -101,34 +107,34 @@ public class KClustering<T extends Observation> {
 
 	private boolean processTheObservationsForThisCluster(int i) {
 		boolean rejiggled = false;
-		final Cluster currentCluster = clusters.get(i);
-		List<double[]> observationsToMove = currentCluster.getObservations();
-		for (double[] observation : observationsToMove) {
+		final Cluster<S> currentCluster = clusters.get(i);
+		List<S> observationsToMove = currentCluster.getObservations();
+		for (S observation : observationsToMove) {
 			if(observation == null)
 				continue;
 			double currentDistance = distanceMeasurer.distanceToCentroid(currentCluster, observation);
 			Cluster closest = findCloserClusterIfExists(i, observation, currentDistance);
 			rejiggled = moveObservationToCloserCluster(currentCluster, observation, closest) || rejiggled;
-			if (rejiggled && listener != null)
-				listener.reassignmentCompleted(clusters);
+			//if (rejiggled && listener != null)
+			//	listener.reassignmentCompleted(clusters);
 		}
 		return rejiggled;
 	}
 
-	private boolean moveObservationToCloserCluster(Cluster currentCluster, double[] observation, Cluster closest) {
+	private boolean moveObservationToCloserCluster(Cluster currentCluster, S observation, Cluster closest) {
 		boolean rejiggled = false;
 		if (closest != null && closest.getObservations().size() > 1) {
 			currentCluster.remove(observation);
 			closest.add(observation);
 			rejiggled = true;
-			if (listener != null)
-				listener.reassignmentCompleted(clusters);
+			//if (listener != null)
+			//	listener.reassignmentCompleted(clusters);
 		}
 		return rejiggled;
 	}
 
-	private Cluster findCloserClusterIfExists(int i, double[] observation, double currentDistance) {
-		Cluster closest = null;
+	private Cluster<S> findCloserClusterIfExists(int i, S observation, double currentDistance) {
+		Cluster<S> closest = null;
 		for (int j = 0; j < clusters.size(); j++) {
 			if (i != j) {
 				if (distanceMeasurer.distanceToCentroid(clusters.get(j), observation) < currentDistance) {
@@ -149,10 +155,10 @@ public class KClustering<T extends Observation> {
 		return list.toString();
 	}
 
-	private void addThePointsToTheInitialClusters(int start, int length) throws Exception {
+	private void addThePointsToTheInitialClusters(int start, int length) {
 
 		for(int i = start; i < start + length && i < provider.getNumberOfLines(); i++) {
-			double[] nextObservation = provider.get(i);
+			S nextObservation = provider.get(i);
 			if(nextObservation == null)
 				continue;
 			Cluster closest = null;
@@ -170,10 +176,10 @@ public class KClustering<T extends Observation> {
 		}
 	}
 
-	void initializeClusters(int numberOfClusters, List<Cluster> clusters, DoubleUnsupervisedModelProvider provider) {
+	private void initializeClusters(int numberOfClusters, List<Cluster<S>> clusters, DataProvider<S> provider) {
 		for (int i = 0; i < numberOfClusters; i++) {
-			final double[] next = provider.get(i);
-			final Cluster cluster = new Cluster(next.length);
+			final S next = provider.get(i);
+			final Cluster<S> cluster = new Cluster<>(provider.getLengthOfObservation());
 			cluster.add(next);
 			clusters.add(cluster);
 		}
@@ -184,7 +190,7 @@ public class KClustering<T extends Observation> {
 		private final int start;
 		private final int length;
 
-		public MultiThreadingHelper(int start, int length) {
+		MultiThreadingHelper(int start, int length) {
 			this.start = start;
 			this.length = length;
 		}

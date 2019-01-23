@@ -1,9 +1,8 @@
 package com.mangione.continuous.classifiers.unsupervised;
 
-import org.apache.commons.math3.random.MersenneTwister;
 
-public interface DistanceMeasurer {
-	double distanceToCentroid(Cluster cluster, double[] observation);
-	void updateCentroid(Cluster cluster);
+public interface DistanceMeasurer<S> {
+	double distanceToCentroid(Cluster<S> cluster, S observation);
+	void updateCentroid(Cluster<S> cluster);
 
 }
