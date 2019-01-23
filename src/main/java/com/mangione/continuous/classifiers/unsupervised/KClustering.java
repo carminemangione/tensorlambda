@@ -108,23 +108,25 @@ public class KClustering<S, T extends Observation> {
 	private boolean processTheObservationsForThisCluster(int i) {
 		boolean rejiggled = false;
 		final Cluster<S> currentCluster = clusters.get(i);
+		List<S> tempList = new ArrayList<>();
 		List<S> observationsToMove = currentCluster.getObservations();
 		for (S observation : observationsToMove) {
 			if(observation == null)
 				continue;
 			double currentDistance = distanceMeasurer.distanceToCentroid(currentCluster, observation);
 			Cluster closest = findCloserClusterIfExists(i, observation, currentDistance);
-			rejiggled = moveObservationToCloserCluster(currentCluster, observation, closest) || rejiggled;
+			rejiggled = moveObservationToCloserCluster(tempList, observation, closest) || rejiggled;
 			//if (rejiggled && listener != null)
 			//	listener.reassignmentCompleted(clusters);
 		}
+		tempList.forEach(currentCluster::remove);
 		return rejiggled;
 	}
 
-	private boolean moveObservationToCloserCluster(Cluster currentCluster, S observation, Cluster closest) {
+	private boolean moveObservationToCloserCluster(List<S> currentCluster, S observation, Cluster closest) {
 		boolean rejiggled = false;
 		if (closest != null && closest.getObservations().size() > 1) {
-			currentCluster.remove(observation);
+			currentCluster.add(observation);
 			closest.add(observation);
 			rejiggled = true;
 			//if (listener != null)

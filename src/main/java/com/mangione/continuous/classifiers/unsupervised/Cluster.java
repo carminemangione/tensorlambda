@@ -41,8 +41,6 @@ public class Cluster<S> {
     	try {
 		    return euclideanDistance.compute((double[]) centroid, observation);
 	    } catch(Throwable e) {
-		    System.out.println(centroid);
-//		    System.out.println(observation);
 		    e.printStackTrace();
 		    System.exit(0);
 	    }
