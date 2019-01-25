@@ -7,7 +7,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import com.mangione.continuous.observationproviders.ArrayObservationProvider;
-import com.mangione.continuous.observations.DoubleObservationFactory;
+import com.mangione.continuous.observations.dense.DoubleObservationFactory;
 import com.mangione.continuous.observations.ObservationInterface;
 
 public class DoubleUnsupervisedModelProviderTest {

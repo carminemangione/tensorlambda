@@ -1,7 +1,9 @@
-package com.mangione.continuous.observations;
+package com.mangione.continuous.observations.dense;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.mangione.continuous.observations.ExemplarFactoryInterface;
 
 public class DiscreteExemplarFactory<S extends Number> implements ExemplarFactoryInterface<S, DiscreteExemplar<S>> {
 	@Override

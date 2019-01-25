@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 
-import com.mangione.continuous.observations.DiscreteExemplar;
+import com.mangione.continuous.observations.dense.DiscreteExemplar;
 import com.mangione.continuous.observations.ObservationInterface;
 
 public class ObservationToExemplarProvider<T extends Number> implements ObservationProviderInterface<T, DiscreteExemplar<T>> {

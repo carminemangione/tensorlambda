@@ -13,8 +13,8 @@ import org.junit.Test;
 
 import com.mangione.continuous.model.modelproviders.DoubleUnsupervisedModelProvider;
 import com.mangione.continuous.observationproviders.ArrayObservationProvider;
-import com.mangione.continuous.observations.DoubleObservationFactory;
-import com.mangione.continuous.observations.Observation;
+import com.mangione.continuous.observations.dense.DoubleObservationFactory;
+import com.mangione.continuous.observations.dense.Observation;
 import com.mangione.continuous.observations.ObservationInterface;
 
 public class KModesTest {

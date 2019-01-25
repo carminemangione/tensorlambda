@@ -7,8 +7,8 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
-import com.mangione.continuous.observations.DiscreteExemplar;
-import com.mangione.continuous.observations.Observation;
+import com.mangione.continuous.observations.dense.DiscreteExemplar;
+import com.mangione.continuous.observations.dense.Observation;
 
 public class ColumnFilteringObservationProviderTest {
 	@Test

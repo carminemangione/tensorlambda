@@ -1,6 +1,6 @@
 package com.mangione.continuous.datagenerators;
 
-import com.mangione.continuous.observations.DiscreteExemplar;
+import com.mangione.continuous.observations.dense.DiscreteExemplar;
 import org.apache.commons.math3.random.MersenneTwister;
 
 import java.util.ArrayList;

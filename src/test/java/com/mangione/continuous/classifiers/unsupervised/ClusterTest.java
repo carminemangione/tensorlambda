@@ -8,8 +8,6 @@ import java.util.List;
 import org.apache.commons.math3.ml.distance.EuclideanDistance;
 import org.junit.Test;
 
-import com.mangione.continuous.observations.Observation;
-
 
 public class ClusterTest {
     @Test

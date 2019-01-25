@@ -1,4 +1,4 @@
-package com.mangione.continuous.observations;
+package com.mangione.continuous.observations.dense;
 
 import static org.junit.Assert.*;
 
@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
+
+import com.mangione.continuous.observations.dense.DiscreteExemplar;
 
 public class DiscreteExemplarTest {
 	@Test
@@ -48,4 +50,11 @@ public class DiscreteExemplarTest {
 	public void targetColumnTooBigExcepts()  {
 		DiscreteExemplar.getExemplarTargetWithColumn(Collections.singletonList(1), 20);
 	}
+
+	@Test
+	public void getColumnsDoesNotIncludeTargetWhenNotAtEnd() {
+		DiscreteExemplar<Integer> exemplarTargetLastColumn = DiscreteExemplar.getExemplarTargetWithColumn(Arrays.asList(1, 2, 3, 4),2);
+		assertEquals(Arrays.asList(1, 2, 4), exemplarTargetLastColumn.getFeatures());
+	}
+
 }

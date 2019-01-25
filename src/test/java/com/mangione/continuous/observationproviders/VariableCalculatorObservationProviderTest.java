@@ -7,16 +7,14 @@ import static org.junit.Assert.assertFalse;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
-import org.junit.Test;
 
 import com.mangione.continuous.calculators.VariableCalculations;
 import com.mangione.continuous.calculators.VariableCalculator;
-import com.mangione.continuous.observations.DoubleObservationFactory;
-import com.mangione.continuous.observations.Observation;
+import com.mangione.continuous.observations.dense.DoubleObservationFactory;
+import com.mangione.continuous.observations.dense.Observation;
 import com.mangione.continuous.observations.ObservationInterface;
 
 public class VariableCalculatorObservationProviderTest {

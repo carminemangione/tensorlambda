@@ -1,7 +1,7 @@
 package com.mangione.continuous.demos.encog.abalone;
 
 import com.mangione.continuous.observationproviders.CsvObservationProvider;
-import com.mangione.continuous.observations.Observation;
+import com.mangione.continuous.observations.dense.Observation;
 import com.mangione.continuous.observations.ObservationInterface;
 import org.encog.ConsoleStatusReportable;
 import org.encog.Encog;

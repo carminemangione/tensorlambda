@@ -16,8 +16,8 @@ import org.encog.util.kmeans.Centroid;
 
 import com.mangione.continuous.observationproviders.ArrayObservationProvider;
 import com.mangione.continuous.observationproviders.ObservationProviderInterface;
-import com.mangione.continuous.observations.DiscreteExemplar;
-import com.mangione.continuous.observations.DiscreteExemplarFactory;
+import com.mangione.continuous.observations.dense.DiscreteExemplar;
+import com.mangione.continuous.observations.dense.DiscreteExemplarFactory;
 
 public class MLDataSetProviderDelegate implements MLDataSet {
 

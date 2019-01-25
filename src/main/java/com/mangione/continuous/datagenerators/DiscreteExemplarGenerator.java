@@ -1,6 +1,6 @@
 package com.mangione.continuous.datagenerators;
 
-import com.mangione.continuous.observations.DiscreteExemplar;
+import com.mangione.continuous.observations.dense.DiscreteExemplar;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.ejml.simple.SimpleMatrix;

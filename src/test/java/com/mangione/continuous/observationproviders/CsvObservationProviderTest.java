@@ -2,7 +2,7 @@ package com.mangione.continuous.observationproviders;
 
 import com.mangione.continuous.observations.ProxyValues;
 import com.mangione.continuous.observations.ObservationInterface;
-import com.mangione.continuous.observations.StringObservationFactory;
+import com.mangione.continuous.observations.dense.StringObservationFactory;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;

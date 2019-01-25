@@ -1,7 +1,9 @@
-package com.mangione.continuous.observations;
+package com.mangione.continuous.observations.dense;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.mangione.continuous.observations.ExemplarInterface;
 
 public class DiscreteExemplar<T extends Number> implements ExemplarInterface<T, Integer> {
 	private final List<T> features;
@@ -10,6 +12,7 @@ public class DiscreteExemplar<T extends Number> implements ExemplarInterface<T, 
 	private final List<T> allColumns;
 	private final int targetColumnIndex;
 
+	@SuppressWarnings("WeakerAccess")
 	public static <F extends Number> DiscreteExemplar<F> getExemplarTargetLastColumn(List<F> features) {
 		return new DiscreteExemplar<>(features);
 	}

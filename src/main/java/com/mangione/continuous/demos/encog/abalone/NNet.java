@@ -25,7 +25,7 @@ import com.mangione.continuous.demos.encog.ColumnDefinitionFunction;
 import com.mangione.continuous.demos.encog.ColumnDefinitionFunctionFactory;
 import com.mangione.continuous.demos.encog.NamedVersatileDataSource;
 import com.mangione.continuous.observationproviders.CsvObservationProvider;
-import com.mangione.continuous.observations.Observation;
+import com.mangione.continuous.observations.dense.Observation;
 import com.mangione.continuous.observations.ObservationInterface;
 
 public class NNet {

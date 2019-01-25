@@ -12,7 +12,7 @@ import java.util.Iterator;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.mangione.continuous.observations.Observation;
+import com.mangione.continuous.observations.dense.Observation;
 
 public class RowFilteringObservationProviderTest {
 	private final static Integer[][] DATA = {{2, 3}, {4, 6}, {2, 0}};

@@ -1,10 +1,9 @@
 package com.mangione.continuous.classifiers.supervised;
 
-import com.mangione.continuous.classifiers.supervised.NaiveBayesClassifier;
 import com.mangione.continuous.observationproviders.ArrayObservationProvider;
 import com.mangione.continuous.observationproviders.ObservationProvider;
-import com.mangione.continuous.observations.DiscreteExemplar;
-import com.mangione.continuous.observations.DiscreteExemplarFactory;
+import com.mangione.continuous.observations.dense.DiscreteExemplar;
+import com.mangione.continuous.observations.dense.DiscreteExemplarFactory;
 import com.mangione.continuous.observations.ExemplarInterface;
 import org.junit.Test;
 

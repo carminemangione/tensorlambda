@@ -12,7 +12,7 @@ import Jama.Matrix;
 import Jama.QRDecomposition;
 import com.mangione.continuous.model.SupervisedModelInterace;
 import com.mangione.continuous.observationproviders.ObservationProviderInterface;
-import com.mangione.continuous.observations.DiscreteExemplar;
+import com.mangione.continuous.observations.dense.DiscreteExemplar;
 import com.mangione.continuous.observations.ObservationInterface;
 
 public class LinearRegression implements SupervisedModelInterace<Double, Integer, DiscreteExemplar<Double>> {

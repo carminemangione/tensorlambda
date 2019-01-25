@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.mangione.continuous.model.modelproviders.DataProvider;
-import com.mangione.continuous.observations.Observation;
+import com.mangione.continuous.observations.dense.Observation;
 
 
 public class KClustering<S, T extends Observation> {
