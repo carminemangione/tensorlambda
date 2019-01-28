@@ -143,7 +143,8 @@ public class KClustering<S extends Set<Integer>, T extends Observation> {
 
 			if(i == 3 && j == 0) {
 				System.out.println("Current Distance: " + currentDistance);
-				System.out.println("CLoseset : " + distanceMeasurer.distanceToCentroid(closest, observation));
+				if(closest != null)
+					System.out.println("CLoseset : " + distanceMeasurer.distanceToCentroid(closest, observation));
 			}
 
 			rejiggled = moveObservationToCloserCluster(tempList, observation, closest) || rejiggled;
