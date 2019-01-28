@@ -110,7 +110,9 @@ public class KClustering<S extends Set<Integer>, T extends Observation> {
 	}
 
 
+
 	private void checkCorrectAnswer(List<Cluster<S>> clusters) {
+
 		SparseKModes kModes = new SparseKModes();
 		for (int i = 0; i < clusters.size(); i++) {
 			for (S elem : clusters.get(i).getObservations()) {
