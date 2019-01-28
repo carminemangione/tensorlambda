@@ -134,6 +134,7 @@ public class KClustering<S extends Set<Integer>, T extends Observation> {
 		boolean rejiggled = false;
 		final Cluster<S> currentCluster = clusters.get(i);
 		List<S> tempList = new ArrayList<>();
+		int index = 0;
 		List<S> observationsToMove = currentCluster.getObservations();
 		for(int j = 0; j < observationsToMove.size(); j++) {
 			S observation = observationsToMove.get(j);
@@ -143,25 +144,27 @@ public class KClustering<S extends Set<Integer>, T extends Observation> {
 			double currentDistance = distanceMeasurer.distanceToCentroid(currentCluster, observation);
 			Cluster closest = findCloserClusterIfExists(i, observation, currentDistance);
 
-			if(i == 3 && j == 0) {
-				System.out.println("Current Distance: " + currentDistance);
-				if(closest != null) {
-					System.out.println("Closeset : " + distanceMeasurer.distanceToCentroid(closest, observation));
-					System.out.println(clusters.indexOf(closest));
-				}
-			}
+//			if(i == 3 && j == 0) {
+//				System.out.println("Current Distance: " + currentDistance);
+//				if(closest != null) {
+//					System.out.println("Closeset : " + distanceMeasurer.distanceToCentroid(closest, observation));
+//					System.out.println(clusters.indexOf(closest));
+//					index = clusters.indexOf(closest)
+//				}
+//			}
 
 			rejiggled = moveObservationToCloserCluster(tempList, observation, closest) || rejiggled;
 			//if (rejiggled && listener != null)
 			//	listener.reassignmentCompleted(clusters);
 		}
 		tempList.forEach(currentCluster::remove);
-		if(i == 3) {
-			System.out.println(distanceMeasurer.distanceToCentroid(currentCluster, observationsToMove.get(0)));
-			System.out.println(currentCluster.getObservations().contains(observationsToMove.get(0)));
-			System.out.println(clusters.get(2).getObservations().contains(observationsToMove.get(0)));
-			System.out.println(tempList.contains(observationsToMove.get(0)));
-		}
+//		if(i == 3) {
+//			System.out.println(distanceMeasurer.distanceToCentroid(currentCluster, observationsToMove.get(0)));
+//			System.out.println(currentCluster.getObservations().contains(observationsToMove.get(0)));
+//			System.out.println(clusters.get(index).getObservations().contains(observationsToMove.get(0)));
+//			System.out.println(tempList.contains(observationsToMove.get(0)));
+//		}
+		System.out.println(rejiggled);
 		return rejiggled;
 	}
 
