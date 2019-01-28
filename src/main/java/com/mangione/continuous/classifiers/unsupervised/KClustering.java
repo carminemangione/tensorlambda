@@ -98,7 +98,6 @@ public class KClustering<S extends Set<Integer>, T extends Observation> {
 			for (int i = 0; i < clusters.size(); i++) {
 				rejiggled = processTheObservationsForThisCluster(i) || rejiggled;
 			}
-			System.out.println(rejiggled);
 			//if (listener != null)
 			//	listener.reassignmentCompleted(clusters);
 			if(!rejiggled) {
