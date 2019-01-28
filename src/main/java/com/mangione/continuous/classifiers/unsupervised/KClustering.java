@@ -120,6 +120,8 @@ public class KClustering<S extends Set<Integer>, T extends Observation> {
 				for (int j = 0; j < clusters.size(); j++) {
 					if(kModes.distanceToCentroid(clusters.get(j), elem) < dist) {
 						System.out.println(dist + "     " + kModes.distanceToCentroid(clusters.get(j), elem) +   "   " + j);
+						System.out.println(clusters.get(i).getObservations().size() + clusters.get(j).getObservations().size());
+						System.out.println("INDEX: " + i + "   " + j);
 						return true;
 					}
 				}
