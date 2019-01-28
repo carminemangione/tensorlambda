@@ -145,8 +145,10 @@ public class KClustering<S extends Set<Integer>, T extends Observation> {
 
 			if(i == 3 && j == 0) {
 				System.out.println("Current Distance: " + currentDistance);
-				if(closest != null)
-					System.out.println("CLoseset : " + distanceMeasurer.distanceToCentroid(closest, observation));
+				if(closest != null) {
+					System.out.println("Closeset : " + distanceMeasurer.distanceToCentroid(closest, observation));
+					System.out.println(clusters.indexOf(closest));
+				}
 			}
 
 			rejiggled = moveObservationToCloserCluster(tempList, observation, closest) || rejiggled;
@@ -157,6 +159,7 @@ public class KClustering<S extends Set<Integer>, T extends Observation> {
 		if(i == 3) {
 			System.out.println(distanceMeasurer.distanceToCentroid(currentCluster, observationsToMove.get(0)));
 			System.out.println(currentCluster.getObservations().contains(observationsToMove.get(0)));
+			System.out.println(clusters.get(2).getObservations().contains(observationsToMove.get(0)));
 			System.out.println(tempList.contains(observationsToMove.get(0)));
 		}
 		return rejiggled;
@@ -164,7 +167,7 @@ public class KClustering<S extends Set<Integer>, T extends Observation> {
 
 	private boolean moveObservationToCloserCluster(List<S> currentCluster, S observation, Cluster closest) {
 		boolean rejiggled = false;
-		if (closest != null && closest.getObservations().size() > 1) {
+		if (closest != null) {
 			currentCluster.add(observation);
 			closest.add(observation);
 			rejiggled = true;
