@@ -157,6 +157,7 @@ public class KClustering<S extends Set<Integer>, T extends Observation> {
 		if(i == 3) {
 			System.out.println(distanceMeasurer.distanceToCentroid(currentCluster, observationsToMove.get(0)));
 			System.out.println(currentCluster.getObservations().contains(observationsToMove.get(0)));
+			System.out.println(tempList.contains(observationsToMove.get(0)));
 		}
 		return rejiggled;
 	}
