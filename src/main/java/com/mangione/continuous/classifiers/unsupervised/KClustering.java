@@ -133,11 +133,19 @@ public class KClustering<S extends Set<Integer>, T extends Observation> {
 		final Cluster<S> currentCluster = clusters.get(i);
 		List<S> tempList = new ArrayList<>();
 		List<S> observationsToMove = currentCluster.getObservations();
-		for (S observation : observationsToMove) {
+		for(int j = 0; j < observationsToMove.size(); j++) {
+			S observation = observationsToMove.get(j);
 			if(observation == null)
 				continue;
+
 			double currentDistance = distanceMeasurer.distanceToCentroid(currentCluster, observation);
 			Cluster closest = findCloserClusterIfExists(i, observation, currentDistance);
+
+			if(i == 3 && j == 0) {
+				System.out.println("Current Distance: " + currentDistance);
+				System.out.println("CLoseset : " + distanceMeasurer.distanceToCentroid(closest, observation));
+			}
+
 			rejiggled = moveObservationToCloserCluster(tempList, observation, closest) || rejiggled;
 			//if (rejiggled && listener != null)
 			//	listener.reassignmentCompleted(clusters);
