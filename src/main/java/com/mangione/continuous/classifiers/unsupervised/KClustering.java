@@ -102,7 +102,7 @@ public class KClustering<S extends Set<Integer>, T extends Observation> {
 			//if (listener != null)
 			//	listener.reassignmentCompleted(clusters);
 			if(!rejiggled) {
-				checkCorrectAnswer(clusters);
+				rejiggled = checkCorrectAnswer(clusters);
 			}
 
 		} while (rejiggled);
@@ -111,7 +111,7 @@ public class KClustering<S extends Set<Integer>, T extends Observation> {
 
 
 
-	private void checkCorrectAnswer(List<Cluster<S>> clusters) {
+	private boolean checkCorrectAnswer(List<Cluster<S>> clusters) {
 
 		SparseKModes kModes = new SparseKModes();
 		for (int i = 0; i < clusters.size(); i++) {
@@ -120,11 +120,12 @@ public class KClustering<S extends Set<Integer>, T extends Observation> {
 				for (int j = 0; j < clusters.size(); j++) {
 					if(kModes.distanceToCentroid(clusters.get(j), elem) < dist) {
 						System.out.println(dist + "     " + kModes.distanceToCentroid(clusters.get(j), elem) +   "   " + j);
-						System.exit(0);
+						return true;
 					}
 				}
 			}
 		}
+		return false;
 	}
 
 	private boolean processTheObservationsForThisCluster(int i) {
