@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.function.Consumer;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
 
 import javax.annotation.Nonnull;
 
@@ -29,6 +31,25 @@ public class ArrayObservationProvider<S, T extends ObservationInterface<S>>
 		super(observationFactoryInterface);
 		observations.addAll(data);
 	}
+
+	@SuppressWarnings("WeakerAccess")
+	public static Double[][] doubleFromPrimitive(double[][] doubles) {
+
+		Double[][] objects = new Double[doubles.length][];
+		for (int i = 0; i < objects.length; i++) {
+			objects[i] = DoubleStream.of(doubles[i]).boxed().toArray(Double[]::new);
+		}
+		return objects;
+	}
+
+	public static Integer[][] integerFromPrimitive(int[][] ints) {
+		Integer[][] objects = new Integer[ints.length][];
+		for (int i = 0; i < objects.length; i++) {
+			objects[i] = IntStream.of(ints[i]).boxed().toArray(Integer[]::new);
+		}
+		return objects;
+	}
+
 
 	public T getByIndex(int index) {
 		try {

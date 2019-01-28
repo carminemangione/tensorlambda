@@ -44,6 +44,17 @@ public class ArrayObservationProviderTest {
 		assertEquals(DATA.length, number[0]);
 	}
 
+	@Test
+	public void fromPrimitiveDoubleArrays() {
+		final double[][] doubles = new double[][]{{3d}, {5d}, {6d}, {7d}};
+
+		Double[][] objects = ArrayObservationProvider.doubleFromPrimitive(doubles);
+		assertEquals(4, objects.length);
+		assertEquals(3d, objects[0][0], 0);
+		assertEquals(5d, objects[1][0], 0);
+		assertEquals(6d, objects[2][0], 0);
+		assertEquals(7d, objects[3][0], 0);
+	}
 
 	@Test
 	public void fromProvider() {
