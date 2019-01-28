@@ -1,5 +1,6 @@
 package com.mangione.continuous.classifiers.unsupervised;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,7 +15,7 @@ public class SparseKModes implements DistanceMeasurer<Set<Integer>>{
 	private MersenneTwister random = new MersenneTwister();
 
 	@Override
-	public double distanceToCentroid(Cluster<Set<Integer>> cluster, Set<Integer> observation) {
+	public double distanceToCentroid(Cluster<? extends Set<Integer>> cluster, Set<Integer> observation) {
 		Set<Integer> centroid = cluster.getCentroid();
 
 

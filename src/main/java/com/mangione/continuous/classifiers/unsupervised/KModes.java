@@ -10,7 +10,7 @@ public class KModes implements DistanceMeasurer<double[]>{
 	private MersenneTwister random = new MersenneTwister();
 
 	@Override
-	public double distanceToCentroid(Cluster<double[]> cluster, double[] observation) {
+	public double distanceToCentroid(Cluster<? extends double[]> cluster, double[] observation) {
 		double[] centroid = cluster.getCentroid();
 		int dist = 0;
 		for(int i = 0; i < observation.length; i++) {

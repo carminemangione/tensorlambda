@@ -2,12 +2,13 @@ package com.mangione.continuous.classifiers.unsupervised;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.mangione.continuous.model.modelproviders.DataProvider;
 import com.mangione.continuous.observations.dense.Observation;
 
 
-public class KClustering<S, T extends Observation> {
+public class KClustering<S extends Set<Integer>, T extends Observation> {
 
 	private final List<Cluster<S>> clusters = new ArrayList<>();
 	private final KMeansListener<T> listener;
@@ -100,9 +101,28 @@ public class KClustering<S, T extends Observation> {
 
 			//if (listener != null)
 			//	listener.reassignmentCompleted(clusters);
+			if(!rejiggled) {
+				checkCorrectAnswer(clusters);
+			}
 
 		} while (rejiggled);
 
+	}
+
+
+	private void checkCorrectAnswer(List<Cluster<S>> clusters) {
+		SparseKModes kModes = new SparseKModes();
+		for (int i = 0; i < clusters.size(); i++) {
+			for (S elem : clusters.get(i).getObservations()) {
+				double dist = kModes.distanceToCentroid(clusters.get(i), elem);
+				for (int j = 0; j < clusters.size(); j++) {
+					if(kModes.distanceToCentroid(clusters.get(j), elem) < dist) {
+						System.out.println(dist + "     " + kModes.distanceToCentroid(clusters.get(j), elem) +   "   " + j);
+						System.exit(0);
+					}
+				}
+			}
+		}
 	}
 
 	private boolean processTheObservationsForThisCluster(int i) {
