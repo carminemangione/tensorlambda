@@ -120,7 +120,7 @@ public class KClustering<S extends Set<Integer>, T extends Observation> {
 				for (int j = 0; j < clusters.size(); j++) {
 					if(kModes.distanceToCentroid(clusters.get(j), elem) < dist) {
 						System.out.println(dist + "     " + kModes.distanceToCentroid(clusters.get(j), elem) +   "   " + j);
-						System.out.println(clusters.get(i).getObservations().size() + clusters.get(j).getObservations().size());
+						System.out.println(clusters.get(i).getObservations().size() + " " + clusters.get(j).getObservations().size());
 						System.out.println("INDEX: " + i + "   " + j);
 						return true;
 					}
@@ -154,6 +154,10 @@ public class KClustering<S extends Set<Integer>, T extends Observation> {
 			//	listener.reassignmentCompleted(clusters);
 		}
 		tempList.forEach(currentCluster::remove);
+		if(i == 3) {
+			System.out.println(distanceMeasurer.distanceToCentroid(currentCluster, observationsToMove.get(0)));
+			System.out.println(currentCluster.getObservations().contains(observationsToMove.get(0)));
+		}
 		return rejiggled;
 	}
 
