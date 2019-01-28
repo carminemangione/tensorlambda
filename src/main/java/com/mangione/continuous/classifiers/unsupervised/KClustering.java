@@ -144,6 +144,9 @@ public class KClustering<S extends Set<Integer>, T extends Observation> {
 			double currentDistance = distanceMeasurer.distanceToCentroid(currentCluster, observation);
 			Cluster closest = findCloserClusterIfExists(i, observation, currentDistance);
 
+			if(currentCluster.getObservations().size() - tempList.size() <= 1)
+				continue;
+
 			rejiggled = moveObservationToCloserCluster(tempList, observation, closest) || rejiggled;
 			//if (rejiggled && listener != null)
 			//	listener.reassignmentCompleted(clusters);
