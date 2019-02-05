@@ -33,6 +33,10 @@ public class SparseObservation<T> implements SparseObservationInterface<T> {
 		this.missingValue = missingValue;
 	}
 
+	public List<Integer> getColumnIndexes() {
+		return Collections.unmodifiableList(new ArrayList<>(columnIndexToValueMap.keySet()));
+	}
+
 	@Override
 	public List<T> getFeatures() {
 		List<T> features = new ArrayList<>(generateListWithMissingValues());
@@ -47,13 +51,13 @@ public class SparseObservation<T> implements SparseObservationInterface<T> {
 
 
 	@Override
-	public T getValueAt(int index) {
+	public T getFeature(int index) {
 		validateIndex(index);
 		return columnIndexToValueMap.getOrDefault(index, missingValue);
 	}
 
 	@Override
-	public void setValueAt(int index, T value) {
+	public void setFeature(int index, T value) {
 		validateIndex(index);
 		columnIndexToValueMap.put(index, value);
 	}
@@ -69,10 +73,6 @@ public class SparseObservation<T> implements SparseObservationInterface<T> {
 		return Stream.generate(() -> missingValue)
 				.limit(numberOfColumns)
 				.collect(Collectors.toList());
-	}
-
-	public List<Integer> getColumnIndexes() {
-		return Collections.unmodifiableList(new ArrayList<>(columnIndexToValueMap.keySet()));
 	}
 
 	private static <T> Map<Integer, T> createAndFillIndexToValueMap(int[] columns, T[] values) {

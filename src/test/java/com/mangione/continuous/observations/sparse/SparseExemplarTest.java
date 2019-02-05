@@ -67,21 +67,21 @@ public class SparseExemplarTest {
 	@Test
 	public void getValuesAtIndexLowerThanTarget() {
 		SparseExemplar<Integer> sparseExemplar = new SparseExemplar<>(new int[]{1, 3, 4}, new Integer[]{3, 5, 10}, 5, 666, 3);
-		assertEquals(new Integer(666), sparseExemplar.getValueAt(0));
-		assertEquals(new Integer(3), sparseExemplar.getValueAt(1));
-		assertEquals(new Integer(666), sparseExemplar.getValueAt(2));
+		assertEquals(new Integer(666), sparseExemplar.getFeature(0));
+		assertEquals(new Integer(3), sparseExemplar.getFeature(1));
+		assertEquals(new Integer(666), sparseExemplar.getFeature(2));
 	}
 
 	@Test
-	public void getValueAtIndexHigherThanTarget() {
+	public void getFeatureIndexHigherThanTarget() {
 		SparseExemplar<Integer> sparseExemplar = new SparseExemplar<>(new int[]{1, 3, 4}, new Integer[]{3, 5, 10}, 5, 666, 3);
-		assertEquals(new Integer(10), sparseExemplar.getValueAt(4));
+		assertEquals(new Integer(10), sparseExemplar.getFeature(4));
 	}
 
 
 	@Test(expected = IllegalArgumentException.class)
-	public void getValueAtTargetExcepts() {
-		new SparseExemplar<>(new int[]{1, 3, 4, 5}, new Integer[]{3, 5, 10, 11}, 6, 666, 3).getValueAt(3);
+	public void getFeatureTargetExcepts() {
+		new SparseExemplar<>(new int[]{1, 3, 4, 5}, new Integer[]{3, 5, 10, 11}, 6, 666, 3).getFeature(3);
 	}
 
 	@Test
@@ -93,9 +93,9 @@ public class SparseExemplarTest {
 	@Test
 	public void valuesAddedRatherThanArrayInputPlacesTargetAtEnd() {
 		SparseExemplar<Integer> sparseExemplar = new SparseExemplar<>(5, 666, 20);
-		sparseExemplar.setValueAt(0, 2);
-		sparseExemplar.setValueAt(2, 10);
-		sparseExemplar.setValueAt(3, 11);
+		sparseExemplar.setFeature(0, 2);
+		sparseExemplar.setFeature(2, 10);
+		sparseExemplar.setFeature(3, 11);
 		assertEquals(Arrays.asList(2, 666, 10, 11, 666, 20), sparseExemplar.getAllColumns());
 	}
 }

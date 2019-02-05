@@ -51,44 +51,44 @@ public class SparseObservationTest {
 	}
 
 	@Test
-	public void getValueAtIndexExists() {
+	public void getFeatureIndexExists() {
 		Integer[] values = {9, 8, 2};
 		int[] indexes = {0, 2, 7};
 
 		SparseObservation<Integer> sparseObservation = new SparseObservation<>(values, indexes, 10, 0);
-		assertEquals(new Integer(9), sparseObservation.getValueAt(0));
-		assertEquals(new Integer(8), sparseObservation.getValueAt(2));
-		assertEquals(new Integer(2), sparseObservation.getValueAt(7));
+		assertEquals(new Integer(9), sparseObservation.getFeature(0));
+		assertEquals(new Integer(8), sparseObservation.getFeature(2));
+		assertEquals(new Integer(2), sparseObservation.getFeature(7));
 	}
 
 	@Test
-	public void getValueAtIndexMissing() {
+	public void getFeatureIndexMissing() {
 		Integer[] values = {9, 8, 2};
 		int[] indexes = {0, 2, 7};
 
 		SparseObservation<Integer> sparseObservation = new SparseObservation<>(values, indexes, 10, 0);
-		assertEquals(new Integer(9), sparseObservation.getValueAt(0));	}
+		assertEquals(new Integer(9), sparseObservation.getFeature(0));	}
 
 	@Test
-	public void getValueAtIndexAfter() {
+	public void getFeatureIndexAfter() {
 		Integer[] values = {9, 8, 2};
 		int[] indexes = {0, 2, 7};
 
 		SparseObservation<Integer> sparseObservation = new SparseObservation<>(values, indexes, 10, 666);
-		assertEquals(new Integer(666), sparseObservation.getValueAt(9));
+		assertEquals(new Integer(666), sparseObservation.getFeature(9));
 	}
 
 	@Test
 	public void setValueAtIndex() {
 		SparseObservation<Integer> sparseObservation = new SparseObservation<>(10, 666);
 		IntStream.range(0, 10)
-				.forEach(index -> assertEquals(new Integer(666), sparseObservation.getValueAt(index)));
+				.forEach(index -> assertEquals(new Integer(666), sparseObservation.getFeature(index)));
 
-		sparseObservation.setValueAt(5, 2);
+		sparseObservation.setFeature(5, 2);
 		IntStream.range(0, 10)
 				.filter(index -> index != 5)
-				.forEach(index -> assertEquals(new Integer(666), sparseObservation.getValueAt(index)));
-		assertEquals(new Integer(2), sparseObservation.getValueAt(5));
+				.forEach(index -> assertEquals(new Integer(666), sparseObservation.getFeature(index)));
+		assertEquals(new Integer(2), sparseObservation.getFeature(5));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -101,12 +101,12 @@ public class SparseObservationTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void setValueAtIndexFailsIfIndexIsOutOfRangeHigh()  {
-		new SparseObservation<>(10, 666).setValueAt(10, 9);
+		new SparseObservation<>(10, 666).setFeature(10, 9);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void setValueAtIndexFailsIfIndexIsNegative()  {
-		new SparseObservation<>(10, 666).setValueAt(-1, 9);
+		new SparseObservation<>(10, 666).setFeature(-1, 9);
 	}
 
 	@Test
@@ -120,12 +120,12 @@ public class SparseObservationTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void getValueTooHighExcepts()  {
-		new SparseObservation<>(10, 666).getValueAt(10);
+		new SparseObservation<>(10, 666).getFeature(10);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void getValueNegativeExcepts()  {
-		new SparseObservation<>(10, 666).getValueAt(-1);
+		new SparseObservation<>(10, 666).getFeature(-1);
 	}
 
 

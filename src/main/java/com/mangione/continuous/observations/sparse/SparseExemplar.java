@@ -57,11 +57,11 @@ public class SparseExemplar<T> extends SparseObservation<T> implements SparseExe
 	}
 
 	@Override
-	public T getValueAt(int index) {
+	public T getFeature(int index) {
 		if (index == targetIndex)
 			throw new IllegalArgumentException("May not return value at target index");
 		int adjustedIndexForRemovalOfTarget = index > targetIndex ? index - 1 : index;
-		return super.getValueAt(adjustedIndexForRemovalOfTarget);
+		return super.getFeature(adjustedIndexForRemovalOfTarget);
 	}
 
 	private static <T> Map<Integer, T> createAndFillIndexToValueMapRemovingTarget(int[] columns, T[] values, int targetIndex) {

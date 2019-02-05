@@ -6,6 +6,5 @@ import com.mangione.continuous.observations.ObservationInterface;
 
 public interface SparseObservationInterface<T> extends ObservationInterface<T> {
 	List<Integer> getColumnIndexes();
-	T getValueAt(int index);
-	void setValueAt(int index, T value);
+	void setFeature(int index, T value);
 }
