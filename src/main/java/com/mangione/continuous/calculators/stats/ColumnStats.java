@@ -7,6 +7,7 @@ import org.apache.commons.math3.random.EmpiricalDistribution;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
+@SuppressWarnings("WeakerAccess")
 public class ColumnStats implements Serializable {
 
 	private static final long serialVersionUID = 7889775836422189051L;
@@ -49,11 +50,9 @@ public class ColumnStats implements Serializable {
 
 		private final DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics();
 		private final EmpiricalDistribution empiricalDistribution;
-		private final int numberOfBins;
 
 		public Builder(int numberOfBins) {
 			empiricalDistribution = new EmpiricalDistribution(numberOfBins);
-			this.numberOfBins = numberOfBins;
 		}
 
 		public void add(double value) {
@@ -61,6 +60,7 @@ public class ColumnStats implements Serializable {
 		}
 
 		public ColumnStats build() {
+			empiricalDistribution.load(descriptiveStatistics.getValues());
 
 			long[] histogram = ArrayUtils.toPrimitive(empiricalDistribution.getBinStats()
 					.stream()

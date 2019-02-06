@@ -1,5 +1,6 @@
 package com.mangione.continuous.calculators.stats;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
@@ -17,7 +18,7 @@ public class ColumnStatsTest {
 	private ColumnStats stats;
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		Double[] doubles = {1.0, 2.0, 4.0, 1.0};
 
 		ColumnStats.Builder builder = new ColumnStats.Builder(20);
@@ -28,13 +29,21 @@ public class ColumnStatsTest {
 	}
 
 	@Test
-	public void statsInFirstColumn() throws Exception {
+	public void statsInFirstColumn() {
 
 		assertEquals(2.0, stats.avg(), Double.MIN_VALUE);
 		assertEquals(4.0, stats.max(), Double.MIN_VALUE);
 		assertEquals(1.0, stats.min(), Double.MIN_VALUE);
 		assertEquals(1.4142135623731, stats.std(), 1.0e-12);
 	}
+
+	@Test
+	public void histogram() {
+		assertEquals(20, stats.getHistogram().length);
+		assertArrayEquals(new long[]{2, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+				stats.getHistogram());
+	}
+
 
 	@Test
 	public void serialize() throws Exception {

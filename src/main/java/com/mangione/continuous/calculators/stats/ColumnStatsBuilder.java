@@ -15,6 +15,7 @@ public class ColumnStatsBuilder implements Serializable {
 	private static final long serialVersionUID = 2584705314151370296L;
 	private final List<ColumnStats> columnStats;
 
+	@SuppressWarnings("WeakerAccess")
 	public ColumnStatsBuilder(ObservationProviderInterface<Double, ObservationInterface<Double>> provider) {
 		Iterator<ObservationInterface<Double>> iterator = provider.iterator();
 		if (!iterator.hasNext())
