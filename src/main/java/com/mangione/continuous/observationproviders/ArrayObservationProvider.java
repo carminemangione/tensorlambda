@@ -42,6 +42,7 @@ public class ArrayObservationProvider<S, T extends ObservationInterface<S>>
 		return objects;
 	}
 
+	@SuppressWarnings("WeakerAccess")
 	public static Integer[][] integerFromPrimitive(int[][] ints) {
 		Integer[][] objects = new Integer[ints.length][];
 		for (int i = 0; i < objects.length; i++) {
@@ -60,7 +61,6 @@ public class ArrayObservationProvider<S, T extends ObservationInterface<S>>
 		}
 	}
 
-	@SuppressWarnings("WeakerAccess")
 	public ArrayObservationProvider(ObservationProviderInterface<S, ? extends T> observationProvider,
 			ObservationFactoryInterface<S, ? extends T> observationFactoryInterface) {
 		super(observationFactoryInterface);
@@ -121,11 +121,11 @@ public class ArrayObservationProvider<S, T extends ObservationInterface<S>>
 	private class ArrayObservationProviderIterator implements Iterator<T> {
 		private int current;
 
-		public ArrayObservationProviderIterator(int curr) {
+		ArrayObservationProviderIterator(int curr) {
 			current = curr;
 		}
 
-		public ArrayObservationProviderIterator() {
+		ArrayObservationProviderIterator() {
 		}
 
 		@Override

@@ -13,6 +13,7 @@ public class ObservationToExemplarProvider<T extends Number> implements Observat
 	private final ObservationProviderInterface<T, ? extends ObservationInterface<T>> provider;
 	private final int targetColumnIndex;
 
+	@SuppressWarnings("WeakerAccess")
 	public ObservationToExemplarProvider(ObservationProviderInterface<T, ? extends ObservationInterface<T>> provider,
 			int targetColumnIndex) {
 		this.provider = provider;

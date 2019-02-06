@@ -1,26 +1,23 @@
 package com.mangione.continuous.observationproviders;
 
-import clojure.lang.PersistentVector;
-import com.mangione.continuous.calculators.VariableCalculations;
-import com.mangione.continuous.observations.ProxyValues;
-import com.mangione.continuous.observations.ObservationFactoryInterface;
-import com.mangione.continuous.observations.ObservationInterface;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
-import java.util.*;
-import java.util.function.Consumer;
+
+import com.mangione.continuous.calculators.VariableCalculations;
+import com.mangione.continuous.observations.ObservationFactoryInterface;
+import com.mangione.continuous.observations.ObservationInterface;
 
 public class VariableCalculatorObservationProvider<R, S, T extends ObservationInterface<S>> implements ObservationProviderInterface<S, T> {
 
 	private final ObservationProviderInterface<R, ? extends ObservationInterface<R>> provider;
 	private final ObservationFactoryInterface<S, ? extends T> observationFactory;
 	private final VariableCalculations<R, S> variableCalculations;
-	private final ProxyValues namedColumns = new ProxyValues();
-	private PersistentVector featureMap;
 
 
-
-	@SuppressWarnings("WeakerAccess")
 	public VariableCalculatorObservationProvider(ObservationProviderInterface<R, ? extends ObservationInterface<R>> provider,
 			VariableCalculations<R, S> variableCalculations,
 			ObservationFactoryInterface<S, ? extends T> observationFactory) {
@@ -29,14 +26,6 @@ public class VariableCalculatorObservationProvider<R, S, T extends ObservationIn
 		this.observationFactory = observationFactory;
 		this.variableCalculations = variableCalculations;
 
-	}
-
-	public void fillNamedColumns(Map<String, Integer> mapOfTracks) {
-		for (Map.Entry<String, Integer> entry : mapOfTracks.entrySet()) {
-			String key = entry.getKey();
-			Integer value = entry.getValue();
-			namedColumns.addPair(value, key);
-		}
 	}
 
 	@Override

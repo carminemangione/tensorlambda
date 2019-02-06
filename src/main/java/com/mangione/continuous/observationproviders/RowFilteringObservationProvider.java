@@ -15,6 +15,7 @@ public class RowFilteringObservationProvider<S, T extends ObservationInterface<S
 	private final Predicate<T> predicate;
 	private Integer numberOfLines;
 
+	@SuppressWarnings("WeakerAccess")
 	public RowFilteringObservationProvider(ObservationProviderInterface<S, T> provider, Predicate<T> predicate) {
 		if (predicate == null)
 			throw new IllegalArgumentException("predicate can not be null");

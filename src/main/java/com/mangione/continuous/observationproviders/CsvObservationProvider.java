@@ -19,7 +19,7 @@ public class CsvObservationProvider implements ObservationProviderInterface<Stri
 	private final ProxyValues namedColumns = new ProxyValues();
 	private String charVal = ",";
 
-	public CsvObservationProvider(File file, ObservationFactoryInterface<String, ObservationInterface<String>> factory, boolean hasColumnHeader) throws FileNotFoundException {
+	public CsvObservationProvider(File file, ObservationFactoryInterface<String, ObservationInterface<String>> factory, boolean hasColumnHeader) {
 		this.file = file;
 		this.factory = factory;
 		if(hasColumnHeader)
@@ -73,7 +73,7 @@ public class CsvObservationProvider implements ObservationProviderInterface<Stri
 			}
 		}
 
-		public void setChar(String val) {
+		void setChar(String val) {
 			splitVal = val;
 		}
 
