@@ -1,8 +1,6 @@
 package com.mangione.continuous.observations.sparse;
 
 import com.mangione.continuous.observationproviders.ArrayObservationProvider;
-import com.mangione.continuous.observations.ObservationFactoryInterface;
-import com.mangione.continuous.observations.dense.Observation;
 import org.junit.Test;
 
 import java.util.ArrayList;
