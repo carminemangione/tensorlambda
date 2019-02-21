@@ -29,15 +29,10 @@ public class ContingencyTableTest {
     @Test
     // Taken from http://www.stat.yale.edu/Courses/1997-98/101/chisq.htm
     public void threeStatesBunchOfValues() {
-        ContingencyTable.Builder builder = new ContingencyTable.Builder(3, 3);
-
         int[][] counts = {{49, 50, 69}, {24, 36, 38}, {19, 22, 28}};
-        for (int observationState = 0; observationState < 3; observationState++)
-            for (int targetState = 0; targetState < 3; targetState++)
-                builder = addNumberOfObservationsForState(observationState, targetState, builder,
-                        counts[observationState][targetState]);
 
-        ContingencyTable table = builder.build();
+        ContingencyTable table = createContingencyTableFromCounts(counts);
+
         for (int observationState = 0; observationState < 3; observationState++)
             for (int targetState = 0; targetState < 3; targetState++)
                 assertEquals(counts[observationState][targetState], table.getCountForState(observationState, targetState));
@@ -55,15 +50,9 @@ public class ContingencyTableTest {
 
     @Test
     public void nonSymmetricStates() {
-        ContingencyTable.Builder builder = new ContingencyTable.Builder(3, 2);
-
         int[][] counts = {{49, 50}, {24, 36}, {19, 22}};
-        for (int observationState = 0; observationState < 3; observationState++)
-            for (int targetState = 0; targetState < 2; targetState++)
-                builder = addNumberOfObservationsForState(observationState, targetState, builder,
-                        counts[observationState][targetState]);
 
-        ContingencyTable table = builder.build();
+        ContingencyTable table = createContingencyTableFromCounts(counts);
         for (int observationState = 0; observationState < 3; observationState++)
             for (int targetState = 0; targetState < 2; targetState++)
                 assertEquals(counts[observationState][targetState], table.getCountForState(observationState, targetState));
@@ -81,8 +70,18 @@ public class ContingencyTableTest {
         assertEquals(200, table.getObservationCount());
     }
 
+    static ContingencyTable createContingencyTableFromCounts(int[][] counts) {
+        ContingencyTable.Builder builder = new ContingencyTable.Builder(counts.length, counts[0].length);
+        for (int observationState = 0; observationState < counts.length; observationState++)
+            for (int targetState = 0; targetState < counts[0].length; targetState++)
+                builder = addNumberOfObservationsForState(observationState, targetState, builder,
+                        counts[observationState][targetState]);
+        return builder.build();
+    }
 
-    private ContingencyTable.Builder addNumberOfObservationsForState(int observationState, int targetState, ContingencyTable.Builder builder, int numberOfTimes) {
+
+    private static ContingencyTable.Builder addNumberOfObservationsForState(
+            int observationState, int targetState, ContingencyTable.Builder builder, int numberOfTimes) {
         ContingencyTable.Builder nextBuilder = builder;
         for (int i = 0; i < numberOfTimes; i++)
             nextBuilder = builder.addObservation(observationState, targetState);
