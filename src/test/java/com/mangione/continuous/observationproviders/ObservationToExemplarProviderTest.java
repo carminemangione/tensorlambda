@@ -19,7 +19,7 @@ public class ObservationToExemplarProviderTest {
 
 		@SuppressWarnings("Convert2Diamond") ObservationProviderInterface<Integer, Observation<Integer>> aop =
 				new ArrayObservationProvider<Integer, Observation<Integer>>(observations,
-				Observation::new);
+                        (features, columns) -> new Observation<Integer>(features));
 
 		ObservationToExemplarProvider<Integer> exemplarProvider = new ObservationToExemplarProvider<>(aop, 1);
 		Iterator<DiscreteExemplar<Integer>> iterator = exemplarProvider.iterator();

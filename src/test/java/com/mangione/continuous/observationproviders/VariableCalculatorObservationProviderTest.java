@@ -30,7 +30,7 @@ public class VariableCalculatorObservationProviderTest {
 
 		ArrayObservationProvider<String, ? extends ObservationInterface<String>> abcObservationProvider
 				= new ArrayObservationProvider<String, ObservationInterface<String>>(new String[][]{{"a", "234"}, {"b", "321"}, {"c", "987"}},
-				Observation::new);
+                (features1, columns) -> new Observation<String>(features1));
 
 		calculators.put(0, (feature, features) -> {
 			Double[] out = new Double[]{0d, 0d, 0d};

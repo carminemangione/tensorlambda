@@ -17,7 +17,7 @@ public class ColumnFilteringObservationProviderTest {
 
 		@SuppressWarnings("Convert2Diamond") ObservationProviderInterface<Integer, Observation<Integer>> aop =
 				new ArrayObservationProvider<Integer, Observation<Integer>>(observations,
-						Observation::new);
+                        (features, columns) -> new Observation<Integer>(features));
 
 
 

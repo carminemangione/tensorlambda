@@ -7,7 +7,7 @@ import com.mangione.continuous.observations.ObservationInterface;
 
 public class DoubleObservationFactory implements ObservationFactoryInterface<Double, ObservationInterface<Double>> {
     @Override
-    public ObservationInterface<Double> create(List<Double> data) {
+    public ObservationInterface<Double> create(List<Double> data, int[] columns) {
         return  new Observation<>(data);
     }
 }

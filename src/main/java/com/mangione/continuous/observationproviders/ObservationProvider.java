@@ -15,7 +15,7 @@ public abstract class ObservationProvider<S, T extends ObservationInterface<S>> 
 
 	public T create(List<S> data) {
 
-		return factory.create(data);
+		return factory.create(data, null);
     }
 
 }

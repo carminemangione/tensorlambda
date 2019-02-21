@@ -100,7 +100,7 @@ public class NeuralNetwork {
 	private static VersatileMLDataSet prepareDataset() throws FileNotFoundException {
 
 		// Create data source
-		final CsvObservationProvider csv = new CsvObservationProvider(new File(DATA_FILENAME), data -> {
+		final CsvObservationProvider csv = new CsvObservationProvider(new File(DATA_FILENAME), (data, columns) -> {
 					final List<String> strings = data.stream()
 										.map(x -> (String) x)
 										.collect(Collectors.toList());
@@ -304,7 +304,7 @@ public class NeuralNetwork {
 	}
 
 	public static void ScoreRecords(MLRegression bestMethod, NormalizationHelper helper) throws FileNotFoundException {
-		CsvObservationProvider csvP = new CsvObservationProvider(new File(DATA_FILENAME), data -> {
+		CsvObservationProvider csvP = new CsvObservationProvider(new File(DATA_FILENAME), (data, columns) -> {
 			final List<String> strings = data.stream()
 								.map(x -> (String) x)
 								.collect(Collectors.toList());

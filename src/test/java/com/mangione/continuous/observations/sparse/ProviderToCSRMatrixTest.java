@@ -38,7 +38,7 @@ public class ProviderToCSRMatrixTest {
 
         ArrayObservationProvider<Integer, SparseObservation<Integer>> observations =
                 new ArrayObservationProvider<Integer, SparseObservation<Integer>>(sparseObservations,
-                        data -> new SparseObservation<>(data.size(), 0));
+                        (data, columns) -> new SparseObservation<>(data.size(), 0));
 
         ProviderToCSRMatrix<Integer, SparseObservation<Integer>,
                 ArrayObservationProvider<Integer, SparseObservation<Integer>>> providerToCSRMatrix = new ProviderToCSRMatrix<>(observations);

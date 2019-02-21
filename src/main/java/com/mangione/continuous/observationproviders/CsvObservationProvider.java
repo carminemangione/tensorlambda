@@ -99,7 +99,7 @@ public class CsvObservationProvider implements ObservationProviderInterface<Stri
 				throw new ProviderException(e);
 			}
 
-			return factory.create(Arrays.asList(nextLine));
+			return factory.create(Arrays.asList(nextLine), null);
 		}
 
 		@Override

@@ -143,4 +143,14 @@ public class SparseObservationTest {
 	public void tooManyValues() {
 		new SparseObservation<>(new Integer[23], new int[]{0}, 5, 0);
 	}
+
+	@Test
+	public void fourColumns() {
+		int[] columns = {3, 5, 9, 11};
+		Integer[] values = new Integer[4];
+		Arrays.fill(values, 1);
+		SparseObservation<Integer> observation = new SparseObservation<>(values, columns, 30, 0);
+		assertEquals(Arrays.asList(3, 5, 9, 11), observation.getColumnIndexes());
+	}
+
 }

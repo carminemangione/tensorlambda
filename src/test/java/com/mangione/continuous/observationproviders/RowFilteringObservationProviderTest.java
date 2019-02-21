@@ -21,7 +21,7 @@ public class RowFilteringObservationProviderTest {
 	@Before
 	public void setUp() {
 		//noinspection Convert2Diamond ... won't compile otherwise
-		provider = new ArrayObservationProvider<Integer, Observation<Integer>>(DATA, Observation::new);
+		provider = new ArrayObservationProvider<Integer, Observation<Integer>>(DATA, (features, columns) -> new Observation<Integer>(features));
 	}
 
 	@Test

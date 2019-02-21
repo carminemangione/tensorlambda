@@ -183,7 +183,7 @@ public class NNet {
 
 	public static void main(String[] args) throws IOException {
 		File file = new File(DATA_FILENAME);
-		final CsvObservationProvider csvObservationProvider = new CsvObservationProvider(file, data -> {
+		final CsvObservationProvider csvObservationProvider = new CsvObservationProvider(file, (data, columns) -> {
 			final List<String> strings = data.stream()
 					.map(x -> (String) x)
 					.collect(Collectors.toList());

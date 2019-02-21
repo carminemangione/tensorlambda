@@ -7,7 +7,7 @@ import com.mangione.continuous.observations.ObservationInterface;
 
 public class StringObservationFactory implements ObservationFactoryInterface<String, ObservationInterface<String>> {
 	@Override
-	public ObservationInterface<String> create(List<String> data) {
+	public ObservationInterface<String> create(List<String> data, int[] columns) {
 		return new Observation<>(data);
 	}
 }

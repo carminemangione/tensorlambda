@@ -60,7 +60,7 @@ public class VariableCalculatorObservationProvider<R, S, T extends ObservationIn
 		@Override
 		public T next() {
 			List<S> translatedVariables = variableCalculations.translateAllVariables(iterator.next().getAllColumns());
-			return observationFactory.create(translatedVariables);
+			return observationFactory.create(translatedVariables, null);
 		}
 
 		@Override

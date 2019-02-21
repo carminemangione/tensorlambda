@@ -7,7 +7,7 @@ import com.mangione.continuous.observations.ExemplarFactoryInterface;
 
 public class DiscreteExemplarFactory<S extends Number> implements ExemplarFactoryInterface<S, DiscreteExemplar<S>> {
 	@Override
-	public DiscreteExemplar<S> create(List<S> data) {
+	public DiscreteExemplar<S> create(List<S> data, int[] columns) {
 		final List<S> doubles = new ArrayList<>(data);
 		
 		final S target = doubles.get(data.size() - 1);
