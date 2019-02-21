@@ -6,6 +6,11 @@ import org.junit.Test;
 
 public class ExpectedValueTest {
 
+    @Test
+    public void contingencyTable() {
+
+    }
+
 
 
 }

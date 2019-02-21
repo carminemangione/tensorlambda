@@ -35,6 +35,14 @@ public class ContingencyTable {
         return countsWithTotalsInLastRowAndColumns[targetSumLocation][observationSumLocation];
     }
 
+    public int getNumberOfObservationStates() {
+        return targetSumLocation;
+    }
+
+    public int getNumberOfTargetStates() {
+        return observationSumLocation;
+    }
+
     public static class Builder {
         private final int[][] countsWithTotalsInLastRowAndColumns;
         private final int observationSumLocation;

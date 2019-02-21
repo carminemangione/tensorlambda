@@ -3,7 +3,6 @@ package com.mangione.continuous.calculators.chisquare;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 public class ContingencyTableTest {
 
@@ -18,7 +17,6 @@ public class ContingencyTableTest {
         assertEquals(0, table.getCountForState(1, 0));
         assertEquals(0, table.getCountForState(0, 1));
         assertEquals(0, table.getCountForState(1, 1));
-
 
         assertEquals(0, table.getTotalForObservationState(0));
         assertEquals(0, table.getTotalForObservationState(1));
@@ -44,15 +42,15 @@ public class ContingencyTableTest {
             for (int targetState = 0; targetState < 3; targetState++)
                 assertEquals(counts[observationState][targetState], table.getCountForState(observationState, targetState));
 
-            assertEquals(168, table.getTotalForObservationState(0));
-            assertEquals(98, table.getTotalForObservationState(1));
-            assertEquals(69, table.getTotalForObservationState(2));
+        assertEquals(168, table.getTotalForObservationState(0));
+        assertEquals(98, table.getTotalForObservationState(1));
+        assertEquals(69, table.getTotalForObservationState(2));
 
-            assertEquals(92, table.getTotalForTargetState(0));
-            assertEquals(108, table.getTotalForTargetState(1));
-            assertEquals(135, table.getTotalForTargetState(2));
+        assertEquals(92, table.getTotalForTargetState(0));
+        assertEquals(108, table.getTotalForTargetState(1));
+        assertEquals(135, table.getTotalForTargetState(2));
 
-            assertEquals(335, table.getObservationCount());
+        assertEquals(335, table.getObservationCount());
     }
 
     @Test
@@ -70,6 +68,9 @@ public class ContingencyTableTest {
             for (int targetState = 0; targetState < 2; targetState++)
                 assertEquals(counts[observationState][targetState], table.getCountForState(observationState, targetState));
 
+        assertEquals(3, table.getNumberOfObservationStates());
+        assertEquals(2, table.getNumberOfTargetStates());
+
         assertEquals(99, table.getTotalForObservationState(0));
         assertEquals(60, table.getTotalForObservationState(1));
         assertEquals(41, table.getTotalForObservationState(2));
@@ -77,7 +78,8 @@ public class ContingencyTableTest {
         assertEquals(92, table.getTotalForTargetState(0));
         assertEquals(108, table.getTotalForTargetState(1));
 
-        assertEquals(200, table.getObservationCount());    }
+        assertEquals(200, table.getObservationCount());
+    }
 
 
     private ContingencyTable.Builder addNumberOfObservationsForState(int observationState, int targetState, ContingencyTable.Builder builder, int numberOfTimes) {
@@ -143,12 +145,12 @@ public class ContingencyTableTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void zeroTargetStatesExcepts()  {
+    public void zeroTargetStatesExcepts() {
         new ContingencyTable.Builder(3, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void zeroObservationStatesExcepts()  {
+    public void zeroObservationStatesExcepts() {
         new ContingencyTable.Builder(0, 3);
     }
 
@@ -179,7 +181,6 @@ public class ContingencyTableTest {
                 .build()
                 .getTotalForObservationState(-1);
     }
-
 
 
 }
