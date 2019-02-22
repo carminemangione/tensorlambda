@@ -12,7 +12,7 @@ public class SparseExemplar<T> extends SparseObservation<T> implements SparseExe
 	private final int targetIndex;
 
 	@SuppressWarnings("WeakerAccess")
-	public SparseExemplar(int[] columns, T[] values, int numberOfColumns, T missingValue, int targetIndex) {
+	public SparseExemplar(T[] values, int[] columns, int numberOfColumns, T missingValue, int targetIndex) {
 		super(createAndFillIndexToValueMapRemovingTarget(columns, values, targetIndex),
 				numberOfColumns- 1, missingValue);
 		if (numberOfColumns < 1) {
