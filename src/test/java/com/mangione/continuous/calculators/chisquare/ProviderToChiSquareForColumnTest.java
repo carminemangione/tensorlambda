@@ -30,7 +30,6 @@ public class ProviderToChiSquareForColumnTest {
 		assertEquals(1.51, chiSquareForColumn.getChiSquare(), 0.01);
 	}
 
-
 	private static class SampleSparseExemplarProvider extends ObservationProvider<Integer, SparseExemplarInterface<Integer, Integer>> {
 
 		private List<SparseExemplarInterface<Integer, Integer>> fRows = new ArrayList<>();
