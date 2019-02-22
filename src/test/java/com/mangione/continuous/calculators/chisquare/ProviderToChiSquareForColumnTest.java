@@ -37,11 +37,10 @@ public class ProviderToChiSquareForColumnTest {
 
 		private SampleSparseExemplarProvider(ObservationFactoryInterface<Integer, ? extends SparseExemplarInterface<Integer, Integer>> factory) {
 			super(factory);
+			int[] columns = {0, 1};
 
 			for (int observationState = 0; observationState < 3; observationState++) {
 				for (int targetState = 0; targetState < 3; targetState++) {
-
-					int[] columns = {0, 1};
 					Integer[] values = {observationState, targetState};
 					for (int newRow = 0; newRow < COUNTS[observationState][targetState]; newRow++) {
 						fRows.add(new SparseExemplar<>(values, columns, 2, 0, 1));
