@@ -16,8 +16,8 @@ public class SparseExemplarTest {
 		assertArrayEquals(new Integer[]{0, 0, 0, 0}, sparseExemplar.getFeatures().toArray());
 		assertEquals(0, sparseExemplar.getTargetIndex());
 		assertEquals(0, (int) sparseExemplar.getTarget());
-	}
 
+	}
 
 	@Test
 	public void targetIndexAndValue() {
@@ -25,7 +25,6 @@ public class SparseExemplarTest {
 		assertEquals(3, sparseExemplar.getTargetIndex());
 		assertEquals(5, (int) sparseExemplar.getTarget());
 	}
-
 
 	@Test
 	public void getFeaturesDoesNotIncludeTarget() {
@@ -70,6 +69,7 @@ public class SparseExemplarTest {
 		assertEquals(new Integer(666), sparseExemplar.getFeature(0));
 		assertEquals(new Integer(3), sparseExemplar.getFeature(1));
 		assertEquals(new Integer(666), sparseExemplar.getFeature(2));
+		assertEquals(4, sparseExemplar.numberOfFeatures());
 	}
 
 	@Test

@@ -63,6 +63,11 @@ public class SparseObservation<T> implements SparseObservationInterface<T> {
 		columnIndexToValueMap.put(index, value);
 	}
 
+	@Override
+	public int numberOfFeatures() {
+		return numberOfColumns;
+	}
+
 	private void validateIndex(int index) {
 		if (index < 0)
 			throw new IllegalArgumentException("Index may not be negative");

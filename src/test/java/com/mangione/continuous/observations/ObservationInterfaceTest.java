@@ -41,6 +41,9 @@ public class ObservationInterfaceTest {
                 observationInterface.getColumnIndexes().toArray());
     }
 
-
+    @Test
+    public void numberOfFeatures() {
+    	assertEquals(4, observationInterface.numberOfFeatures());
+    }
 
 }

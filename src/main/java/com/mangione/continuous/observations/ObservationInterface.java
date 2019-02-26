@@ -17,4 +17,8 @@ public interface ObservationInterface<T> {
 				.boxed()
 				.collect(Collectors.toList());
 	}
+
+	default int numberOfFeatures() {
+		return getFeatures().size();
+	}
 }

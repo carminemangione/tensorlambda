@@ -3,6 +3,7 @@ package com.mangione.continuous.observations.sparse;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.IntStream;
 
 import org.junit.Test;
@@ -152,5 +153,20 @@ public class SparseObservationTest {
 		SparseObservation<Integer> observation = new SparseObservation<>(values, columns, 30, 0);
 		assertEquals(Arrays.asList(3, 5, 9, 11), observation.getColumnIndexes());
 	}
+
+	@Test
+	public void numberOfFeaturesDoesNotInflateObservationByCallingGetFeatures() {
+		int[] columns = {3, 5, 9, 11};
+		Integer[] values = new Integer[4];
+		Arrays.fill(values, 1);
+		SparseObservation<Integer> observation = new SparseObservation<Integer>(values, columns, 30, 0) {
+			@Override
+			public List<Integer> getFeatures() {
+				throw new IllegalStateException("This was not supposed to happen. Should use internal number rather than inflating.");
+			}
+		};
+		assertEquals(30, observation.numberOfFeatures());
+	}
+
 
 }
