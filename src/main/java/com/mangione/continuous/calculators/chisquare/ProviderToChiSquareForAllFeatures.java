@@ -17,18 +17,25 @@ public class ProviderToChiSquareForAllFeatures {
 	public ProviderToChiSquareForAllFeatures(ObservationProvider<Integer, ExemplarInterface<Integer, Integer>> provider,
 											 ProxyValues observationStates, ProxyValues targetStates) {
 
-		int numberOfFeatures = provider.iterator().next().numberOfFeatures();
-		List<ContingencyTable.Builder> contingencyTableBuilders = createBuilderForEachFeature(numberOfFeatures, observationStates, targetStates);
+        int numberOfFeatures = getNumberOfFeaturesFromFirstExemplar(provider);
+        List<ContingencyTable.Builder> contingencyTableBuilders = createBuilderForEachFeature(numberOfFeatures, observationStates, targetStates);
 		loopThroughExemplarsAddingToAppropriateBuilder(provider, contingencyTableBuilders);
 
 		chiSquares = contingencyTableBuilders.stream()
 				.map(ContingencyTable.Builder::build)
 				.map(ChiSquare::new)
 				.collect(Collectors.toList());
-
 	}
 
-	private void loopThroughExemplarsAddingToAppropriateBuilder(ObservationProvider<Integer,
+    private int getNumberOfFeaturesFromFirstExemplar(ObservationProvider<Integer, ExemplarInterface<Integer, Integer>> provider) {
+        ExemplarInterface<Integer, Integer> firstExemplar = provider.iterator().next();
+        if (firstExemplar == null)
+            throw new IllegalArgumentException("Empty providers not allowed.");
+
+        return firstExemplar.numberOfFeatures();
+    }
+
+    private void loopThroughExemplarsAddingToAppropriateBuilder(ObservationProvider<Integer,
 			ExemplarInterface<Integer, Integer>> provider, List<ContingencyTable.Builder> contingencyTableBuilders) {
 
 		for (ExemplarInterface<Integer, Integer> exemplar : provider) {

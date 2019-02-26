@@ -1,19 +1,17 @@
 package com.mangione.continuous.calculators.chisquare;
 
-import static com.mangione.continuous.calculators.chisquare.ProviderToChiSquareForFeatureTest.COUNTS;
-import static org.junit.Assert.assertEquals;
+import com.mangione.continuous.observationproviders.ObservationProvider;
+import com.mangione.continuous.observations.ExemplarInterface;
+import com.mangione.continuous.observations.ObservationFactoryInterface;
+import com.mangione.continuous.observations.ProxyValues;
+import org.junit.Test;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
-import org.junit.Test;
-
-import com.mangione.continuous.observationproviders.ObservationProvider;
-import com.mangione.continuous.observations.ExemplarInterface;
-import com.mangione.continuous.observations.ProxyValues;
+import static org.junit.Assert.assertEquals;
 
 public class ProviderToChiSquareForAllFeaturesTest {
 	
@@ -46,17 +44,27 @@ public class ProviderToChiSquareForAllFeaturesTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void invalidObservationState()  {
+		ObservationProvider<Integer, ExemplarInterface<Integer, Integer>> provider =
+				new ProviderToChiSquareForFeatureTest.ContingencyTableExemplarProvider(null, 2);
 
+		ProxyValues observationStatesOneTooLittle = fillProxies("obs1", "obs2");
+		ProxyValues targetStates = fillProxies("target1", "target2", "target3");
+		new ProviderToChiSquareForAllFeatures(provider, observationStatesOneTooLittle, targetStates);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void invalidTargetState()  {
+		ObservationProvider<Integer, ExemplarInterface<Integer, Integer>> provider =
+				new ProviderToChiSquareForFeatureTest.ContingencyTableExemplarProvider(null, 2);
 
+		ProxyValues observationStates = fillProxies("obs1", "obs2", "obs3");
+		ProxyValues targetStatesMissingOne = fillProxies("target1", "target2");
+		new ProviderToChiSquareForAllFeatures(provider, observationStates, targetStatesMissingOne);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void emptyProviderExcepts()  {
-
+		new ProviderToChiSquareForAllFeatures(new EmptyProvider(null), new ProxyValues(), new ProxyValues());
 	}
 
 	private ProxyValues fillProxies(String... names) {
@@ -65,5 +73,26 @@ public class ProviderToChiSquareForAllFeaturesTest {
 				.forEach(proxyValues::add);
 		return proxyValues;
 	}
-	
+
+	private static class EmptyProvider extends ObservationProvider<Integer, ExemplarInterface<Integer, Integer>> {
+		EmptyProvider(ObservationFactoryInterface<Integer, ? extends ExemplarInterface<Integer, Integer>> factory) {
+			super(factory);
+		}
+
+		@Nonnull
+		@Override
+		public Iterator<ExemplarInterface<Integer, Integer>> iterator() {
+			return new Iterator<ExemplarInterface<Integer, Integer>>() {
+				@Override
+				public boolean hasNext() {
+					return false;
+				}
+
+				@Override
+				public ExemplarInterface<Integer, Integer> next() {
+					return null;
+				}
+			};
+		}
+	}
 }
