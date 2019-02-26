@@ -1,27 +1,24 @@
 package com.mangione.continuous.calculators.chisquare;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.stream.IntStream;
-
-import javax.annotation.Nonnull;
-
-import org.junit.Test;
-
 import com.mangione.continuous.observationproviders.ObservationProvider;
 import com.mangione.continuous.observations.ExemplarInterface;
 import com.mangione.continuous.observations.ObservationFactoryInterface;
 import com.mangione.continuous.observations.sparse.SparseExemplar;
 import com.mangione.continuous.observations.sparse.SparseExemplarInterface;
+import org.junit.Test;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.IntStream;
+
+import static org.junit.Assert.assertEquals;
 
 public class ProviderToChiSquareForFeatureTest {
 
-	static final Integer[][] COUNTS = new Integer[][]{{49, 50, 69}, {24, 36, 38}, {19, 22, 28}};
+	private static final Integer[][] COUNTS = new Integer[][]{{49, 50, 69}, {24, 36, 38}, {19, 22, 28}};
 
 	@Test
 	// Taken from http://www.stat.yale.edu/Courses/1997-98/101/chisq.htm
