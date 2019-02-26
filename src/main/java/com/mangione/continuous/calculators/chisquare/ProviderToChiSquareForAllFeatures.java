@@ -7,17 +7,21 @@ import java.util.stream.IntStream;
 import com.mangione.continuous.observationproviders.ObservationProvider;
 import com.mangione.continuous.observations.ExemplarInterface;
 import com.mangione.continuous.observations.ProxyValues;
+import org.apache.commons.lang3.time.StopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("WeakerAccess")
 public class ProviderToChiSquareForAllFeatures {
 
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(ProviderToChiSquareForAllFeatures.class);
 	private final List<ChiSquare> chiSquares;
 
 	public ProviderToChiSquareForAllFeatures(ObservationProvider<Integer, ExemplarInterface<Integer, Integer>> provider,
 											 ProxyValues observationStates, ProxyValues targetStates) {
 
         int numberOfFeatures = getNumberOfFeaturesFromFirstExemplar(provider);
+        LOGGER.info(String.format("Calculating Chi-Square for %d features", numberOfFeatures));
         List<ContingencyTable.Builder> contingencyTableBuilders = createBuilderForEachFeature(numberOfFeatures, observationStates, targetStates);
 		loopThroughExemplarsAddingToAppropriateBuilder(provider, contingencyTableBuilders);
 
@@ -38,10 +42,18 @@ public class ProviderToChiSquareForAllFeatures {
     private void loopThroughExemplarsAddingToAppropriateBuilder(ObservationProvider<Integer,
 			ExemplarInterface<Integer, Integer>> provider, List<ContingencyTable.Builder> contingencyTableBuilders) {
 
+		int numObservations = 0;
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
 		for (ExemplarInterface<Integer, Integer> exemplar : provider) {
 			exemplar.getColumnIndexes()
 					.forEach(index -> contingencyTableBuilders.get(index).addObservation(exemplar.getFeature(index),
 							exemplar.getTarget()));
+
+			if (numObservations++ % 1000 == 0) {
+				LOGGER.info(String.format("Processed %d observations at %d per second", numObservations,
+						numObservations / (stopWatch.getSplitTime() / 1000)));
+			}
 		}
 	}
 
