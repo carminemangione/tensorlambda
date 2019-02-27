@@ -51,8 +51,9 @@ public class ProviderToChiSquareForAllFeatures {
 							exemplar.getTarget()));
 
 			if (numObservations++ % 1000 == 0) {
-				LOGGER.info(String.format("Processed %d observations at %d per second", numObservations,
-						numObservations / (stopWatch.getSplitTime() / 1000)));
+				stopWatch.split();
+				LOGGER.info(String.format("Processed %d observations at %f per second", numObservations,
+						numObservations / ((double)stopWatch.getSplitTime() / 1000)));
 			}
 		}
 	}
