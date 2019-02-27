@@ -9,11 +9,11 @@ import javax.annotation.Nonnull;
 import com.mangione.continuous.observations.dense.DiscreteExemplar;
 import com.mangione.continuous.observations.ObservationInterface;
 
+@SuppressWarnings("WeakerAccess")
 public class ObservationToExemplarProvider<T extends Number> implements ObservationProviderInterface<T, DiscreteExemplar<T>> {
 	private final ObservationProviderInterface<T, ? extends ObservationInterface<T>> provider;
 	private final int targetColumnIndex;
 
-	@SuppressWarnings("WeakerAccess")
 	public ObservationToExemplarProvider(ObservationProviderInterface<T, ? extends ObservationInterface<T>> provider,
 			int targetColumnIndex) {
 		this.provider = provider;
@@ -34,7 +34,8 @@ public class ObservationToExemplarProvider<T extends Number> implements Observat
 
 			@Override
 			public DiscreteExemplar<T> next() {
-				return DiscreteExemplar.getExemplarTargetWithColumn(iterator.next().getFeatures(), targetColumnIndex);
+				ObservationInterface<T> next = iterator.next();
+				return DiscreteExemplar.getExemplarTargetWithColumn(next.getFeatures(), targetColumnIndex);
 			}
 		};
 	}
