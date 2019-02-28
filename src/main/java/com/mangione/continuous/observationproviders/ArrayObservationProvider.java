@@ -23,7 +23,7 @@ public class ArrayObservationProvider<S, T extends ObservationInterface<S>>
 	public ArrayObservationProvider(S[][] data, ObservationFactoryInterface<S, T> observationFactoryInterface) {
 		super(observationFactoryInterface);
 		for (S[] doubles : data) {
-			observations.add(create(Arrays.asList(doubles)));
+			observations.add(create(Arrays.asList(doubles), null));
 		}
 	}
 
@@ -66,7 +66,7 @@ public class ArrayObservationProvider<S, T extends ObservationInterface<S>>
 		super(observationFactoryInterface);
 
 		for (T anObservationProvider : observationProvider) {
-			observations.add(create(anObservationProvider.getAllColumns()));
+			observations.add(create(anObservationProvider.getAllColumns(), null));
 		}
 	}
 
@@ -83,7 +83,7 @@ public class ArrayObservationProvider<S, T extends ObservationInterface<S>>
 			if(counter % 100000 == 0)
 				System.out.println(counter);
 			if(anObservationProvider != null)
-				observations.add(create(anObservationProvider.getAllColumns()));
+				observations.add(create(anObservationProvider.getAllColumns(), null));
 		}
 		System.out.println("About to Sort");
 		observations.sort(comp);

@@ -100,6 +100,32 @@ public class ProviderToChiSquareForAllFeaturesTest {
 	}
 
 
+	@Test
+	public void batchesAreNotPerfectMatch() {
+		int[][] counts = {{4, 1}, {2, 3}};
+		ContingencyTable table = ContingencyTableTest.createContingencyTableFromCounts(counts);
+		ChiSquare baseChiSquare = new ChiSquare(table);
+
+		List<SparseExemplar<Integer>> exemplars = Arrays.asList(
+				getSparseExemplarWith(2, 0, 0),
+				getSparseExemplarWith(2, 0, 0),
+				getSparseExemplarWith(2, 0, 0),
+				getSparseExemplarWith(2, 0, 0),
+				getSparseExemplarWith(2, 0, 1),
+				getSparseExemplarWith(2, 1, 0),
+				getSparseExemplarWith(2, 1, 0),
+				getSparseExemplarWith(2, 1, 1),
+				getSparseExemplarWith(2, 1, 1),
+				getSparseExemplarWith(2, 1, 1));
+
+		ProxyValues observationStates = fillProxies("obs1", "obs2");
+		ProxyValues targetStates = fillProxies("target1", "target2");
+		ArrayObservationProvider<Integer, SparseExemplar<Integer>> sparseExemplars = new ArrayObservationProvider<>(exemplars, null);
+		ProviderToChiSquareForAllFeatures providerToChiSquare = new ProviderToChiSquareForAllFeatures(sparseExemplars, observationStates, targetStates, 3);
+		assertEquals(baseChiSquare.getChiSquare(), providerToChiSquare.getChiSquares().get(0).getChiSquare(), 0.001);
+
+	}
+
 	@Test(expected = IllegalArgumentException.class)
 	public void invalidObservationState()  {
 		ObservationProvider<Integer, ExemplarInterface<Integer, Integer>> provider =
@@ -134,6 +160,7 @@ public class ProviderToChiSquareForAllFeaturesTest {
 
 
 
+	@SuppressWarnings("SameParameterValue")
 	private SparseExemplar<Integer> getSparseExemplarWith(int numColumns, int... values) {
 		List<Integer> nonZeroValues = new ArrayList<>();
 		List<Integer> nonZeroIndexes = new ArrayList<>();

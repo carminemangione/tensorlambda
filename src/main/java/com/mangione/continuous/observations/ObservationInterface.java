@@ -13,7 +13,7 @@ public interface ObservationInterface<T> {
 	}
 
 	default List<Integer> getColumnIndexes() {
-		return IntStream.range(0, getFeatures().size())
+		return IntStream.range(0,numberOfFeatures())
 				.boxed()
 				.collect(Collectors.toList());
 	}

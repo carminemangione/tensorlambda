@@ -17,6 +17,7 @@ public class ProviderToChiSquareForAllFeatures {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProviderToChiSquareForAllFeatures.class);
     private final List<ChiSquare> chiSquares = new ArrayList<>();
+    private int numObservations = 0;
 
     public ProviderToChiSquareForAllFeatures(ObservationProviderInterface<Integer,
             ? extends ExemplarInterface<Integer, Integer>> provider, ProxyValues observationStates, ProxyValues targetStates, int batchSize) {
@@ -24,11 +25,10 @@ public class ProviderToChiSquareForAllFeatures {
         int numberOfFeatures = getNumberOfFeaturesFromFirstExemplar(provider);
 
         int offset = 0;
-
         while (offset < numberOfFeatures) {
-            int nextBatchSize = Math.min(batchSize, observationStates.size() - offset);
-            LOGGER.info(String.format("Calculating Chi-Square for %d through %d of %d features",
-                    offset, offset + batchSize, numberOfFeatures));
+            int nextBatchSize = Math.min(batchSize, numberOfFeatures - offset);
+            LOGGER.info(String.format("Calculating Chi-Square for %d to %d of %d features",
+                    offset, offset + nextBatchSize, numberOfFeatures));
 
             List<ContingencyTable.Builder> contingencyTableBuilders = createBuilderForEachFeature(nextBatchSize, observationStates, targetStates);
             loopThroughExemplarsAddingToAppropriateBuilder(provider, contingencyTableBuilders, offset, nextBatchSize);
@@ -55,21 +55,26 @@ public class ProviderToChiSquareForAllFeatures {
             ObservationProviderInterface<Integer, ? extends ExemplarInterface<Integer, Integer>> provider,
             List<ContingencyTable.Builder> contingencyTableBuilders, int offset, int batchSize) {
 
-        int numObservations = 0;
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        for (ExemplarInterface<Integer, Integer> exemplar : provider) {
-            IntStream.range(offset, exemplar.numberOfFeatures())
-                    .boxed()
-                    .filter(index -> index >= offset && index < offset + batchSize)
-                    .forEach(index -> contingencyTableBuilders.get(index - offset).addObservation(
-                            exemplar.getFeature(index), exemplar.getTarget()));
+        try {
+            for (ExemplarInterface<Integer, Integer> exemplar : provider) {
 
-            if (numObservations++ % 1000 == 0) {
-                stopWatch.split();
-                LOGGER.info(String.format("Processed %d observations at %f per second", numObservations,
-                        numObservations / ((double) stopWatch.getSplitTime() / 1000)));
+                IntStream.range(0, batchSize)
+                        .boxed()
+                        .forEach(index -> contingencyTableBuilders.get(index).addObservation(
+                                exemplar.getFeature(offset + index), exemplar.getTarget()));
+
+                if (numObservations++ % 1000 == 0) {
+                    stopWatch.split();
+                    LOGGER.info(String.format("Processed %d observations at %f per second", numObservations,
+                            numObservations / ((double) stopWatch.getSplitTime() / 1000)));
+                }
+
             }
+        } catch (Exception e) {
+            LOGGER.error("Error processing observation " + numObservations);
+            throw e;
         }
     }
 

@@ -20,20 +20,23 @@ public class ProviderToFeatureToTargetChiSquareTest {
     public void oneFeatureOneTarget() {
         int[][] counts = {{4, 1}, {2, 3}};
         ContingencyTable table = ContingencyTableTest.createContingencyTableFromCounts(counts);
-        ChiSquare baseChiSquare = new ChiSquare(table);
+        ChiSquare chiSquareFirstFeature = new ChiSquare(table);
+
+        int[][] secondFeatureCounts = {{3, 1}, {3, 3}};
+        table = ContingencyTableTest.createContingencyTableFromCounts(secondFeatureCounts);
+        ChiSquare chiSquareColumn = new ChiSquare(table);
 
         List<DiscreteExemplar> exemplars = Arrays.asList(
-            DiscreteExemplar.getExemplarTargetLastColumn(Arrays.asList(0, 0)),
-            DiscreteExemplar.getExemplarTargetLastColumn(Arrays.asList(0, 0)),
-            DiscreteExemplar.getExemplarTargetLastColumn(Arrays.asList(0, 0)),
-            DiscreteExemplar.getExemplarTargetLastColumn(Arrays.asList(0, 0)),
-            DiscreteExemplar.getExemplarTargetLastColumn(Arrays.asList(0, 1)),
-            DiscreteExemplar.getExemplarTargetLastColumn(Arrays.asList(1, 0)),
-            DiscreteExemplar.getExemplarTargetLastColumn(Arrays.asList(1, 0)),
-            DiscreteExemplar.getExemplarTargetLastColumn(Arrays.asList(1, 1)),
-            DiscreteExemplar.getExemplarTargetLastColumn(Arrays.asList(1, 1)),
-            DiscreteExemplar.getExemplarTargetLastColumn(Arrays.asList(1, 1)));
-
+            DiscreteExemplar.getExemplarTargetLastColumn(Arrays.asList(0, 1, 0)),
+            DiscreteExemplar.getExemplarTargetLastColumn(Arrays.asList(0, 1, 0)),
+            DiscreteExemplar.getExemplarTargetLastColumn(Arrays.asList(0, 0, 0)),
+            DiscreteExemplar.getExemplarTargetLastColumn(Arrays.asList(0, 0, 0)),
+            DiscreteExemplar.getExemplarTargetLastColumn(Arrays.asList(0, 1, 1)),
+            DiscreteExemplar.getExemplarTargetLastColumn(Arrays.asList(1, 0, 0)),
+            DiscreteExemplar.getExemplarTargetLastColumn(Arrays.asList(1, 1, 0)),
+            DiscreteExemplar.getExemplarTargetLastColumn(Arrays.asList(1, 0, 1)),
+            DiscreteExemplar.getExemplarTargetLastColumn(Arrays.asList(1, 1, 1)),
+            DiscreteExemplar.getExemplarTargetLastColumn(Arrays.asList(1, 1, 1)));
 
 
 

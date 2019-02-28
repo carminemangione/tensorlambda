@@ -43,10 +43,9 @@ public class ColumnFilteringObservationProvider<S, T extends ObservationInterfac
 						.mapToInt(Integer::intValue)
 						.toArray();
 
-				List<S> features = next.getFeatures();
 				List<S> filteredFeatures = Arrays.stream(filteredColumns)
 						.boxed()
-						.map(features::get)
+						.map(next::getFeature)
 						.collect(Collectors.toList());
 				return factory.create(filteredFeatures, filteredColumns);
 			}

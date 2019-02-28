@@ -6,7 +6,6 @@ import static com.mangione.continuous.calculators.chisquare.ContingencyTableTest
 import static org.junit.Assert.*;
 
 public class ChiSquareTest {
-
     @Test
     // Taken from http://www.stat.yale.edu/Courses/1997-98/101/chisq.htm
     public void fromExample() {
@@ -16,5 +15,4 @@ public class ChiSquareTest {
         ChiSquare chiSquare = new ChiSquare(table);
         assertEquals(1.51, chiSquare.getChiSquare(), 0.01);
     }
-
 }
