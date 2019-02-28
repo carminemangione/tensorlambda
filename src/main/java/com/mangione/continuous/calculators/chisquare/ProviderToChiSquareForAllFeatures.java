@@ -13,7 +13,6 @@ import com.mangione.continuous.observationproviders.ObservationProviderInterface
 import com.mangione.continuous.observations.ExemplarInterface;
 import com.mangione.continuous.observations.ProxyValues;
 
-@SuppressWarnings("WeakerAccess")
 public class ProviderToChiSquareForAllFeatures {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProviderToChiSquareForAllFeatures.class);
@@ -28,7 +27,8 @@ public class ProviderToChiSquareForAllFeatures {
 
         while (offset < numberOfFeatures) {
             int nextBatchSize = Math.min(batchSize, observationStates.size() - offset);
-            LOGGER.info(String.format("Calculating Chi-Square for %d features", numberOfFeatures));
+            LOGGER.info(String.format("Calculating Chi-Square for %d through %d of %d features",
+                    offset, offset + batchSize, numberOfFeatures));
 
             List<ContingencyTable.Builder> contingencyTableBuilders = createBuilderForEachFeature(nextBatchSize, observationStates, targetStates);
             loopThroughExemplarsAddingToAppropriateBuilder(provider, contingencyTableBuilders, offset, nextBatchSize);
