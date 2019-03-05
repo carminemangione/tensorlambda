@@ -3,6 +3,7 @@ package com.mangione.continuous.observations.sparse;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -16,7 +17,6 @@ public class SparseExemplarTest {
 		assertArrayEquals(new Integer[]{0, 0, 0, 0}, sparseExemplar.getFeatures().toArray());
 		assertEquals(0, sparseExemplar.getTargetIndex());
 		assertEquals(0, (int) sparseExemplar.getTarget());
-
 	}
 
 	@Test
@@ -32,6 +32,19 @@ public class SparseExemplarTest {
 		assertEquals(Arrays.asList(666, 3, 666, 10, 11), sparseExemplar.getFeatures());
 	}
 
+	@Test
+	public void targetButNoFeatures() {
+		SparseExemplar<Integer> sparseExemplar = new ExceptsOnGetFeatures(0, 0, 11);
+		assertEquals(11, sparseExemplar.getTarget().intValue());
+		assertEquals(0, sparseExemplar.numberOfFeatures());
+	}
+
+	@Test
+	public void targetGetNumberOfFeaturesDoesNotCallExpand() {
+		SparseExemplar<Integer> sparseExemplar = new SparseExemplar<>(new Integer[]{11}, new int[]{0}, 1, 666, 0);
+		assertEquals(11, sparseExemplar.getTarget().intValue());
+		assertEquals(0, sparseExemplar.getFeatures().size());
+	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void valuesDoesNotContainTarget() {
@@ -98,4 +111,16 @@ public class SparseExemplarTest {
 		sparseExemplar.setFeature(3, 11);
 		assertEquals(Arrays.asList(2, 666, 10, 11, 666, 20), sparseExemplar.getAllColumns());
 	}
+
+	private class ExceptsOnGetFeatures extends SparseExemplar<Integer> {
+		ExceptsOnGetFeatures(int numberOfColumns, Integer missingValue, Integer target) {
+			super(numberOfColumns, missingValue, target);
+		}
+
+		@Override
+		public List<Integer> getFeatures() {
+			throw new RuntimeException("Should use number of columns");
+		}
+	}
+
 }

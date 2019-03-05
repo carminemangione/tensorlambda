@@ -11,7 +11,6 @@ public class SparseExemplar<T> extends SparseObservation<T> implements SparseExe
 	private final T target;
 	private final int targetIndex;
 
-	@SuppressWarnings("WeakerAccess")
 	public SparseExemplar(T[] values, int[] columns, int numberOfColumns, T missingValue, int targetIndex) {
 		super(createAndFillIndexToValueMapRemovingTarget(columns, values, targetIndex),
 				numberOfColumns- 1, missingValue);
@@ -22,7 +21,6 @@ public class SparseExemplar<T> extends SparseObservation<T> implements SparseExe
 
 		if (targetIndex < 0)
 			throw new IllegalArgumentException("Column index may not be negative");
-
 
 		this.targetIndex = targetIndex;
 		int locationOfTargetIndex = Arrays.binarySearch(columns, targetIndex);
@@ -62,6 +60,11 @@ public class SparseExemplar<T> extends SparseObservation<T> implements SparseExe
 			throw new IllegalArgumentException("May not return value at target index");
 		int adjustedIndexForRemovalOfTarget = index > targetIndex ? index - 1 : index;
 		return super.getFeature(adjustedIndexForRemovalOfTarget);
+	}
+
+	@Override
+	public List<Integer> getColumnIndexes() {
+		return super.getColumnIndexes();
 	}
 
 	private static <T> Map<Integer, T> createAndFillIndexToValueMapRemovingTarget(int[] columns, T[] values, int targetIndex) {

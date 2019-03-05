@@ -34,6 +34,15 @@ public class SparseObservationTest {
 	}
 
 	@Test
+	public void numberOfFeaturesDoesNotExpand() {
+		Integer[] values = {9, 8, 2};
+		int[] indexes = {0, 2, 7};
+		SparseObservation<Integer> sparseObservation = new ExceptsOnGetFeatures(values, indexes);
+		assertEquals(10, sparseObservation.numberOfFeatures());
+	}
+
+
+	@Test
 	public void missingValuesAreZeros() {
 		Integer[] values = {9, 8, 2};
 		int[] indexes = {0, 2, 7};
@@ -168,5 +177,17 @@ public class SparseObservationTest {
 		assertEquals(30, observation.numberOfFeatures());
 	}
 
+
+	private static class ExceptsOnGetFeatures extends SparseObservation<Integer> {
+		ExceptsOnGetFeatures(Integer[] values, int[] indexes) {
+			super(values, indexes, 10, 0);
+		}
+
+		@Override
+		public List<Integer> getFeatures() {
+			throw new RuntimeException("Should use number of columns rather than expanding which, to be frank, " +
+					"is not what sparse means");
+		}
+	}
 
 }

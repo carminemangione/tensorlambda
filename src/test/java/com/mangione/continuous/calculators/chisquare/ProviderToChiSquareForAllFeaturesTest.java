@@ -127,26 +127,6 @@ public class ProviderToChiSquareForAllFeaturesTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void invalidObservationState()  {
-		ObservationProvider<Integer, ExemplarInterface<Integer, Integer>> provider =
-				new ProviderToChiSquareForFeatureTest.ContingencyTableExemplarProvider(null, 2);
-
-		ProxyValues observationStatesOneTooLittle = fillProxies("obs1", "obs2");
-		ProxyValues targetStates = fillProxies("target1", "target2", "target3");
-		new ProviderToChiSquareForAllFeatures(provider, observationStatesOneTooLittle, targetStates, 2);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void invalidTargetState()  {
-		ObservationProvider<Integer, ExemplarInterface<Integer, Integer>> provider =
-				new ProviderToChiSquareForFeatureTest.ContingencyTableExemplarProvider(null, 2);
-
-		ProxyValues observationStates = fillProxies("obs1", "obs2", "obs3");
-		ProxyValues targetStatesMissingOne = fillProxies("target1", "target2");
-		new ProviderToChiSquareForAllFeatures(provider, observationStates, targetStatesMissingOne, 2);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
 	public void emptyProviderExcepts()  {
 		new ProviderToChiSquareForAllFeatures(new EmptyProvider(null), new ProxyValues(), new ProxyValues(), 2);
 	}

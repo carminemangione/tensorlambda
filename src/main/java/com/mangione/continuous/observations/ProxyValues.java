@@ -30,7 +30,8 @@ public class ProxyValues {
 				String line = br.readLine();
 				String[] nameAndValue = line.split(",");
 				try {
-					biMap.put(nameAndValue[0], Integer.parseInt(nameAndValue[1]));
+					int index = Integer.parseInt(nameAndValue[1]);
+					biMap.put(nameAndValue[0], index);
 				} catch (NumberFormatException e) {
 					LOGGER.error("Bad input line: " + line);
 				}
