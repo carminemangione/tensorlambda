@@ -1,6 +1,5 @@
 package com.mangione.continuous.calculators.chisquare;
 
-@SuppressWarnings("WeakerAccess")
 public class ChiSquare {
     private final double chiSquare;
 
@@ -22,4 +21,8 @@ public class ChiSquare {
         return chiSquare;
     }
 
+    @Override
+    public String toString() {
+        return "" + chiSquare;
+    }
 }

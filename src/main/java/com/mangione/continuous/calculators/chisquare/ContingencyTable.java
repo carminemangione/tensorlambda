@@ -1,5 +1,7 @@
 package com.mangione.continuous.calculators.chisquare;
 
+import java.util.Arrays;
+
 @SuppressWarnings("WeakerAccess")
 public class ContingencyTable {
     public static final String INVALID_OBSERVATION_STATE = "Invalid observation state: ";
@@ -43,6 +45,13 @@ public class ContingencyTable {
         return observationSumLocation;
     }
 
+    @Override
+    public String toString() {
+        return "ContingencyTable{" +
+                "countsWithTotalsInLastRowAndColumns=" + Arrays.deepToString(countsWithTotalsInLastRowAndColumns) +
+                '}';
+    }
+
     public static class Builder {
         private final int[][] countsWithTotalsInLastRowAndColumns;
         private final int observationSumLocation;
@@ -71,6 +80,13 @@ public class ContingencyTable {
             countsWithTotalsInLastRowAndColumns[targetSumLocation][targetState]++;
             countsWithTotalsInLastRowAndColumns[targetSumLocation][observationSumLocation]++;
             return this;
+        }
+
+        @Override
+        public String toString() {
+            return "Builder{" +
+                    "countsWithTotalsInLastRowAndColumns=" + Arrays.deepToString(countsWithTotalsInLastRowAndColumns) +
+                    '}';
         }
     }
 
