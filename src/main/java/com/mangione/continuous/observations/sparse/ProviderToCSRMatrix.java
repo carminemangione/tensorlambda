@@ -26,9 +26,11 @@ public class ProviderToCSRMatrix<S extends Number, T extends ObservationInterfac
             rowIndexes.add(rowIndexes.get(rowIndexes.size() - 1) + csrRow.getNumValues());
             values.addAll(csrRow.getValues());
             columnIndexes.addAll(csrRow.getIndexes());
-            if(i++ % 1000 == 0) {
-                System.out.println(i);
+            if(i++ % 500 == 0) {
+                break;
             }
+            if(i % 100 == 0)
+                System.out.println("GOTTEMM" + i);
         }
 
         this.values = values.stream().mapToDouble(x->x).toArray();
