@@ -20,11 +20,15 @@ public class ProviderToCSRMatrix<S extends Number, T extends ObservationInterfac
         List<Double> values = new ArrayList<>();
 
         rowIndexes.add(0);
+        int i = 0;
         for (T sObservation : provider) {
             CSRRow<T> csrRow = new CSRRow<>(sObservation);
             rowIndexes.add(rowIndexes.get(rowIndexes.size() - 1) + csrRow.getNumValues());
             values.addAll(csrRow.getValues());
             columnIndexes.addAll(csrRow.getIndexes());
+            if(i++ % 1000 == 0) {
+                System.out.println(i);
+            }
         }
 
         this.values = values.stream().mapToDouble(x->x).toArray();
