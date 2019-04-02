@@ -1,32 +1,34 @@
 package com.mangione.continuous.observationproviders;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.stream.IntStream;
-
+import com.mangione.continuous.observations.dense.Observation;
+import org.junit.Before;
 import org.junit.Test;
 
-import com.mangione.continuous.observations.ObservationFactoryInterface;
-import com.mangione.continuous.observations.ObservationInterface;
-import com.mangione.continuous.observations.dense.Observation;
-import com.mangione.continuous.observations.sparse.SparseObservation;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.function.Function;
+
+import static org.junit.Assert.*;
 
 public class ColumnFilteringObservationProviderTest {
+
+	private Function<Integer[], Observation<Integer>> observationFunction;
+
+	@Before
+	public void setUp() {
+		observationFunction = integers -> new Observation<>(Arrays.asList(integers));
+	}
+
 	@Test
 	public void provideOneFilteredColumn() {
 		Integer[][] observations = {{1, 2, 3}, {4, 5, 6}};
 
-		ObservationFactoryInterface<Integer, Observation<Integer>> factory = (features, columns) -> new Observation<>(features);
 		ObservationProviderInterface<Integer, Observation<Integer>> aop =
-				new ArrayObservationProvider<>(observations, factory);
+				new ArrayObservationProvider<>(observations, observationFunction);
 
 		ColumnFilteringObservationProvider<Integer, Observation<Integer>> cfop = new ColumnFilteringObservationProvider<>(aop,
-				new int[]{0, 2}, factory);
+				new int[]{0, 2}, (values, columns)->new Observation<>(values));
 
 	    Iterator<Observation<Integer>> iterator = cfop.iterator();
 		assertTrue(iterator.hasNext());
@@ -43,15 +45,14 @@ public class ColumnFilteringObservationProviderTest {
 	@Test
 	public void doesNotCallGetFeaturesBecauseItExpandsSparseArrays() {
 		Integer[][] observations = {{1, 2, 3}, {4, 5, 6}};
-
-		ObservationFactoryInterface<Integer, ObservationInterface<Integer>> factory = (features, columns) -> new Observation<>(features);
 		ExceptionIfGetFeaturesCalledObservationProvider provider
-				= new ExceptionIfGetFeaturesCalledObservationProvider(observations, factory);
+				= new ExceptionIfGetFeaturesCalledObservationProvider(observations, observationFunction);
 
-		ColumnFilteringObservationProvider<Integer, ObservationInterface<Integer>> cfop = new ColumnFilteringObservationProvider<>(provider,
-				new int[]{0, 2}, factory);
+		ColumnFilteringObservationProvider<Integer, Observation<Integer>> cfop =
+				new ColumnFilteringObservationProvider<>(provider,
+						new int[]{0, 2}, (values, columns) -> new Observation<>(values));
 
-		Iterator<ObservationInterface<Integer>> iterator = cfop.iterator();
+		Iterator<Observation<Integer>> iterator = cfop.iterator();
 		//noinspection WhileLoopReplaceableByForEach
 		while(iterator.hasNext())
 			iterator.next();
@@ -59,24 +60,13 @@ public class ColumnFilteringObservationProviderTest {
 
 
 	private static class ExceptionIfGetFeaturesCalledObservationProvider
-			extends ArrayObservationProvider<Integer, ObservationInterface<Integer>> {
+			extends ArrayObservationProvider<Integer, Observation<Integer>> {
 
-		private ExceptionIfGetFeaturesCalledObservationProvider(Integer[][] data, ObservationFactoryInterface<Integer,
-				ObservationInterface<Integer>> observationFactoryInterface) {
-			super(data, observationFactoryInterface);
+		private ExceptionIfGetFeaturesCalledObservationProvider(Integer[][] data, Function<Integer[],
+				Observation<Integer>> observationCoercionInterface) {
+			super(data, observationCoercionInterface);
 		}
 
-		@Override
-		public ObservationInterface<Integer> create(List<Integer> data, int[] columns) {
-			return new SparseObservation<Integer>(data.toArray(new Integer[0]),
-					IntStream.range(0, data.size()).toArray(), 3, 0) {
-				@Override
-				public List<Integer> getFeatures() {
-					throw new RuntimeException("Get features expands the ");
-				}
-			};
-
-		}
 	}
 
 }

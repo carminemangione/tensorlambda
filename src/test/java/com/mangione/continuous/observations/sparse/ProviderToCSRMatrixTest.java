@@ -1,6 +1,6 @@
 package com.mangione.continuous.observations.sparse;
 
-import com.mangione.continuous.observationproviders.ArrayObservationProvider;
+import com.mangione.continuous.observationproviders.ListObservationProvider;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -36,12 +36,11 @@ public class ProviderToCSRMatrixTest {
         sparseObservation.setFeature(5, 80);
         sparseObservations.add(sparseObservation);
 
-        ArrayObservationProvider<Integer, SparseObservation<Integer>> observations =
-                new ArrayObservationProvider<Integer, SparseObservation<Integer>>(sparseObservations,
-                        (data, columns) -> new SparseObservation<>(data.size(), 0));
+        ListObservationProvider<Integer, SparseObservation<Integer>> observations =
+                new ListObservationProvider<>(sparseObservations);
 
         ProviderToCSRMatrix<Integer, SparseObservation<Integer>,
-                ArrayObservationProvider<Integer, SparseObservation<Integer>>> providerToCSRMatrix = new ProviderToCSRMatrix<>(observations);
+                ListObservationProvider<Integer, SparseObservation<Integer>>> providerToCSRMatrix = new ProviderToCSRMatrix<>(observations);
 
 
         double[] values = providerToCSRMatrix.getValues();
@@ -51,38 +50,4 @@ public class ProviderToCSRMatrixTest {
         assertArrayEquals(new int[] {0, 2, 4, 7, 8}, rowIndexes);
         assertArrayEquals(new int[] {0, 1, 1, 3, 2, 3, 4, 5}, columnIndexes);
     }
-
-    @Test
-    public void csrNewTest() {
-        List<SparseObservation<Integer>> sparseObservations = new ArrayList<>();
-        SparseObservation<Integer> sparseObservation = new SparseObservation<>(3, 0);
-        sparseObservation.setFeature(0, 1);
-        sparseObservation.setFeature(2, 2);
-        sparseObservations.add(sparseObservation);
-        sparseObservation = new SparseObservation<>(3, 0);
-        sparseObservation.setFeature(2, 3);
-        sparseObservations.add(sparseObservation);
-        sparseObservation = new SparseObservation<>(3, 0);
-        sparseObservation.setFeature(0, 4);
-        sparseObservation.setFeature(1, 5);
-        sparseObservation.setFeature(2, 6);
-        sparseObservations.add(sparseObservation);
-
-        ArrayObservationProvider<Integer, SparseObservation<Integer>> observations =
-                new ArrayObservationProvider<Integer, SparseObservation<Integer>>(sparseObservations,
-                        (data, columns) -> new SparseObservation<>(data.size(), 0));
-
-        ProviderToCSRMatrix<Integer, SparseObservation<Integer>,
-                ArrayObservationProvider<Integer, SparseObservation<Integer>>> providerToCSRMatrix = new ProviderToCSRMatrix<>(observations);
-
-
-        double[] values = providerToCSRMatrix.getValues();
-        int[] columnIndexes = providerToCSRMatrix.getColumnIndexes();
-        int[] rowIndexes = providerToCSRMatrix.getRowIndexes();
-        assertArrayEquals(new double[]{10, 20, 30, 40, 50, 60, 70, 80}, values, 0);
-        assertArrayEquals(new int[] {0, 2, 4, 7, 8}, rowIndexes);
-        assertArrayEquals(new int[] {0, 1, 1, 3, 2, 3, 4, 5}, columnIndexes);
-    }
-
-
 }

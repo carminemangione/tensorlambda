@@ -1,15 +1,14 @@
 package com.mangione.continuous.observations.sparse;
 
+import com.mangione.continuous.observations.ExemplarInterface;
+
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.jetbrains.annotations.NotNull;
 
-import com.mangione.continuous.observations.sparse.SparseExemplar;
-import com.mangione.continuous.observations.sparse.SparseExemplarInterface;
-
-public class FailedTestExemplar implements SparseExemplarInterface<Integer, Integer> {
+public class FailedTestExemplar implements ExemplarInterface<Integer, Integer>, SparseObservationInterface<Integer> {
 
 	private final boolean fFailed;
 	private final int fTrack;
@@ -70,8 +69,8 @@ public class FailedTestExemplar implements SparseExemplarInterface<Integer, Inte
 
 	private SparseExemplar<Integer> createSparseExemplar(int numFeatures, String[] featureStrings,
 			int numberOfNonZeroFeatures, int target) {
-		int[] featureAndTargetColumns = createFeatureColumnsAddingTargetAsLast(featureStrings, numFeatures,
-				numberOfNonZeroFeatures);
+		Integer[] featureAndTargetColumns = createFeatureColumnsAddingTargetAsLast(featureStrings, numFeatures,
+				numberOfNonZeroFeatures).toArray(new Integer[0]);
 
 		Integer[] featureAndTargetValues = createFeatureValuesAddingTargetValueAsLast(numberOfNonZeroFeatures, target);
 		return new SparseExemplar<>(featureAndTargetValues, featureAndTargetColumns,
@@ -83,16 +82,16 @@ public class FailedTestExemplar implements SparseExemplarInterface<Integer, Inte
 		return fSparseExemplar.numberOfFeatures();
 	}
 
-	private int[] createFeatureColumnsAddingTargetAsLast(String[] featureStrings, int numFeatures, int numberOfNonZeroFeatures) {
+	private List<Integer> createFeatureColumnsAddingTargetAsLast(String[] featureStrings, int numFeatures, int numberOfNonZeroFeatures) {
 		List<Integer> featureColumnList = Arrays.stream(Arrays.copyOfRange(featureStrings, 0, numberOfNonZeroFeatures))
 				.map(Integer::parseInt)
 				.collect(Collectors.toList());
 
 		featureColumnList.add(numFeatures);
-		return featureColumnList.stream().mapToInt(Integer::intValue).toArray();
+		return featureColumnList;
 	}
 
-	@NotNull
+	@Nonnull
 	private Integer[] createFeatureValuesAddingTargetValueAsLast(int numberOfNonZeroFeatures, int target) {
 		Integer[] featureAndTargetValues = new Integer[numberOfNonZeroFeatures + 1];
 		Arrays.fill(featureAndTargetValues, 1);

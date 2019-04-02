@@ -1,9 +1,8 @@
 package com.mangione.continuous.calculators.chisquare;
 
-import com.mangione.continuous.observationproviders.ArrayObservationProvider;
-import com.mangione.continuous.observationproviders.ObservationProvider;
+import com.mangione.continuous.observationproviders.ListObservationProvider;
+import com.mangione.continuous.observationproviders.ObservationProviderInterface;
 import com.mangione.continuous.observations.ExemplarInterface;
-import com.mangione.continuous.observations.ObservationFactoryInterface;
 import com.mangione.continuous.observations.ProxyValues;
 import com.mangione.continuous.observations.sparse.SparseExemplar;
 import org.junit.Test;
@@ -21,8 +20,8 @@ public class ProviderToChiSquareForAllFeaturesTest {
 	@Test
 	// Taken from http://www.stat.yale.edu/Courses/1997-98/101/chisq.htm
 	public void chiSquareTwoColumnsOnlyDoesOnePass() {
-		ObservationProvider<Integer, ExemplarInterface<Integer, Integer>> provider =
-				new ProviderToChiSquareForFeatureTest.ContingencyTableExemplarProvider(null, 2) {
+		ObservationProviderInterface<Integer, ExemplarInterface<Integer, Integer>> provider =
+				new ProviderToChiSquareForFeatureTest.ContingencyTableExemplarProvider( 2) {
 					private int numberOfTimesIteratorWasCalled;
 
 					@Nonnull
@@ -50,8 +49,8 @@ public class ProviderToChiSquareForAllFeaturesTest {
 	// Taken from http://www.stat.yale.edu/Courses/1997-98/101/chisq.htm
 	public void batchSizeOfOneGoesInTwoPasses() {
 		final int[] numTimesThrough = {0};
-		ObservationProvider<Integer, ExemplarInterface<Integer, Integer>> provider =
-				new ProviderToChiSquareForFeatureTest.ContingencyTableExemplarProvider(null, 2) {
+		ObservationProviderInterface<Integer, ExemplarInterface<Integer, Integer>> provider =
+				new ProviderToChiSquareForFeatureTest.ContingencyTableExemplarProvider( 2) {
 					@Nonnull
 					@Override
 					public Iterator<ExemplarInterface<Integer, Integer>> iterator() {
@@ -93,7 +92,7 @@ public class ProviderToChiSquareForAllFeaturesTest {
 
 		ProxyValues observationStates = fillProxies("obs1", "obs2");
 		ProxyValues targetStates = fillProxies("target1", "target2");
-		ArrayObservationProvider<Integer, SparseExemplar<Integer>> sparseExemplars = new ArrayObservationProvider<>(exemplars, null);
+		ListObservationProvider<Integer, SparseExemplar<Integer>> sparseExemplars = new ListObservationProvider<>(exemplars);
 		ProviderToChiSquareForAllFeatures providerToChiSquare = new ProviderToChiSquareForAllFeatures(sparseExemplars, observationStates, targetStates, 1);
 		assertEquals(baseChiSquare.getChiSquare(), providerToChiSquare.getChiSquares().get(0).getChiSquare(), 0.001);
 
@@ -120,7 +119,7 @@ public class ProviderToChiSquareForAllFeaturesTest {
 
 		ProxyValues observationStates = fillProxies("obs1", "obs2");
 		ProxyValues targetStates = fillProxies("target1", "target2");
-		ArrayObservationProvider<Integer, SparseExemplar<Integer>> sparseExemplars = new ArrayObservationProvider<>(exemplars, null);
+		ListObservationProvider<Integer, SparseExemplar<Integer>> sparseExemplars = new ListObservationProvider<>(exemplars);
 		ProviderToChiSquareForAllFeatures providerToChiSquare = new ProviderToChiSquareForAllFeatures(sparseExemplars, observationStates, targetStates, 3);
 		assertEquals(baseChiSquare.getChiSquare(), providerToChiSquare.getChiSquares().get(0).getChiSquare(), 0.001);
 
@@ -128,7 +127,7 @@ public class ProviderToChiSquareForAllFeaturesTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void emptyProviderExcepts()  {
-		new ProviderToChiSquareForAllFeatures(new EmptyProvider(null), new ProxyValues(), new ProxyValues(), 2);
+		new ProviderToChiSquareForAllFeatures(new EmptyProvider(), new ProxyValues(), new ProxyValues(), 2);
 	}
 
 	private ProxyValues fillProxies(String... names) {
@@ -153,15 +152,13 @@ public class ProviderToChiSquareForAllFeaturesTest {
 		}
 
 
-		return new SparseExemplar<>(nonZeroValues.toArray(new Integer[0]),
-				nonZeroIndexes.stream().mapToInt(Integer::intValue).toArray(),
-				numColumns, 0, numColumns - 1);
+		return new SparseExemplar<>(nonZeroValues,
+				nonZeroIndexes, numColumns, 0, numColumns - 1);
 	}
 
 
-	private static class EmptyProvider extends ObservationProvider<Integer, ExemplarInterface<Integer, Integer>> {
-		EmptyProvider(ObservationFactoryInterface<Integer, ? extends ExemplarInterface<Integer, Integer>> factory) {
-			super(factory);
+	private static class EmptyProvider implements ObservationProviderInterface<Integer, ExemplarInterface<Integer, Integer>> {
+		EmptyProvider() {
 		}
 
 		@Nonnull

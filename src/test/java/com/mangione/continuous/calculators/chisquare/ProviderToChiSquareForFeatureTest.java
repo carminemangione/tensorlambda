@@ -1,10 +1,8 @@
 package com.mangione.continuous.calculators.chisquare;
 
-import com.mangione.continuous.observationproviders.ObservationProvider;
+import com.mangione.continuous.observationproviders.ObservationProviderInterface;
 import com.mangione.continuous.observations.ExemplarInterface;
-import com.mangione.continuous.observations.ObservationFactoryInterface;
 import com.mangione.continuous.observations.sparse.SparseExemplar;
-import com.mangione.continuous.observations.sparse.SparseExemplarInterface;
 import org.junit.Test;
 
 import javax.annotation.Nonnull;
@@ -24,20 +22,18 @@ public class ProviderToChiSquareForFeatureTest {
 	// Taken from http://www.stat.yale.edu/Courses/1997-98/101/chisq.htm
 	public void fromExample() {
 
-		ObservationProvider<Integer, ExemplarInterface<Integer, Integer>> provider =
-				new ContingencyTableExemplarProvider(null, 1);
+		ObservationProviderInterface<Integer, ExemplarInterface<Integer, Integer>> provider =
+				new ContingencyTableExemplarProvider(1);
 
 		ProviderToChiSquareForFeature chiSquareForColumn = new ProviderToChiSquareForFeature(provider, 0);
 		assertEquals(1.51, chiSquareForColumn.getChiSquare(), 0.01);
 	}
 
-	static class ContingencyTableExemplarProvider extends ObservationProvider<Integer, ExemplarInterface<Integer, Integer>> {
+	static class ContingencyTableExemplarProvider implements ObservationProviderInterface<Integer, ExemplarInterface<Integer, Integer>> {
 
-		private List<SparseExemplarInterface<Integer, Integer>> fRows = new ArrayList<>();
+		private List<ExemplarInterface<Integer, Integer>> fRows = new ArrayList<>();
 
-		ContingencyTableExemplarProvider(ObservationFactoryInterface<Integer, ? extends ExemplarInterface<Integer, Integer>> factory,
-										 int numberOfFeatures) {
-			super(factory);
+		ContingencyTableExemplarProvider(int numberOfFeatures) {
 
 			for (int observationState = 0; observationState < 3; observationState++) {
 				for (int targetState = 0; targetState < 3; targetState++) {
@@ -58,7 +54,7 @@ public class ProviderToChiSquareForFeatureTest {
 		}
 
 		private SparseExemplar<Integer> createExemplarForThisColumn(int numberOfFeatures, int observationState, int targetState) {
-			int[] columns = IntStream.range(0, numberOfFeatures + 1).toArray();
+			Integer[] columns = IntStream.range(0, numberOfFeatures + 1).boxed().toArray(Integer[]::new);
 			Integer[] values = new Integer[numberOfFeatures + 1];
 			Arrays.fill(values, 0);
 			Arrays.fill(values, 0, numberOfFeatures, observationState);

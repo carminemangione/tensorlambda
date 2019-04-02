@@ -1,53 +1,45 @@
 package com.mangione.continuous.observationproviders;
 
-import java.util.Iterator;
-import java.util.Spliterator;
-import java.util.function.Consumer;
-
-import javax.annotation.Nonnull;
-
-import com.mangione.continuous.observations.dense.DiscreteExemplar;
+import com.mangione.continuous.observations.ExemplarInterface;
 import com.mangione.continuous.observations.ObservationInterface;
 
-@SuppressWarnings("WeakerAccess")
-public class ObservationToExemplarProvider<T extends Number> implements ObservationProviderInterface<T, DiscreteExemplar<T>> {
-	private final ObservationProviderInterface<T, ? extends ObservationInterface<T>> provider;
-	private final int targetColumnIndex;
+import javax.annotation.Nonnull;
+import java.util.Iterator;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
-	public ObservationToExemplarProvider(ObservationProviderInterface<T, ? extends ObservationInterface<T>> provider,
-			int targetColumnIndex) {
-		this.provider = provider;
-		this.targetColumnIndex = targetColumnIndex;
-	}
+public class ObservationToExemplarProvider<S extends Number, T extends ExemplarInterface<S, Integer>>
+        implements ObservationProviderInterface<S, T> {
+    private final ObservationProviderInterface<S, ? extends ObservationInterface<S>> provider;
+    private Function<ObservationInterface<S>, T> factory;
 
-	@Nonnull
-	@Override
-	public Iterator<DiscreteExemplar<T>> iterator() {
-		return new Iterator<DiscreteExemplar<T>>() {
+    public ObservationToExemplarProvider(ObservationProviderInterface<S, ? extends ObservationInterface<S>> provider,
+                                         Function<ObservationInterface<S>, T> observationToExemplarFactory) {
+        this.provider = provider;
+        this.factory = observationToExemplarFactory;
+    }
 
-			private final Iterator<? extends ObservationInterface<T>> iterator = provider.iterator();
+    @Nonnull
+    @Override
+    public Iterator<T> iterator() {
+        return new Iterator<T>() {
+            private final Iterator<? extends ObservationInterface<S>> iterator = provider.iterator();
 
-			@Override
-			public boolean hasNext() {
-				return iterator.hasNext();
-			}
+            @Override
+            public boolean hasNext() {
+                return iterator.hasNext();
+            }
 
-			@Override
-			public DiscreteExemplar<T> next() {
-				ObservationInterface<T> next = iterator.next();
-				return DiscreteExemplar.getExemplarTargetWithColumn(next.getFeatures(), targetColumnIndex);
-			}
-		};
-	}
+            @Override
+            public T next() {
+                return factory.apply(iterator.next());
+            }
+        };
+    }
 
-	@Override
-	public void forEach(Consumer<? super DiscreteExemplar<T>> action) {
-		provider.iterator().forEachRemaining(observation -> action.accept(
-				DiscreteExemplar.getExemplarTargetWithColumn(observation.getFeatures(), targetColumnIndex)));
-	}
-
-	@Override
-	public Spliterator<DiscreteExemplar<T>> spliterator() {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public void forEach(Consumer<? super T> action) {
+        provider.iterator().forEachRemaining(observation -> action.accept(
+                factory.apply(observation)));
+    }
 }

@@ -3,14 +3,15 @@ package com.mangione.continuous.sampling;
 import com.mangione.continuous.observationproviders.ArrayObservationProvider;
 import com.mangione.continuous.observationproviders.ObservationProviderInterface;
 import com.mangione.continuous.observationproviders.RandomGeneratorFactory;
-import com.mangione.continuous.observations.dense.DoubleObservationFactory;
 import com.mangione.continuous.observations.ObservationInterface;
-
+import com.mangione.continuous.observations.dense.Observation;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.function.Function;
 
 import static org.junit.Assert.*;
 
@@ -22,15 +23,17 @@ public class SampledObservationProviderTest {
 	private double[] trainExpected;
 	private double[] testExpected;
 	private boolean[] inTestSet;
+	private Function<Double[], ObservationInterface<Double>> factory;
 
 
 	@Before
-	public void setUp() throws Exception {
-		observationProvider = new ArrayObservationProvider<>(DATA, new DoubleObservationFactory());
+	public void setUp() {
+		factory = doubles -> new Observation<>(Arrays.asList(doubles));
+		observationProvider = new ArrayObservationProvider<>(DATA, factory);
 		seed = 1000;
 
 		inTestSet = new boolean[]{true, false, false, true, false};
-		trainsSampler = new SampledObservationProvider<>(0.50, observationProvider, new DoubleObservationFactory(),
+		trainsSampler = new SampledObservationProvider<>(0.50, observationProvider,
 				new AlternatingTestRandomGeneratorFactory(inTestSet), seed, false);
 
 
@@ -40,9 +43,9 @@ public class SampledObservationProviderTest {
 	}
 
 	@Test
-	public void iteratorTest() throws Exception {
+	public void iteratorTest() {
 		SampledObservationProvider<Double, ObservationInterface<Double>> sampler =
-				new SampledObservationProvider<>(0.50, observationProvider, new DoubleObservationFactory(),
+				new SampledObservationProvider<>(0.50, observationProvider,
 						new AlternatingTestRandomGeneratorFactory(inTestSet), seed, true);
 
 		int i = 0;
@@ -53,7 +56,7 @@ public class SampledObservationProviderTest {
 	}
 
 	@Test
-	public void iteratorTrain() throws Exception {
+	public void iteratorTrain() {
 		int i = 0;
 		for (ObservationInterface<Double> aSampler : trainsSampler) {
 			assertEquals(trainExpected[i++], aSampler.getFeatures().get(0), 0);
@@ -62,24 +65,24 @@ public class SampledObservationProviderTest {
 	}
 
 	@Test
-	public void forEach() throws Exception {
+	public void forEach() {
 		final int[] i = {0};
 		trainsSampler.forEach(observation -> assertEquals(trainExpected[i[0]++], observation.getFeatures().get(0), 0));
 		assertEquals(2, i[0]);
 	}
 
 	@Test
-	public void noSamplesDoesNotExplode() throws Exception {
+	public void noSamplesDoesNotExplode() {
 		ObservationProviderInterface<Double, ObservationInterface<Double>> emptyProvider =
-				new ArrayObservationProvider<>(new Double[0][0], new DoubleObservationFactory());
-		trainsSampler = new SampledObservationProvider<>(0.50, emptyProvider, new DoubleObservationFactory(),
+				new ArrayObservationProvider<>(new Double[0][0], factory);
+		trainsSampler = new SampledObservationProvider<>(0.50, emptyProvider,
 				new AlternatingTestRandomGeneratorFactory(inTestSet), seed, false);
 		assertFalse(trainsSampler.iterator().hasNext());
 	}
 
 
 	@Test
-	public void forEachRemaining() throws Exception {
+	public void forEachRemaining() {
 		Iterator<ObservationInterface<Double>> iterator = trainsSampler.iterator();
 		assertTrue(iterator.hasNext());
 		assertEquals(5d, iterator.next().getFeatures().get(0), 0);
@@ -89,17 +92,17 @@ public class SampledObservationProviderTest {
 
 
 	@Test(expected = UnsupportedOperationException.class)
-	public void spliterator() throws Exception {
+	public void spliterator() {
 		trainsSampler.spliterator();
 	}
 
 	@Test(expected = UnsupportedOperationException.class)
-	public void remove() throws Exception {
+	public void remove() {
 		trainsSampler.iterator().remove();
 	}
 
 	@Test
-	public void multipleIterators() throws Exception {
+	public void multipleIterators() {
 		final int[] i = {0};
 		trainsSampler.forEach(observation ->
 		{

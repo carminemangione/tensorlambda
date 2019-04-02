@@ -1,16 +1,15 @@
 package com.mangione.continuous.observationproviders;
 
-import static com.mangione.continuous.observationproviders.ArrayObservationProvider.doubleFromPrimitive;
-import static org.junit.Assert.assertEquals;
-
-import java.util.Arrays;
-
+import com.mangione.continuous.observations.ObservationInterface;
+import com.mangione.continuous.observations.ProxyValues;
+import com.mangione.continuous.observations.dense.Observation;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.mangione.continuous.observations.ObservationInterface;
-import com.mangione.continuous.observations.ProxyValues;
-import com.mangione.continuous.observations.dense.DoubleObservationFactory;
+import java.util.Arrays;
+
+import static com.mangione.continuous.observationproviders.ArrayObservationProvider.doubleFromPrimitive;
+import static org.junit.Assert.assertEquals;
 
 public class LabeledObservationProviderTest {
 
@@ -21,7 +20,7 @@ public class LabeledObservationProviderTest {
 	@Before
 	public void setUp() {
 		aop = new ArrayObservationProvider<>(DATA,
-				new DoubleObservationFactory());
+				doubles -> new Observation<>(Arrays.asList(doubles)));
 	}
 
 	@Test
@@ -30,7 +29,7 @@ public class LabeledObservationProviderTest {
 		ProxyValues columnNamesProxy = new ProxyValues();
 		Arrays.stream(columnNames).forEach(columnNamesProxy::add);
 
-		aop = new ArrayObservationProvider<>(doubleFromPrimitive(new double[4][1]), new DoubleObservationFactory());
+		aop = new ArrayObservationProvider<>(doubleFromPrimitive(new double[4][1]), doubles -> new Observation<>(Arrays.asList(doubles)));
 		LabeledObservationProvider<Double, ObservationInterface<Double>> labeledProvider =
 				new LabeledObservationProvider<>(aop, columnNamesProxy);
 

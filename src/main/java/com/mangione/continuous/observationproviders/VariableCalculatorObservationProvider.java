@@ -4,28 +4,28 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
 import com.mangione.continuous.calculators.VariableCalculations;
-import com.mangione.continuous.observations.ObservationFactoryInterface;
 import com.mangione.continuous.observations.ObservationInterface;
 
 public class VariableCalculatorObservationProvider<R, S, T extends ObservationInterface<S>> implements ObservationProviderInterface<S, T> {
 
 	private final ObservationProviderInterface<R, ? extends ObservationInterface<R>> provider;
-	private final ObservationFactoryInterface<S, ? extends T> observationFactory;
 	private final VariableCalculations<R, S> variableCalculations;
+	private Function<List<S>, T> calculatedListToObservation;
 
 
+	@SuppressWarnings("WeakerAccess")
 	public VariableCalculatorObservationProvider(ObservationProviderInterface<R, ? extends ObservationInterface<R>> provider,
-			VariableCalculations<R, S> variableCalculations,
-			ObservationFactoryInterface<S, ? extends T> observationFactory) {
+												 VariableCalculations<R, S> variableCalculations, Function<List<S>, T> calculatedListToObservation) {
 
 		this.provider = provider;
-		this.observationFactory = observationFactory;
 		this.variableCalculations = variableCalculations;
 
+		this.calculatedListToObservation = calculatedListToObservation;
 	}
 
 	@Override
@@ -60,7 +60,7 @@ public class VariableCalculatorObservationProvider<R, S, T extends ObservationIn
 		@Override
 		public T next() {
 			List<S> translatedVariables = variableCalculations.translateAllVariables(iterator.next().getAllColumns());
-			return observationFactory.create(translatedVariables, null);
+			return calculatedListToObservation.apply(translatedVariables);
 		}
 
 		@Override

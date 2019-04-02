@@ -1,10 +1,9 @@
 package com.mangione.continuous.classifiers.supervised;
 
-import com.mangione.continuous.observationproviders.ArrayObservationProvider;
-import com.mangione.continuous.observationproviders.ObservationProvider;
-import com.mangione.continuous.observations.dense.DiscreteExemplar;
-import com.mangione.continuous.observations.dense.DiscreteExemplarFactory;
+import com.mangione.continuous.observationproviders.ListObservationProvider;
+import com.mangione.continuous.observationproviders.ObservationProviderInterface;
 import com.mangione.continuous.observations.ExemplarInterface;
+import com.mangione.continuous.observations.dense.DiscreteExemplar;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -25,8 +24,8 @@ public class NaiveBayesClassifierTest {
 		exemplars.add(new DiscreteExemplar<>(Arrays.asList(0., 0., 2., 0., 2., 1., 0.), 1., 1));
 		exemplars.add(new DiscreteExemplar<>(Arrays.asList(1., 0., 0., 0., 2., 2., 0.), 1., 1));
 
-		ObservationProvider<Double, ExemplarInterface<Double, Integer>> provider =
-				new ArrayObservationProvider<>(exemplars, new DiscreteExemplarFactory());
+		ObservationProviderInterface<Double, ExemplarInterface<Double, Integer>> provider =
+				new ListObservationProvider<>(exemplars);
 
 		NaiveBayesClassifier nbc = new NaiveBayesClassifier(provider, 2);
 		assertEquals(1, nbc.classify(new DiscreteExemplar<>(Arrays.asList(0., 1., 0., 0., 2., 1., 0.), 1., 1)));
@@ -41,8 +40,8 @@ public class NaiveBayesClassifierTest {
 		exemplars.add(new DiscreteExemplar<>(Arrays.asList(20., 2.), 1., 1));
 		exemplars.add(new DiscreteExemplar<>(Arrays.asList(1., 5.), 0., 0));
 
-		ObservationProvider<Double, ExemplarInterface<Double, Integer>> provider =
-				new ArrayObservationProvider<>(exemplars, new DiscreteExemplarFactory());
+		ObservationProviderInterface<Double, ExemplarInterface<Double, Integer>> provider =
+				new ListObservationProvider<>(exemplars);
 		NaiveBayesClassifier nbc = new NaiveBayesClassifier(provider, 2);
 		assertEquals(1, nbc.classify(new DiscreteExemplar<>(Arrays.asList(20., 5.), 1., 1)));
 		assertEquals(0, nbc.classify(new DiscreteExemplar<>(Arrays.asList(1., 15.), 0., 0)));

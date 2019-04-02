@@ -1,36 +1,39 @@
 package com.mangione.continuous.observations.sparse;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.mangione.continuous.observations.ExemplarInterface;
+
+import java.util.*;
+import java.util.function.BinaryOperator;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class SparseExemplar<T> extends SparseObservation<T> implements SparseExemplarInterface<T, T> {
+@SuppressWarnings("WeakerAccess")
+public class SparseExemplar<T> extends SparseObservation<T> implements ExemplarInterface<T, T> {
 	private final T target;
 	private final int targetIndex;
 
-	public SparseExemplar(T[] values, int[] columns, int numberOfColumns, T missingValue, int targetIndex) {
-		super(createAndFillIndexToValueMapRemovingTarget(columns, values, targetIndex),
-				numberOfColumns- 1, missingValue);
+	public SparseExemplar(List<T> values, List<Integer> columns, int numberOfColumns, T missingValue, int targetIndex) {
+		super(createAndFillIndexToValueMapRemovingTarget(values, columns, targetIndex),
+				numberOfColumns - 1, missingValue);
 		if (numberOfColumns < 1) {
 			throw new IllegalArgumentException("Number of columns must be greater than 0");
 		}
-
 
 		if (targetIndex < 0)
 			throw new IllegalArgumentException("Column index may not be negative");
 
 		this.targetIndex = targetIndex;
-		int locationOfTargetIndex = Arrays.binarySearch(columns, targetIndex);
+		int locationOfTargetIndex = Collections.binarySearch(columns, targetIndex);
 		if (locationOfTargetIndex < 0)
 			throw new IllegalArgumentException(String.format("Target index %d must be set in values array", targetIndex));
 
-		this.target = values[locationOfTargetIndex];
+		this.target = values.get(locationOfTargetIndex);
 	}
 
-	@SuppressWarnings("WeakerAccess")
+	public SparseExemplar(T[] values, Integer[] columns, int numberOfColumns, T missingValue, int targetIndex) {
+		this(Arrays.asList(values), Arrays.asList(columns), numberOfColumns, missingValue, targetIndex);
+	}
+
 	public SparseExemplar(int numberOfColumns, T missingValue, T target) {
 		super(numberOfColumns, missingValue);
 		this.target = target;
@@ -62,33 +65,19 @@ public class SparseExemplar<T> extends SparseObservation<T> implements SparseExe
 		return super.getFeature(adjustedIndexForRemovalOfTarget);
 	}
 
-	@Override
-	public List<Integer> getColumnIndexes() {
-		return super.getColumnIndexes();
-	}
-
-	private static <T> Map<Integer, T> createAndFillIndexToValueMapRemovingTarget(int[] columns, T[] values, int targetIndex) {
-		Map<Integer, T> indexToValueMap = new HashMap<>(columns.length);
-
-		fillUpToColumnIndex(columns, values, targetIndex, indexToValueMap);
-		fillAfterColumnIndexSlidingToLeft(columns, values, targetIndex, indexToValueMap);
-		return indexToValueMap;
-	}
-
-	private static <T> void fillAfterColumnIndexSlidingToLeft(int[] columns, T[] values, int targetIndex, Map<Integer, T> indexToValueMap) {
-		IntStream.range(0, columns.length)
+	private static <T> Map<Integer, T> createAndFillIndexToValueMapRemovingTarget(List<T> values, List<Integer> columns, int targetIndex) {
+		TreeMap<Integer, T> treeMap = IntStream.range(0, columns.size())
 				.boxed()
-				.filter(index -> columns[index] > targetIndex)
-				.forEach(index -> indexToValueMap.put(columns[index] - 1, values[index]));
+				.collect(Collectors.toMap(columns::get, values::get, throwingMerger(), TreeMap::new));
+
+		treeMap.remove(targetIndex);
+		return treeMap;
 	}
 
-	private static <T> void fillUpToColumnIndex(int[] columns, T[] values, int targetIndex, Map<Integer, T> indexToValueMap) {
-		if (columns.length != values.length)
-			throw new IllegalArgumentException(String.format("Number of columns %d does not equal number of values %d", columns.length, values.length));
-		IntStream.range(0, columns.length)
-				.boxed()
-				.filter(index -> columns[index] < targetIndex)
-				.forEach(index -> indexToValueMap.put(columns[index], values[index]));
+	private static <T> BinaryOperator<T> throwingMerger() {
+		return (u, v) -> {
+			throw new IllegalStateException(String.format("Duplicate key %s", u));
+		};
 	}
 
 }

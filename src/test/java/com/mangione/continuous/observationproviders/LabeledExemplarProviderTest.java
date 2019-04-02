@@ -1,15 +1,14 @@
 package com.mangione.continuous.observationproviders;
 
-import static com.mangione.continuous.observationproviders.ArrayObservationProvider.integerFromPrimitive;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
+import java.util.function.Function;
 
 import org.junit.Test;
 
 import com.mangione.continuous.observations.ProxyValues;
 import com.mangione.continuous.observations.dense.DiscreteExemplar;
-import com.mangione.continuous.observations.dense.DiscreteExemplarFactory;
 
 public class LabeledExemplarProviderTest {
 
@@ -22,7 +21,7 @@ public class LabeledExemplarProviderTest {
 		Arrays.stream(new String[]{"True", "False"}).forEach(targetProxy::add);
 
 		ArrayObservationProvider<Integer, DiscreteExemplar<Integer>> aop =
-				new ArrayObservationProvider<>(integerFromPrimitive(new int[4][1]), new DiscreteExemplarFactory<>());
+				new ArrayObservationProvider<>(ArrayObservationProvider.integerFromPrimitive(new int[4][1]), integers -> new DiscreteExemplar<>(Arrays.asList(integers), 0, 1));
 
 		LabeledExemplarProvider<Integer, Integer, DiscreteExemplar<Integer>> discreteExemplars =
 				new LabeledExemplarProvider<>(aop, columnNamesProxy, targetProxy);

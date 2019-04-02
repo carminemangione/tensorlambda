@@ -1,13 +1,13 @@
 package com.mangione.continuous.calculators.chisquare;
 
-import com.mangione.continuous.observationproviders.ObservationProvider;
+import com.mangione.continuous.observationproviders.ObservationProviderInterface;
 import com.mangione.continuous.observations.ExemplarInterface;
 import org.apache.commons.lang3.time.StopWatch;
 
 @SuppressWarnings("WeakerAccess")
 public class ProviderToChiSquareForFeature {
 	private final ChiSquare fChiSquare;
-	public ProviderToChiSquareForFeature(ObservationProvider<Integer, ? extends ExemplarInterface<Integer, Integer>> provider, int column) {
+	public ProviderToChiSquareForFeature(ObservationProviderInterface<Integer, ? extends ExemplarInterface<Integer, Integer>> provider, int column) {
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 		ContingencyTable.Builder builder = new ContingencyTable.Builder(3, 3);

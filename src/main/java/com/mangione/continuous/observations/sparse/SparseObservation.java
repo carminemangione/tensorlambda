@@ -10,25 +10,24 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+@SuppressWarnings("ALL")
 public class SparseObservation<T> implements SparseObservationInterface<T> {
 
 	private final Map<Integer, T> columnIndexToValueMap;
 	private final int numberOfColumns;
 	private final T missingValue;
 
-	@SuppressWarnings("WeakerAccess")
 	public SparseObservation(T[] values, int[] columns, int numberOfColumns, T missingValue) {
 		this(createAndFillIndexToValueMap(columns, values), numberOfColumns, missingValue);
 	}
 
-	@SuppressWarnings("WeakerAccess")
 	public SparseObservation(int numberOfColumns, T missingValue) {
 		columnIndexToValueMap = new HashMap<>();
 		this.numberOfColumns = numberOfColumns;
 		this.missingValue = missingValue;
 	}
 
-	SparseObservation(Map<Integer, T> columnIndexToValueMap, int numberOfColumns, T missingValue) {
+	protected SparseObservation(Map<Integer, T> columnIndexToValueMap, int numberOfColumns, T missingValue) {
 		this.columnIndexToValueMap = columnIndexToValueMap;
 		this.numberOfColumns = numberOfColumns;
 		this.missingValue = missingValue;

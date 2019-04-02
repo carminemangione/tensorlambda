@@ -6,6 +6,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
 
@@ -16,12 +17,11 @@ import com.mangione.continuous.observations.dense.Observation;
 
 public class RowFilteringObservationProviderTest {
 	private final static Integer[][] DATA = {{2, 3}, {4, 6}, {2, 0}};
-	private ArrayObservationProvider<Integer, Observation<Integer>> provider;
+	private ListObservationProvider<Integer, Observation<Integer>> provider;
 
 	@Before
 	public void setUp() {
-		//noinspection Convert2Diamond ... won't compile otherwise
-		provider = new ArrayObservationProvider<Integer, Observation<Integer>>(DATA, (features, columns) -> new Observation<Integer>(features));
+		provider = new ArrayObservationProvider<>(DATA, (features) -> new Observation<>(Arrays.asList(features)));
 	}
 
 	@Test
@@ -82,8 +82,8 @@ public class RowFilteringObservationProviderTest {
 
 	@Test
 	public void numberOfLinesWhenEmpty() {
-		ArrayObservationProvider<Integer, Observation<Integer>> empty =
-				new ArrayObservationProvider<>(new ArrayList<>(), null);
+		ListObservationProvider<Integer, Observation<Integer>> empty =
+				new ListObservationProvider<>(new ArrayList<>());
 
 		RowFilteringObservationProvider<Integer, Observation<Integer>> rfop =
 				new RowFilteringObservationProvider<>(empty,
@@ -92,6 +92,7 @@ public class RowFilteringObservationProviderTest {
 	}
 
 
+	@SuppressWarnings("ConstantConditions")
 	@Test
 	public void callingHasNextMultipleTimesDoesNotAdvance() {
 		RowFilteringObservationProvider<Integer, Observation<Integer>> rfop =
@@ -119,8 +120,8 @@ public class RowFilteringObservationProviderTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void nextWhenNoneLeftExcepts() {
-		ArrayObservationProvider<Integer, Observation<Integer>> empty =
-				new ArrayObservationProvider<>(new ArrayList<>(), null);
+		ListObservationProvider<Integer, Observation<Integer>> empty =
+				new ListObservationProvider<>(new ArrayList<>());
 
 		RowFilteringObservationProvider<Integer, Observation<Integer>> rfop =
 				new RowFilteringObservationProvider<>(empty,

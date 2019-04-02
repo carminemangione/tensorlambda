@@ -1,22 +1,16 @@
 package com.mangione.continuous.sampling;
 
+import com.mangione.continuous.observationproviders.ObservationProviderInterface;
+import com.mangione.continuous.observationproviders.RandomGeneratorFactory;
+import com.mangione.continuous.observations.ObservationInterface;
+
+import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
-import javax.annotation.Nonnull;
 
-import com.mangione.continuous.observationproviders.ObservationProvider;
-import com.mangione.continuous.observationproviders.ObservationProviderInterface;
-import com.mangione.continuous.observationproviders.RandomGeneratorFactory;
-import com.mangione.continuous.observations.ObservationFactoryInterface;
-import com.mangione.continuous.observations.ObservationInterface;
-import com.mangione.continuous.sampling.SamplingWithoutReplacement;
-
-
-public class SampledObservationProvider<S, T extends ObservationInterface<S>> extends ObservationProvider<S, T> {
-
-
+public class SampledObservationProvider<S, T extends ObservationInterface<S>> implements ObservationProviderInterface<S, T> {
 	private final double testSamplingPercent;
 	private final ObservationProviderInterface<S, T> provider;
 	private final RandomGeneratorFactory generatorFactory;
@@ -27,9 +21,7 @@ public class SampledObservationProvider<S, T extends ObservationInterface<S>> ex
 
 	@SuppressWarnings("WeakerAccess")
 	public SampledObservationProvider(double testSamplingPercent, ObservationProviderInterface<S, T> provider,
-			ObservationFactoryInterface<S, T> observationFactory,
-			RandomGeneratorFactory generatorFactory, long seed, boolean isTestSet) throws Exception {
-		super(observationFactory);
+			RandomGeneratorFactory generatorFactory, long seed, boolean isTestSet) {
 		this.testSamplingPercent = testSamplingPercent;
 		this.provider = provider;
 		this.generatorFactory = generatorFactory;

@@ -8,38 +8,27 @@ import java.util.List;
 
 
 @SuppressWarnings("WeakerAccess")
-public class ProviderToCSRMatrix<S extends Number, T extends SparseObservationInterface<S>,
+public class ProviderToCSRMatrix<S extends Number, T extends ObservationInterface<S>,
         U extends ObservationProviderInterface<S, T>> {
-    private final double[] values;
-    private final int[] columnIndexes;
-    private final int[] rowIndexes;
-	private final double[] targets;
+    private double[] values;
+    private int[] columnIndexes;
+    private int[] rowIndexes;
+    private final List<Integer> columnIndexesList;
+    private final List<Integer> rowIndexesList;
+    private final List<S> valueList;
 
-	public ProviderToCSRMatrix(U provider) {
-        List<Integer> columnIndexes = new ArrayList<>();
-        List<Integer> rowIndexes = new ArrayList<>();
-        List<Double> values = new ArrayList<>();
-        List<Integer> targets = new ArrayList<>();
+    public ProviderToCSRMatrix(U provider) {
+        columnIndexesList = new ArrayList<>();
+        rowIndexesList = new ArrayList<>();
+        valueList = new ArrayList<>();
 
-        rowIndexes.add(0);
-        int i = 0;
+
+        rowIndexesList.add(0);
         for (T sObservation : provider) {
-        	try {
-		        targets.add(((FailedTestExemplar) sObservation).getTarget());
-	        } catch(Exception e) {
-        		e.printStackTrace();
-	        }
-            CSRRow<T> csrRow = new CSRRow<>(sObservation);
-            rowIndexes.add(rowIndexes.get(rowIndexes.size() - 1) + csrRow.getNumValues());
-            values.addAll(csrRow.getValues());
-            columnIndexes.addAll(csrRow.getIndexes());
-
+            processNextRow(sObservation);
         }
 
-        this.values = values.stream().mapToDouble(x->x).toArray();
-        this.columnIndexes = columnIndexes.stream().mapToInt(x->x).toArray();
-        this.rowIndexes = rowIndexes.stream().mapToInt(x->x).toArray();
-        this.targets = targets.stream().mapToDouble(x -> x).toArray();
+        finishProcessing();
     }
 
     public double[] getValues() {
@@ -54,7 +43,19 @@ public class ProviderToCSRMatrix<S extends Number, T extends SparseObservationIn
         return rowIndexes;
     }
 
-    public double[] getTargets() {
-		return targets;
+    protected void processNextRow(T observation) {
+        List<Integer> columnIndexes = observation.getColumnIndexes();
+        columnIndexesList.addAll(columnIndexes);
+        columnIndexes.forEach(
+                index -> valueList.add(observation.getFeature(index)));
+        rowIndexesList.add(rowIndexesList.get(rowIndexesList.size() - 1) + columnIndexes.size());
+    }
+
+    protected void finishProcessing() {
+        this.values = valueList.stream()
+                .map(Number::doubleValue)
+                .mapToDouble(x -> x).toArray();
+        this.columnIndexes = columnIndexesList.stream().mapToInt(x -> x).toArray();
+        this.rowIndexes = rowIndexesList.stream().mapToInt(x -> x).toArray();
     }
 }

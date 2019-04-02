@@ -1,40 +1,43 @@
 package com.mangione.continuous.calculators.stats;
 
-import static org.junit.Assert.assertEquals;
+import com.mangione.continuous.observationproviders.ArrayObservationProvider;
+import com.mangione.continuous.observations.ObservationInterface;
+import com.mangione.continuous.observations.dense.Observation;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Arrays;
+import java.util.function.Function;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import com.mangione.continuous.observationproviders.ArrayObservationProvider;
-import com.mangione.continuous.observations.dense.DoubleObservationFactory;
-import com.mangione.continuous.observations.ObservationInterface;
+import static org.junit.Assert.assertEquals;
 
 public class ColumnStatsBuilderTest {
 
 	private ColumnStatsBuilder columnStatsBuilder;
+	private Function<Double[], ObservationInterface<Double>> factory;
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
+		factory = doubles -> new Observation<>(Arrays.asList(doubles));
 		ArrayObservationProvider<Double, ObservationInterface<Double>> provider =
-				new ArrayObservationProvider<>(new Double[][]{{2., 1.0}, {20., 2.0}, {18., 4.0}, {0., 1.0}}, new DoubleObservationFactory());
+				new ArrayObservationProvider<>(new Double[][]{{2., 1.0}, {20., 2.0}, {18., 4.0}, {0., 1.0}}, factory);
 
 		columnStatsBuilder = new ColumnStatsBuilder(provider);
 	}
 
 	@Test
-	public void multipleColumns() throws Exception {
+	public void multipleColumns() {
 		validateBuiltColumnStats(columnStatsBuilder);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void emptyIteratorExcepts() throws Exception {
+	public void emptyIteratorExcepts() {
 		ArrayObservationProvider<Double, ObservationInterface<Double>> provider =
-				new ArrayObservationProvider<>(new Double[0][0], new DoubleObservationFactory());
+				new ArrayObservationProvider<>(new Double[0][0], factory);
 
 		new ColumnStatsBuilder(provider);
 	}
