@@ -2,9 +2,11 @@ package com.mangione.continuous.observationproviders;
 
 import com.mangione.continuous.observations.ProxyValues;
 import com.mangione.continuous.observations.ObservationInterface;
+import com.mangione.continuous.observations.dense.Observation;
 
 import javax.annotation.Nonnull;
 import java.io.*;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.function.Consumer;
@@ -18,6 +20,10 @@ public class CsvObservationProvider<S, T extends ObservationInterface<S>> implem
     private boolean hasColumnHeader;
     private final ProxyValues namedColumns = new ProxyValues();
     private String charVal = ",";
+
+    public static CsvObservationProvider<String, ? extends ObservationInterface<String>> stringCsvObservationProvider(File file, boolean hasColumnHeader) {
+        return new CsvObservationProvider<>(file, strings -> new Observation<>(Arrays.asList(strings)), hasColumnHeader);
+    }
 
     public CsvObservationProvider(File file, Function<String[], T> csvToObservationFactory, boolean hasColumnHeader) {
         this.file = file;
