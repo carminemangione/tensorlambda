@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class ProviderToCSRMatrixWithTarget<S extends Number, T extends ExemplarInterface<S, Integer>,
         U extends ObservationProviderInterface<S, T>> extends ProviderToCSRMatrix<S, T, U>{
 
-    private final ArrayList<Integer> targetsList;
+    private ArrayList<Integer> targetsList;
     private int[] targets;
 
     @SuppressWarnings("WeakerAccess")
@@ -24,6 +24,8 @@ public class ProviderToCSRMatrixWithTarget<S extends Number, T extends ExemplarI
     @Override
     protected void processNextRow(T exemplar) {
         super.processNextRow(exemplar);
+        if(targetsList == null)
+            targetsList = new ArrayList<>();
         targetsList.add(exemplar.getTarget());
     }
 

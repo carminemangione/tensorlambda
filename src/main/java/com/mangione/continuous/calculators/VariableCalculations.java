@@ -37,8 +37,7 @@ public class VariableCalculations<R, S> implements Serializable {
 	private List<S> calculateVariableWithIndexedCalculatorOrDefault(R variable, int index, List<R> feature) {
 		return indexToCalculator.get(index) != null ?
 				indexToCalculator.get(index).apply(variable, feature) :
-				//defaultCalculator.apply(variable, feature);
-				new ArrayList<>();
+				defaultCalculator.apply(variable, feature);
 	}
 
 

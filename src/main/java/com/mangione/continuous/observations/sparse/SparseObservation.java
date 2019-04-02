@@ -44,6 +44,10 @@ public class SparseObservation<T> implements SparseObservationInterface<T> {
 		return Collections.unmodifiableList(features);
 	}
 
+	public List<T> getFeatureValues() {
+		return Collections.unmodifiableList(new ArrayList<>(columnIndexToValueMap.values()));
+	}
+
 	@Override
 	public List<T> getAllColumns() {
 		return getFeatures();
