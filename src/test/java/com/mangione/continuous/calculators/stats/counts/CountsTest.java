@@ -1,4 +1,4 @@
-package com.mangione.continuous.calculators.stats;
+package com.mangione.continuous.calculators.stats.counts;
 
 import org.junit.Test;
 
@@ -11,7 +11,7 @@ public class CountsTest {
 
     @Test
     public void oneCount() {
-        Counts counts = new Counts();
+        Counts<String> counts = new Counts<>();
         assertEquals(0, counts.getCounts().size());
         counts.add("key1");
         assertEquals(1, counts.getCounts().size());
@@ -24,19 +24,19 @@ public class CountsTest {
 
     @Test
     public void multipleReturnedInInverseOrderOfCount() {
-        Counts counts = new Counts();
+        Counts<String> counts = new Counts<>();
         incrementCount("key0", 5, counts);
         incrementCount("key1", 10, counts);
         incrementCount("key2", 1, counts);
 
-        List<Count> countList = counts.getCounts();
+        List<Count<String>> countList = counts.getCounts();
         assertEquals(10, countList.get(0).getCount());
         assertEquals(5, countList.get(1).getCount());
         assertEquals(1, countList.get(2).getCount());
 
     }
 
-    private void incrementCount(String key, int numHits, Counts counts) {
+    private void incrementCount(String key, int numHits, Counts<String> counts) {
         IntStream.range(0, numHits).forEach(value -> counts.add(key));
     }
 }

@@ -1,11 +1,11 @@
-package com.mangione.continuous.calculators.stats;
+package com.mangione.continuous.calculators.stats.counts;
 
 @SuppressWarnings("WeakerAccess")
-public class Count {
-    private String key;
+public class Count<K> {
+    private K key;
     private int count;
 
-    public Count(String key) {
+    public Count(K key) {
         this.key = key;
     }
 
@@ -13,7 +13,7 @@ public class Count {
         return count;
     }
 
-    public String getKey() {
+    public K getKey() {
         return key;
     }
 

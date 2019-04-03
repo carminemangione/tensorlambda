@@ -1,4 +1,4 @@
-package com.mangione.continuous.calculators.stats;
+package com.mangione.continuous.calculators.stats.counts;
 
 import com.mangione.continuous.observationproviders.ArrayObservationProvider;
 import com.mangione.continuous.observationproviders.ListObservationProvider;
@@ -19,10 +19,10 @@ public class CountsFromProviderTest {
         ArrayObservationProvider<Integer, ObservationInterface<Integer>> provider =
                 new ArrayObservationProvider<>(values, integers -> new Observation<>(Arrays.asList(integers)));
 
-        CountsFromProvider<ObservationInterface<Integer>, ListObservationProvider<Integer, ObservationInterface<Integer>>>
+        CountsFromProvider<ObservationInterface<Integer>, ListObservationProvider<Integer, ObservationInterface<Integer>>, String>
                 countsFromProvider = new CountsFromProvider<>(provider, this::generateKey);
 
-        List<Count> counts = countsFromProvider.getCounts().getCounts();
+        List<Count<String>> counts = countsFromProvider.getCounts().getCounts();
         assertEquals(3, counts.size());
         assertEquals("10", counts.get(0).getKey());
         assertEquals(3, counts.get(0).getCount());
