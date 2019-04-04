@@ -14,7 +14,6 @@ public class ProviderToCSRMatrixWithTarget<S extends Number, T extends ExemplarI
     @SuppressWarnings("WeakerAccess")
     public ProviderToCSRMatrixWithTarget(U provider) {
         super(provider);
-        targetsList = new ArrayList<>();
     }
 
     public int[] getTargets() {

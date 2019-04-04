@@ -22,10 +22,15 @@ public class ProviderToCSRMatrix<S extends Number, T extends ObservationInterfac
         rowIndexesList = new ArrayList<>();
         valueList = new ArrayList<>();
 
+        int i = 0;
 
         rowIndexesList.add(0);
         for (T sObservation : provider) {
             processNextRow(sObservation);
+            if(++i > 1000)
+            	break;
+            if(i % 1000 == 0)
+	            System.out.println(i);
         }
 
         finishProcessing();

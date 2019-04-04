@@ -55,6 +55,7 @@ public class RowFilteringObservationProvider<S, T extends ObservationInterface<S
 			@Override
 			public T next() {
 				fillNextValueIfNeeded();
+				i = 0;
 				if (next == null)
 					throw new IllegalStateException("There is no next there...");
 				T nextValue = next;
@@ -65,9 +66,12 @@ public class RowFilteringObservationProvider<S, T extends ObservationInterface<S
 			private void fillNextValueIfNeeded() {
 				while (next == null && iterator.hasNext()) {
 					T nextTest = iterator.next();
+					System.out.println(i++);
 					next = !predicate.test(nextTest) ? nextTest : null;
 				}
 			}
 		};
 	}
+
+	int i = 0;
 }
