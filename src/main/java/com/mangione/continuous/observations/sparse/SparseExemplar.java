@@ -68,6 +68,7 @@ public class SparseExemplar<T> extends SparseObservation<T> implements ExemplarI
 	private static <T> Map<Integer, T> createAndFillIndexToValueMapRemovingTarget(List<T> values, List<Integer> columns, int targetIndex) {
 		TreeMap<Integer, T> treeMap = IntStream.range(0, columns.size())
 				.boxed()
+				.distinct()
 				.collect(Collectors.toMap(columns::get, values::get, throwingMerger(), TreeMap::new));
 
 		treeMap.remove(targetIndex);
