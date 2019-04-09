@@ -22,12 +22,18 @@ public class SampledObservationProvider<S, T extends ObservationInterface<S>> im
 	@SuppressWarnings("WeakerAccess")
 	public SampledObservationProvider(double testSamplingPercent, ObservationProviderInterface<S, T> provider,
 			RandomGeneratorFactory generatorFactory, long seed, boolean isTestSet) {
+		this(testSamplingPercent, provider, generatorFactory, seed, isTestSet, provider.getNumberOfLines());
+
+	}
+
+	public SampledObservationProvider(double testSamplingPercent, ObservationProviderInterface<S, T> provider,
+	                                  RandomGeneratorFactory generatorFactory, long seed, boolean isTestSet, long numberOfObservations) {
 		this.testSamplingPercent = testSamplingPercent;
 		this.provider = provider;
 		this.generatorFactory = generatorFactory;
 		this.seed = seed;
 		this.isTestSet = isTestSet;
-		numberOfObservations = provider.getNumberOfLines();
+		this.numberOfObservations = numberOfObservations;
 
 	}
 

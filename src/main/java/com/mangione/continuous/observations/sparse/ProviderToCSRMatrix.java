@@ -27,9 +27,9 @@ public class ProviderToCSRMatrix<S extends Number, T extends ObservationInterfac
         rowIndexesList.add(0);
         for (T sObservation : provider) {
             processNextRow(sObservation);
-            if(++i > 1000)
+            if(++i > 100)
             	break;
-            if(i % 1000 == 0)
+            if(i % 100 == 0)
 	            System.out.println(i);
         }
 
