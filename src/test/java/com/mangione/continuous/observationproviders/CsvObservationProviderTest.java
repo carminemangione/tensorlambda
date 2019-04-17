@@ -100,7 +100,7 @@ public class CsvObservationProviderTest {
 	}
 
 	@Test(expected = UnsupportedOperationException.class)
-	public void iteratorRemoveNotSupported() throws Exception {
+	public void iteratorRemoveNotSupported() {
 		new CsvObservationProvider<>( file, stringFactory, false).iterator().remove();
 	}
 
@@ -114,11 +114,6 @@ public class CsvObservationProviderTest {
 				 validateFeatures(i[0]++, stringObservationInterface
 				));
 		assertEquals(3, i[0]);
-	}
-
-	@Test(expected = UnsupportedOperationException.class)
-	public void spliteratorNotSupported() throws Exception {
-		new CsvObservationProvider<>( file, stringFactory, false).spliterator();
 	}
 
 	@Test
@@ -161,7 +156,7 @@ public class CsvObservationProviderTest {
 	}
 
 
-	private void ensureFileIsClosed() throws IOException {
+	private void ensureFileIsClosed() {
         try {
             FileUtils.touch(file);
 

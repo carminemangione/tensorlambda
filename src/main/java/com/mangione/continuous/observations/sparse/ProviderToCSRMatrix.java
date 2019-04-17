@@ -5,6 +5,7 @@ import com.mangione.continuous.observations.ObservationInterface;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
 @SuppressWarnings("WeakerAccess")
@@ -49,7 +50,7 @@ public class ProviderToCSRMatrix<S extends Number, T extends ObservationInterfac
     }
 
     protected void processNextRow(T observation) {
-        List<Integer> columnIndexes = observation.getColumnIndexes();
+        Set<Integer> columnIndexes = observation.getColumnIndexes();
         columnIndexesList.addAll(columnIndexes);
         columnIndexes.forEach(
                 index -> valueList.add(observation.getFeature(index)));

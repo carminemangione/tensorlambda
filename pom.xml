@@ -97,6 +97,11 @@
             <version>RELEASE</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.vlsi.compactmap</groupId>
+            <artifactId>compactmap</artifactId>
+            <version>1.2.1</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -6,6 +6,7 @@ import com.mangione.continuous.observationproviders.ObservationToExemplarProvide
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,9 +37,12 @@ public class ProviderToCSRMatrixWithTargetTest {
         ObservationToExemplarProvider<Integer, SparseExemplar<Integer>> exemplars =
                 new ObservationToExemplarProvider<>(observations,
                         obs -> {
-                            List<Integer> features = obs.getFeatures();
-                            List<Integer> collect = features.stream().filter(x -> x != 0).collect(Collectors.toList());
-                            return new SparseExemplar<>(collect, obs.getColumnIndexes(), obs.numberOfFeatures(), 0, 6);
+                            List<Integer> columns = new ArrayList<>(obs.getColumnIndexes());
+                            Collections.sort(columns);
+                            List<Integer> features = columns.stream()
+                                    .map(obs::getFeature)
+                                    .collect(Collectors.toList());
+                            return new SparseExemplar<>(features, columns, obs.numberOfFeatures(), 0, 6);
                         });
 
 

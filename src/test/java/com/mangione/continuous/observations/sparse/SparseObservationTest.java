@@ -2,7 +2,9 @@ package com.mangione.continuous.observations.sparse;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -57,7 +59,9 @@ public class SparseObservationTest {
 		int[] indexes = {0, 2, 7};
 
 		SparseObservation<Integer> sparseObservation = new SparseObservation<>(values, indexes, 10, 0);
-		assertEquals(Arrays.asList(0, 2, 7), sparseObservation.getColumnIndexes());
+		ArrayList<Integer> columnIndexes = new ArrayList<>(sparseObservation.getColumnIndexes());
+		Collections.sort(columnIndexes);
+		assertEquals(Arrays.asList(0, 2, 7), columnIndexes);
 	}
 
 	@Test
@@ -160,7 +164,10 @@ public class SparseObservationTest {
 		Integer[] values = new Integer[4];
 		Arrays.fill(values, 1);
 		SparseObservation<Integer> observation = new SparseObservation<>(values, columns, 30, 0);
-		assertEquals(Arrays.asList(3, 5, 9, 11), observation.getColumnIndexes());
+
+		ArrayList<Integer> columnIndexes = new ArrayList<>(observation.getColumnIndexes());
+		Collections.sort(columnIndexes);
+		assertEquals(Arrays.asList(3, 5, 9, 11), columnIndexes);
 	}
 
 	@Test

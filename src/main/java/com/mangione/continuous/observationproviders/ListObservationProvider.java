@@ -48,11 +48,6 @@ public class ListObservationProvider<S, T extends ObservationInterface<S>> imple
 		}
 	}
 
-	@Override
-	public Spliterator<T> spliterator() {
-		throw new UnsupportedOperationException("spliterator not supported.");
-	}
-
 	private class ArrayObservationProviderIterator implements Iterator<T> {
 		private int current;
 

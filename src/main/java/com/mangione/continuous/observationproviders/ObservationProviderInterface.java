@@ -1,6 +1,8 @@
 package com.mangione.continuous.observationproviders;
 
 import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.Nonnull;
@@ -22,4 +24,9 @@ public interface ObservationProviderInterface <S, T extends ObservationInterface
 	@Override
 	@Nonnull
 	Iterator<T> iterator();
+
+	@Override
+	default Spliterator<T> spliterator() {
+		return Spliterators.spliteratorUnknownSize(iterator(), 0);
+	}
 }

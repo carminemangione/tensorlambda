@@ -1,6 +1,7 @@
 package com.mangione.continuous.observations;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -12,10 +13,10 @@ public interface ObservationInterface<T> {
 		return getFeatures().get(index);
 	}
 
-	default List<Integer> getColumnIndexes() {
+	default Set<Integer> getColumnIndexes() {
 		return IntStream.range(0,numberOfFeatures())
 				.boxed()
-				.collect(Collectors.toList());
+				.collect(Collectors.toSet());
 	}
 
 	default int numberOfFeatures() {
