@@ -80,9 +80,8 @@ public class CsvObservationProvider<S, T extends ObservationInterface<S>> implem
 
     @Override
     public Spliterator<T> spliterator() {
-        Spliterator<T> spliterator = new CsvObservationSpliterator<>(file, charVal, csvToObservationFactory, hasColumnHeader,
-                estimatedSizeForSpliterator, minimumBatchSizeForSpliterator, bufferedFunction);
-        return spliterator;
+        return new CsvObservationInterleavedSpliterator<>(file, csvToObservationFactory, hasColumnHeader,
+                estimatedSizeForSpliterator, minimumBatchSizeForSpliterator, bufferedFunction, charVal);
     }
 
     @Override

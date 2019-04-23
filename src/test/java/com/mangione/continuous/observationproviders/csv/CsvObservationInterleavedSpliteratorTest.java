@@ -15,7 +15,6 @@ import java.io.FileWriter;
 import java.util.List;
 import java.util.Set;
 import java.util.Spliterator;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -51,8 +50,8 @@ public class CsvObservationInterleavedSpliteratorTest {
 
     @Test
     public void spliteratorNoSplitSizeExact() {
-        CsvObservationInterleavedSpliterator<Integer> spliterator = new CsvObservationInterleavedSpliterator<>(csvFile, " ",
-                x -> Integer.parseInt(x[0]), false, NUM_LINES, 2, bufferedFunction);
+        CsvObservationInterleavedSpliterator<Integer> spliterator = new CsvObservationInterleavedSpliterator<>(csvFile,
+                x -> Integer.parseInt(x[0]), false, NUM_LINES, 2, bufferedFunction, " ");
         assertEquals(2, spliterator.estimateSize());
 
         Set<Integer> collect = StreamSupport.stream(spliterator, false)
@@ -64,8 +63,8 @@ public class CsvObservationInterleavedSpliteratorTest {
 
     @Test
     public void splitEstimatedSizeExactTwoThreads() throws Exception {
-        CsvObservationInterleavedSpliterator<Integer> spliterator = new CsvObservationInterleavedSpliterator<>(csvFile, " ",
-                x -> Integer.parseInt(x[0]), false, NUM_LINES, 2, bufferedFunction);
+        CsvObservationInterleavedSpliterator<Integer> spliterator = new CsvObservationInterleavedSpliterator<>(csvFile,
+                x -> Integer.parseInt(x[0]), false, NUM_LINES, 2, bufferedFunction, " ");
 
         List<Integer> collect = new ForkJoinPool(2).submit(() ->
                 StreamSupport.stream(spliterator, true)
@@ -78,8 +77,8 @@ public class CsvObservationInterleavedSpliteratorTest {
 
     @Test
     public void splitEstimatedSizeTooSmall() throws Exception {
-        CsvObservationInterleavedSpliterator<Integer> spliterator = new CsvObservationInterleavedSpliterator<>(csvFile, " ",
-                x -> Integer.parseInt(x[0]), false, NUM_LINES / 4, 2, bufferedFunction);
+        CsvObservationInterleavedSpliterator<Integer> spliterator = new CsvObservationInterleavedSpliterator<>(csvFile,
+                x -> Integer.parseInt(x[0]), false, NUM_LINES / 4, 2, bufferedFunction, " ");
 
         List<Integer> collect = new ForkJoinPool(2).submit(() ->
                 StreamSupport.stream(spliterator, true)
@@ -92,8 +91,9 @@ public class CsvObservationInterleavedSpliteratorTest {
 
     @Test
     public void splitEstimatedSizeTooLarge() throws Exception {
-        CsvObservationInterleavedSpliterator<Integer> spliterator = new CsvObservationInterleavedSpliterator<>(csvFile, " ",
-                x -> Integer.parseInt(x[0]), false, NUM_LINES + 1, 2, bufferedFunction);
+        CsvObservationInterleavedSpliterator<Integer> spliterator = new CsvObservationInterleavedSpliterator<>(csvFile,
+                x -> Integer.parseInt(x[0]), false, NUM_LINES + 1, 2,
+                bufferedFunction, " ");
 
         List<Integer> collect = new ForkJoinPool(2).submit(() ->
                 StreamSupport.stream(spliterator, true)
@@ -105,25 +105,16 @@ public class CsvObservationInterleavedSpliteratorTest {
                 .forEach(i -> assertTrue(collect.contains(i)));
     }
 
-    @Test(expected = ExecutionException.class)
-    public void splitEstimatedSizeWayTooLargeExcepts() throws Exception {
-        CsvObservationInterleavedSpliterator<Integer> spliterator = new CsvObservationInterleavedSpliterator<>(csvFile, " ",
-                x -> Integer.parseInt(x[0]), false, NUM_LINES * 4, 2, bufferedFunction);
-
-        new ForkJoinPool(2).submit(() ->
-                StreamSupport.stream(spliterator, true)
-                        .collect(Collectors.toList())).get();
-    }
-
 
     @Test
     public void trySplitTooSmallReturnsNull() {
-        CsvObservationInterleavedSpliterator<Integer> spliterator = new CsvObservationInterleavedSpliterator<>(csvFile, " ",
-                x -> Integer.parseInt(x[0]), false, NUM_LINES * 4, NUM_LINES, bufferedFunction);
+        CsvObservationInterleavedSpliterator<Integer> spliterator = new CsvObservationInterleavedSpliterator<>(csvFile,
+                x -> Integer.parseInt(x[0]), false, NUM_LINES * 4, NUM_LINES,
+                bufferedFunction, " ");
 
 
         Spliterator<Integer> currentSplit = null;
-        for (int i = 0; i < 3; i ++) {
+        for (int i = 0; i < 2; i ++) {
             currentSplit = spliterator.trySplit();
             assertNotNull(currentSplit);
         }
@@ -132,8 +123,9 @@ public class CsvObservationInterleavedSpliteratorTest {
 
     @Test
     public void csvHeaderDoesNotMessUpSplit() throws Exception {
-        CsvObservationInterleavedSpliterator<Integer> spliterator = new CsvObservationInterleavedSpliterator<>(csvFile, " ",
-                x -> Integer.parseInt(x[0]), true, NUM_LINES / 4, 2, bufferedFunction);
+        CsvObservationInterleavedSpliterator<Integer> spliterator = new CsvObservationInterleavedSpliterator<>(csvFile,
+                x -> Integer.parseInt(x[0]), true, NUM_LINES / 4, 2,
+                bufferedFunction, " ");
 
         List<Integer> collect = new ForkJoinPool(2).submit(() ->
                 StreamSupport.stream(spliterator, true)
