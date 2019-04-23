@@ -1,9 +1,11 @@
-package com.mangione.continuous.observationproviders;
+package com.mangione.continuous.observationproviders.csv;
 
 import java.io.*;
 import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import com.mangione.continuous.observationproviders.ProviderException;
 
 class CsvObservationIterator<T> implements Iterator<T> {
     private final BufferedReader bufferedReader;
@@ -11,12 +13,13 @@ class CsvObservationIterator<T> implements Iterator<T> {
     private final Function<String[], T> factory;
     private boolean closed;
 
-    CsvObservationIterator(File file, String splitVal, Function<String[], T> factory, boolean hasColumnHeader) {
+    CsvObservationIterator(File file, String splitVal, Function<String[], T> factory, boolean hasColumnHeader,
+            Function<File, BufferedReader> bufferedFunction) {
         this.splitVal = splitVal;
         this.factory = factory;
 
         try {
-            bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+            bufferedReader = bufferedFunction.apply(file);
             if (hasColumnHeader)
                 bufferedReader.readLine();
         } catch (IOException e) {
@@ -61,7 +64,10 @@ class CsvObservationIterator<T> implements Iterator<T> {
             action.accept(next());
     }
 
-    void closeReader() throws IOException {
+    synchronized T getNext() {
+        return hasNext() ? next() : null;
+    }
+        void closeReader() throws IOException {
         bufferedReader.close();
     }
 }

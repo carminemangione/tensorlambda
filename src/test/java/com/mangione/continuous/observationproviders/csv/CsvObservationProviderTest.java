@@ -1,5 +1,6 @@
-package com.mangione.continuous.observationproviders;
+package com.mangione.continuous.observationproviders.csv;
 
+import com.mangione.continuous.observationproviders.csv.CsvObservationProvider;
 import com.mangione.continuous.observations.ProxyValues;
 import com.mangione.continuous.observations.ObservationInterface;
 import com.mangione.continuous.observations.dense.Observation;

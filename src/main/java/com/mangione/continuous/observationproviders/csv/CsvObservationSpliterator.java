@@ -1,12 +1,12 @@
-package com.mangione.continuous.observationproviders;
+package com.mangione.continuous.observationproviders.csv;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-class CsvObservationSpliterator<T> implements Spliterator<T> {
+class CsvObservationSpliterator<T> extends CsvObservationSpliteratorShared implements Spliterator<T> {
 
 	private final File file;
 	private final String splitVal;
@@ -14,17 +14,19 @@ class CsvObservationSpliterator<T> implements Spliterator<T> {
 	private final boolean hasColumnHeader;
 	private final CsvObservationIterator<T> iterator;
 	private final int minimumBatchSize;
+	private Function<File, BufferedReader> bufferedFunction;
 	private int current;
 	private int high;
 	private boolean openEnded;
 
 	CsvObservationSpliterator(File file, String splitVal, Function<String[], T> factory, boolean hasColumnHeader,
-			int estimatedSize, int minimumBatchSize) {
-		this(file, splitVal, factory, hasColumnHeader, 0, estimatedSize, true, minimumBatchSize);
+			int estimatedSize, int minimumBatchSize, Function<File, BufferedReader> bufferedFunction) {
+		this(file, splitVal, factory, hasColumnHeader, 0, estimatedSize, true, minimumBatchSize,
+				bufferedFunction);
 	}
 
 	private CsvObservationSpliterator(File file, String splitVal, Function<String[], T> factory, boolean hasColumnHeader,
-			int low, int high, boolean openEnded, int minimumBatchSize) {
+			int low, int high, boolean openEnded, int minimumBatchSize, Function<File, BufferedReader> bufferedFunction) {
 
 		this.file = file;
 		this.splitVal = splitVal;
@@ -34,8 +36,9 @@ class CsvObservationSpliterator<T> implements Spliterator<T> {
 		this.high = high;
 		this.openEnded = openEnded;
 		this.minimumBatchSize = minimumBatchSize;
+		this.bufferedFunction = bufferedFunction;
 
-		iterator = new CsvObservationIterator<>(file, splitVal, factory, hasColumnHeader);
+		iterator = new CsvObservationIterator<>(file, splitVal, factory, hasColumnHeader, bufferedFunction);
 		for (int i = 0; i < low && iterator.hasNext(); i++) {
 			iterator.next();
 		}
@@ -47,14 +50,8 @@ class CsvObservationSpliterator<T> implements Spliterator<T> {
 		if (tryAdvance) {
 			current++;
 			action.accept(iterator.next());
-		}
-		if (!tryAdvance) {
-			try {
-				iterator.closeReader();
-			} catch (IOException e) {
-				throw new ProviderException(e);
-			}
-		}
+		} else
+			closeResources(iterator);
 		return tryAdvance;
 	}
 
@@ -68,7 +65,7 @@ class CsvObservationSpliterator<T> implements Spliterator<T> {
 			int rest = high;
 			high = mid;
 			split = new CsvObservationSpliterator<>(file, splitVal, factory, hasColumnHeader, mid, rest,
-					openEnded, minimumBatchSize);
+					openEnded, minimumBatchSize, bufferedFunction);
 			openEnded = false;
 		}
 		return split;

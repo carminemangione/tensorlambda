@@ -78,12 +78,6 @@ public class ListObservationProviderTest {
 		assertEquals(DATA.size(), innerNumber[0]);
 	}
 
-	@Test(expected = UnsupportedOperationException.class)
-	public void spliteratorNotSupported() {
-		aop.spliterator();
-	}
-
-
 	private void validateData(Observation<Double> datum, List<Double> features) {
 		assertEquals(1, features.size());
 		assertEquals(datum.getFeatures().get(0), features.get(0), 0);
