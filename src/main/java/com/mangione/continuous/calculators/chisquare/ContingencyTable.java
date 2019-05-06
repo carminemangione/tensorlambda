@@ -54,8 +54,8 @@ public class ContingencyTable {
 
     public static class Builder {
         private final int[][] countsWithTotalsInLastRowAndColumns;
-        private final int observationSumLocation;
-        private final int targetSumLocation;
+        private final int numberOfTargetStates;
+        private final int numberOfObservationStates;
 
         public Builder(int numberOfObservationStates, int numberOfTargetStates) {
             if (numberOfObservationStates < 1)
@@ -64,21 +64,21 @@ public class ContingencyTable {
             if (numberOfTargetStates < 1)
                 throw new IllegalArgumentException("Number of target states must be greater than zero");
             countsWithTotalsInLastRowAndColumns = new int[numberOfObservationStates + 1][numberOfTargetStates + 1];
-            observationSumLocation = numberOfTargetStates;
-            targetSumLocation = numberOfObservationStates;
+            this.numberOfTargetStates = numberOfTargetStates;
+            this.numberOfObservationStates = numberOfObservationStates;
         }
 
         public ContingencyTable build() {
-            return new ContingencyTable(countsWithTotalsInLastRowAndColumns, observationSumLocation, targetSumLocation);
+            return new ContingencyTable(countsWithTotalsInLastRowAndColumns, numberOfTargetStates, numberOfObservationStates);
         }
 
         public Builder addObservation(int observationState, int targetState) {
-            validateStates(observationState, targetState, observationSumLocation, targetSumLocation);
+            validateStates(observationState, targetState, numberOfTargetStates, numberOfObservationStates);
 
             countsWithTotalsInLastRowAndColumns[observationState][targetState]++;
-            countsWithTotalsInLastRowAndColumns[observationState][observationSumLocation]++;
-            countsWithTotalsInLastRowAndColumns[targetSumLocation][targetState]++;
-            countsWithTotalsInLastRowAndColumns[targetSumLocation][observationSumLocation]++;
+            countsWithTotalsInLastRowAndColumns[observationState][numberOfTargetStates]++;
+            countsWithTotalsInLastRowAndColumns[numberOfObservationStates][targetState]++;
+            countsWithTotalsInLastRowAndColumns[numberOfObservationStates][numberOfTargetStates]++;
             return this;
         }
 

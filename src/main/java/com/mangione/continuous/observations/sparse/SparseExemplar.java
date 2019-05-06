@@ -7,8 +7,12 @@ import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @SuppressWarnings("WeakerAccess")
 public class SparseExemplar<T> extends SparseObservation<T> implements ExemplarInterface<T, T> {
+	private static final Logger LOGGER = LoggerFactory.getLogger(SparseExemplar.class);
 	private final T target;
 	private final int targetIndex;
 
@@ -69,15 +73,16 @@ public class SparseExemplar<T> extends SparseObservation<T> implements ExemplarI
 		TreeMap<Integer, T> treeMap = IntStream.range(0, columns.size())
 				.boxed()
 				.distinct()
-				.collect(Collectors.toMap(columns::get, values::get, throwingMerger(), TreeMap::new));
+				.collect(Collectors.toMap(columns::get, values::get, merger(), TreeMap::new));
 
 		treeMap.remove(targetIndex);
 		return treeMap;
 	}
 
-	private static <T> BinaryOperator<T> throwingMerger() {
+	private static <T> BinaryOperator<T> merger() {
 		return (u, v) -> {
-			throw new IllegalStateException(String.format("Duplicate key %s", u));
+			LOGGER.warn(String.format("Duplicate key %s", u));
+			return u;
 		};
 	}
 
