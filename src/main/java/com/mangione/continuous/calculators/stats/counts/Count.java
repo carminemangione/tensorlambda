@@ -20,4 +20,12 @@ public class Count<K> {
     public void add() {
         count++;
     }
+
+    @Override
+    public String toString() {
+        return "Count{" +
+                "key=" + key +
+                ", count=" + count +
+                '}';
+    }
 }
