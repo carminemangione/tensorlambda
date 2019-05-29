@@ -2,6 +2,7 @@ package com.mangione.continuous.observations.sparse;
 
 import com.mangione.continuous.observationproviders.ObservationProviderInterface;
 import com.mangione.continuous.observations.ObservationInterface;
+import com.mangione.continuous.observations.dense.Observation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +57,7 @@ public class ProviderToCSRMatrix<S extends Number, T extends ObservationInterfac
                 index -> valueList.add(observation.getFeature(index)));
         rowIndexesList.add(rowIndexesList.get(rowIndexesList.size() - 1) + columnIndexes.size());
     }
+
 
     protected void finishProcessing() {
         this.values = valueList.stream()

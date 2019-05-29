@@ -2,6 +2,7 @@ package com.mangione.continuous.observations.sparse;
 
 import com.mangione.continuous.observationproviders.ObservationProviderInterface;
 import com.mangione.continuous.observations.ExemplarInterface;
+import com.mangione.continuous.observations.dense.Observation;
 
 import java.util.ArrayList;
 
