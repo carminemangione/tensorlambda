@@ -61,6 +61,7 @@ public class SampledObservationProvider<S, T extends ObservationInterface<S>> im
 		private boolean isCurrentSampleTest;
 		private T nextObservation;
 
+
 		private SampledObservationProviderIterator() {
 			samplingWithoutReplacement =
 					new SamplingWithoutReplacement(testSamplingPercent, numberOfObservations,
