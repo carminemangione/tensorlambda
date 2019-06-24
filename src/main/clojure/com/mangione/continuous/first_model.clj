@@ -16,13 +16,13 @@
   (map codger-communication whippersnappers))
 
 
+(defn titleize
+  [topic]
+  (str topic " for the brave and the true"))
+
 (defn fib
    [number]
    (loop [res [0 1]]
      (if (>= (count res) number)
        res
        (recur (conj res (+' (last res) (last (butlast res))))))))
-
-(defn titleize
-  [topic]
-  (str topic " for the brave and the true"))

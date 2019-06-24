@@ -26,114 +26,114 @@ import org.junit.Test;
 
 public class CsvObservationInterleavedSpliteratorTest {
 
-    private static final int NUM_LINES = 11;
-    private File csvFile;
-    private Function<File, BufferedReader> bufferedFunction;
+	private static final int NUM_LINES = 11;
+	private File csvFile;
+	private Function<File, BufferedReader> bufferedFunction;
 
-    @Before
-    public void setUp() throws Exception {
-        csvFile = File.createTempFile("CsvObservationInterleavedSpliteratorTest", "csv");
-        BufferedWriter bw = new BufferedWriter(new FileWriter(csvFile));
-        for (int i = 0; i < NUM_LINES; i++) {
-            bw.write("" + i);
-            bw.newLine();
-        }
-        bw.close();
-        bufferedFunction = x -> {
-            try {
-                return new BufferedReader(new FileReader(x));
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        };
-    }
+	@Before
+	public void setUp() throws Exception {
+		csvFile = File.createTempFile("CsvObservationInterleavedSpliteratorTest", "csv");
+		BufferedWriter bw = new BufferedWriter(new FileWriter(csvFile));
+		for (int i = 0; i < NUM_LINES; i++) {
+			bw.write("" + i);
+			bw.newLine();
+		}
+		bw.close();
+		bufferedFunction = x -> {
+			try {
+				return new BufferedReader(new FileReader(x));
+			} catch (FileNotFoundException e) {
+				throw new RuntimeException(e);
+			}
+		};
+	}
 
-    @Test
-    public void spliteratorNoSplitSizeExact() {
-        CsvObservationInterleavedSpliterator<Integer> spliterator = new CsvObservationInterleavedSpliterator<>(csvFile,
-                x -> Integer.parseInt(x[0]), false, NUM_LINES, 2, bufferedFunction, " ");
-        assertEquals(2, spliterator.estimateSize());
+	@Test
+	public void spliteratorNoSplitSizeExact() {
+		CsvObservationInterleavedSpliterator<Integer> spliterator = new CsvObservationInterleavedSpliterator<>(csvFile,
+				x -> Integer.parseInt(x[0]), false, NUM_LINES, 2, bufferedFunction, " ");
+		assertEquals(2, spliterator.estimateSize());
 
-        Set<Integer> collect = StreamSupport.stream(spliterator, false)
-                .collect(Collectors.toSet());
-        assertEquals(NUM_LINES, collect.size());
-        assertTrue(collect.contains(0));
-        assertTrue(collect.contains(NUM_LINES - 1));
-    }
+		Set<Integer> collect = StreamSupport.stream(spliterator, false)
+				.collect(Collectors.toSet());
+		assertEquals(NUM_LINES, collect.size());
+		assertTrue(collect.contains(0));
+		assertTrue(collect.contains(NUM_LINES - 1));
+	}
 
-    @Test
-    public void splitEstimatedSizeExactTwoThreads() throws Exception {
-        CsvObservationInterleavedSpliterator<Integer> spliterator = new CsvObservationInterleavedSpliterator<>(csvFile,
-                x -> Integer.parseInt(x[0]), false, NUM_LINES, 2, bufferedFunction, " ");
+	@Test
+	public void splitEstimatedSizeExactTwoThreads() throws Exception {
+		CsvObservationInterleavedSpliterator<Integer> spliterator = new CsvObservationInterleavedSpliterator<>(csvFile,
+				x -> Integer.parseInt(x[0]), false, NUM_LINES, 2, bufferedFunction, " ");
 
-        List<Integer> collect = new ForkJoinPool(2).submit(() ->
-                StreamSupport.stream(spliterator, true)
-                        .collect(Collectors.toList())).get();
+		List<Integer> collect = new ForkJoinPool(2).submit(() ->
+				StreamSupport.stream(spliterator, true)
+						.collect(Collectors.toList())).get();
 
-        assertEquals(NUM_LINES, collect.size());
-        assertTrue(collect.contains(0));
-        assertTrue(collect.contains(NUM_LINES - 1));
-    }
+		assertEquals(NUM_LINES, collect.size());
+		assertTrue(collect.contains(0));
+		assertTrue(collect.contains(NUM_LINES - 1));
+	}
 
-    @Test
-    public void splitEstimatedSizeTooSmall() throws Exception {
-        CsvObservationInterleavedSpliterator<Integer> spliterator = new CsvObservationInterleavedSpliterator<>(csvFile,
-                x -> Integer.parseInt(x[0]), false, NUM_LINES / 4, 2, bufferedFunction, " ");
+	@Test
+	public void splitEstimatedSizeTooSmall() throws Exception {
+		CsvObservationInterleavedSpliterator<Integer> spliterator = new CsvObservationInterleavedSpliterator<>(csvFile,
+				x -> Integer.parseInt(x[0]), false, NUM_LINES / 4, 2, bufferedFunction, " ");
 
-        List<Integer> collect = new ForkJoinPool(2).submit(() ->
-                StreamSupport.stream(spliterator, true)
-                        .collect(Collectors.toList())).get();
+		List<Integer> collect = new ForkJoinPool(2).submit(() ->
+				StreamSupport.stream(spliterator, true)
+						.collect(Collectors.toList())).get();
 
-        assertEquals(NUM_LINES, collect.size());
-        assertTrue(collect.contains(0));
-        assertTrue(collect.contains(NUM_LINES - 1));
-    }
+		assertEquals(NUM_LINES, collect.size());
+		assertTrue(collect.contains(0));
+		assertTrue(collect.contains(NUM_LINES - 1));
+	}
 
-    @Test
-    public void splitEstimatedSizeTooLarge() throws Exception {
-        CsvObservationInterleavedSpliterator<Integer> spliterator = new CsvObservationInterleavedSpliterator<>(csvFile,
-                x -> Integer.parseInt(x[0]), false, NUM_LINES + 1, 2,
-                bufferedFunction, " ");
+	@Test
+	public void splitEstimatedSizeTooLarge() throws Exception {
+		CsvObservationInterleavedSpliterator<Integer> spliterator = new CsvObservationInterleavedSpliterator<>(csvFile,
+				x -> Integer.parseInt(x[0]), false, NUM_LINES + 1, 2,
+				bufferedFunction, " ");
 
-        List<Integer> collect = new ForkJoinPool(2).submit(() ->
-                StreamSupport.stream(spliterator, true)
-                        .collect(Collectors.toList())).get();
-
-
-        assertEquals(NUM_LINES, collect.size());
-        IntStream.range(0, NUM_LINES)
-                .forEach(i -> assertTrue(collect.contains(i)));
-    }
+		List<Integer> collect = new ForkJoinPool(2).submit(() ->
+				StreamSupport.stream(spliterator, true)
+						.collect(Collectors.toList())).get();
 
 
-    @Test
-    public void trySplitTooSmallReturnsNull() {
-        CsvObservationInterleavedSpliterator<Integer> spliterator = new CsvObservationInterleavedSpliterator<>(csvFile,
-                x -> Integer.parseInt(x[0]), false, NUM_LINES * 4, NUM_LINES,
-                bufferedFunction, " ");
+		assertEquals(NUM_LINES, collect.size());
+		IntStream.range(0, NUM_LINES)
+				.forEach(i -> assertTrue(collect.contains(i)));
+	}
 
 
-        Spliterator<Integer> currentSplit = null;
-        for (int i = 0; i < 2; i ++) {
-            currentSplit = spliterator.trySplit();
-            assertNotNull(currentSplit);
-        }
-        assertNull("Half batch size should return null", currentSplit.trySplit());
-    }
+	@Test
+	public void trySplitTooSmallReturnsNull() {
+		CsvObservationInterleavedSpliterator<Integer> spliterator = new CsvObservationInterleavedSpliterator<>(csvFile,
+				x -> Integer.parseInt(x[0]), false, NUM_LINES * 4, NUM_LINES,
+				bufferedFunction, " ");
 
-    @Test
-    public void csvHeaderDoesNotMessUpSplit() throws Exception {
-        CsvObservationInterleavedSpliterator<Integer> spliterator = new CsvObservationInterleavedSpliterator<>(csvFile,
-                x -> Integer.parseInt(x[0]), true, NUM_LINES / 4, 2,
-                bufferedFunction, " ");
 
-        List<Integer> collect = new ForkJoinPool(2).submit(() ->
-                StreamSupport.stream(spliterator, true)
-                        .collect(Collectors.toList())).get();
+		Spliterator<Integer> currentSplit = null;
+		for (int i = 0; i < 2; i ++) {
+			currentSplit = spliterator.trySplit();
+			assertNotNull(currentSplit);
+		}
+		assertNull("Half batch size should return null", currentSplit.trySplit());
+	}
 
-        assertEquals(NUM_LINES - 1, collect.size());
-        assertFalse(collect.contains(0));
-        IntStream.range(1, NUM_LINES)
-                .forEach(line -> assertTrue(collect.contains(line)));
-    }
+	@Test
+	public void csvHeaderDoesNotMessUpSplit() throws Exception {
+		CsvObservationInterleavedSpliterator<Integer> spliterator = new CsvObservationInterleavedSpliterator<>(csvFile,
+				x -> Integer.parseInt(x[0]), true, NUM_LINES / 4, 2,
+				bufferedFunction, " ");
+
+		List<Integer> collect = new ForkJoinPool(2).submit(() ->
+				StreamSupport.stream(spliterator, true)
+						.collect(Collectors.toList())).get();
+
+		assertEquals(NUM_LINES - 1, collect.size());
+		assertFalse(collect.contains(0));
+		IntStream.range(1, NUM_LINES)
+				.forEach(line -> assertTrue(collect.contains(line)));
+	}
 }
