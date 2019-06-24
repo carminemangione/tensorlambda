@@ -17,8 +17,6 @@ public class VariableCalculatorObservationProvider<R, S, T extends ObservationIn
 	private final VariableCalculations<R, S> variableCalculations;
 	private Function<List<S>, T> calculatedListToObservation;
 
-
-	@SuppressWarnings("WeakerAccess")
 	public VariableCalculatorObservationProvider(ObservationProviderInterface<R, ? extends ObservationInterface<R>> provider,
 												 VariableCalculations<R, S> variableCalculations, Function<List<S>, T> calculatedListToObservation) {
 
