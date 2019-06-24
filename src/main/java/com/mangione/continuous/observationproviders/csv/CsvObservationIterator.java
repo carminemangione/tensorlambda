@@ -1,6 +1,7 @@
 package com.mangione.continuous.observationproviders.csv;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.function.Function;
