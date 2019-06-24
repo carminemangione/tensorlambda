@@ -89,6 +89,7 @@ public class ContingencyTableTest {
         return nextBuilder;
     }
 
+
     @Test(expected = IllegalArgumentException.class)
     public void targetStateOutOfBoundsAdd() {
         new ContingencyTable.Builder(3, 3)

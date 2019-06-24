@@ -38,7 +38,6 @@ public class ColumnFilteringObservationProviderTest {
 		assertTrue(iterator.hasNext());
 		next = iterator.next();
 		assertEquals(Collections.singletonList(5), next.getFeatures());
-		assertEquals(1, next.numberOfFeatures());
 		assertFalse(iterator.hasNext());
 	}
 
