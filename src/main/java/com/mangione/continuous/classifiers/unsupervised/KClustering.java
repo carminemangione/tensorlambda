@@ -1,241 +1,95 @@
 package com.mangione.continuous.classifiers.unsupervised;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
-import com.mangione.continuous.model.modelproviders.DataProvider;
-import com.mangione.continuous.observations.dense.Observation;
+import javax.annotation.Nonnull;
+
+import com.mangione.continuous.observationproviders.ObservationProviderInterface;
+import com.mangione.continuous.observations.ObservationInterface;
 
 
-public class KClustering<S extends Set<Integer>, T extends Observation> {
+public class KClustering<S extends Number, T extends ObservationInterface<S>> {
 
-	private final List<Cluster<S>> clusters = new ArrayList<>();
-	private final KMeansListener<T> listener;
-	private final DataProvider<S> provider;
-	private final DistanceMeasurer distanceMeasurer;
+	private final List<Cluster<S, T>> clusters = new ArrayList<>();
+	private final ObservationProviderInterface<S, T> provider;
+	private final DistanceMeasurer<S, T> distanceMeasurer;
 
-	public KClustering(){
-		this.listener = null;
-		this.provider = null;
-		this.distanceMeasurer = null;
-	}
-
-	private KClustering(int numberOfClusters, DataProvider provider, KMeansListener<T> listener, DistanceMeasurer distanceMeasurer) {
-		this.listener = listener;
-		this.provider = provider;
+	public KClustering(int numberOfClusters,  ObservationProviderInterface<S, T> provider,
+			DistanceMeasurer<S, T> distanceMeasurer)  {
 		this.distanceMeasurer = distanceMeasurer;
-		initializeClusters(numberOfClusters, clusters, provider);
-
-		clusters.forEach(distanceMeasurer::updateCentroid);
-
-		//if (listener != null)
-		//	listener.reassignmentCompleted(clusters);
-
-		addThePointsToTheInitialClusters(numberOfClusters, provider.getNumberOfLines());
-
-		loopThroughJigglingOnCentroidsAndReCluster(1);
-	}
-
-	public KClustering(int numberOfClusters, DataProvider provider, DistanceMeasurer distanceMeasurer) {
-		this(numberOfClusters, provider, null, distanceMeasurer);
-	}
-
-	public KClustering(int numberOfClusters, DataProvider provider, int numThreads, DistanceMeasurer distanceMeasurer) throws Exception {
-		listener = null;
-		this.distanceMeasurer = distanceMeasurer;
-		ArrayList<Thread> threads = new ArrayList<>();
 		this.provider = provider;
 
-
 		initializeClusters(numberOfClusters, clusters, provider);
-
-		clusters.forEach(distanceMeasurer::updateCentroid);
-
-		int initial = numberOfClusters;
-		for(int i = 0; i < numThreads; i++) {
-			Thread thread = new Thread(new MultiThreadingHelper(initial, provider.getNumberOfLines() / numThreads));
-			threads.add(thread);
-			thread.start();
-			initial += provider.getNumberOfLines() / numThreads;
-		}
-		for(Thread thread : threads) {
-			thread.join();
-		}
-
-		loopThroughJigglingOnCentroidsAndReCluster(numThreads);
-
+		loopThroughJigglingOnCentroidsAndReCluster();
 	}
 
-//	public double getWithinClusterSumOfSquares() {
-//		final double[] wcss = {0};
-//		clusters.forEach(cluster-> wcss[0] += cluster.withinClusterSumOfSquares());
-//		return wcss[0];
-//	}
-
-	public List<Cluster<S>> getClusters() {
+	public List<Cluster<S, T>> getClusters() {
 		return clusters;
 	}
 
-	int getClusterIndex(double[] observation) {
-		double distance = Double.MAX_VALUE;
-		int index = 0;
-		for (int j = 0; j < clusters.size(); j++) {
-			if (distanceMeasurer.distanceToCentroid(clusters.get(j), observation) < distance) {
-				distance = distanceMeasurer.distanceToCentroid(clusters.get(j), observation);
-				index = j;
-			}
-		}
-		return index;
-	}
-
-	private void loopThroughJigglingOnCentroidsAndReCluster(int numThreads) {
+	private void loopThroughJigglingOnCentroidsAndReCluster() {
 		boolean rejiggled;
 		do {
 			rejiggled = false;
-			clusters.forEach(distanceMeasurer::updateCentroid);
+			clusters.forEach(Cluster::updateCentroid);
 
-			for (int i = 0; i < clusters.size(); i++) {
-				rejiggled = processTheObservationsForThisCluster(i) || rejiggled;
-			}
-			//if (listener != null)
-			//	listener.reassignmentCompleted(clusters);
-			if(!rejiggled) {
-				rejiggled = checkCorrectAnswer(clusters);
+			for (Cluster <S, T> cluster : clusters) {
+				rejiggled = processTheObservationsForThisCluster(cluster) || rejiggled;
 			}
 
 		} while (rejiggled);
-
 	}
 
-
-
-	private boolean checkCorrectAnswer(List<Cluster<S>> clusters) {
-
-		SparseKModes kModes = new SparseKModes();
-		for (int i = 0; i < clusters.size(); i++) {
-			for (S elem : clusters.get(i).getObservations()) {
-				double dist = kModes.distanceToCentroid(clusters.get(i), elem);
-				for (int j = 0; j < clusters.size(); j++) {
-					if(kModes.distanceToCentroid(clusters.get(j), elem) < dist) {
-						System.out.println(dist + "     " + kModes.distanceToCentroid(clusters.get(j), elem) +   "   " + j);
-						System.out.println(clusters.get(i).getObservations().size() + " " + clusters.get(j).getObservations().size());
-						System.out.println("INDEX: " + i + "   " + j);
-						return true;
-					}
-				}
+	private boolean processTheObservationsForThisCluster(Cluster<S, T> currentCluster) {
+		boolean rejiggled = false;
+		Iterator<T> iterator = currentCluster.getObservations().iterator();
+		while (iterator.hasNext()) {
+			T next = iterator.next();
+			Cluster<S, T> closestCluster = getClosestCluster(next);
+			if (closestCluster != currentCluster) {
+				iterator.remove();
+				closestCluster.add(next);
+				rejiggled = true;
 			}
 		}
-		return false;
-	}
-
-	private boolean processTheObservationsForThisCluster(int i) {
-		boolean rejiggled = false;
-		final Cluster<S> currentCluster = clusters.get(i);
-		List<S> tempList = new ArrayList<>();
-		int index = 0;
-		List<S> observationsToMove = currentCluster.getObservations();
-		for(int j = 0; j < observationsToMove.size(); j++) {
-			S observation = observationsToMove.get(j);
-			if(observation == null)
-				continue;
-
-			double currentDistance = distanceMeasurer.distanceToCentroid(currentCluster, observation);
-			Cluster closest = findCloserClusterIfExists(i, observation, currentDistance);
-
-			if(currentCluster.getObservations().size() - tempList.size() <= 1)
-				continue;
-
-			rejiggled = moveObservationToCloserCluster(tempList, observation, closest) || rejiggled;
-			//if (rejiggled && listener != null)
-			//	listener.reassignmentCompleted(clusters);
-		}
-		tempList.forEach(currentCluster::remove);
-
 		return rejiggled;
 	}
 
-	private boolean moveObservationToCloserCluster(List<S> currentCluster, S observation, Cluster closest) {
-		boolean rejiggled = false;
-		if (closest != null) {
-			currentCluster.add(observation);
+	private void addThePointsToTheInitialClusters() {
+		for (T observation : provider) {
+			Cluster<S, T> closest = getClosestCluster(observation);
 			closest.add(observation);
-			rejiggled = true;
-			//if (listener != null)
-			//	listener.reassignmentCompleted(clusters);
 		}
-		return rejiggled;
 	}
 
-	private Cluster<S> findCloserClusterIfExists(int i, S observation, double currentDistance) {
-		Cluster<S> closest = null;
-		for (int j = 0; j < clusters.size(); j++) {
-			if (i != j) {
-				if (distanceMeasurer.distanceToCentroid(clusters.get(j), observation) < currentDistance) {
-					closest = clusters.get(j);
-				}
+	@Nonnull
+	private Cluster<S, T> getClosestCluster(T observation) {
+		Cluster<S, T> closest = null;
+		double distance = Double.MAX_VALUE;
+		for (Cluster<S, T> cluster : clusters) {
+			double toCentroid = distanceMeasurer.distanceToCentroid(cluster, observation);
+			if (toCentroid < distance) {
+				closest = cluster;
+				distance = toCentroid;
 			}
 		}
+		//noinspection ConstantConditions
 		return closest;
 	}
 
-	private String valueOfVec(double[] arr) {
-		ArrayList<Integer> list = new ArrayList<>();
-		for(int i = 0; i < arr.length; i++) {
-			if(arr[i] != 0) {
-				list.add(i);
-			}
-		}
-		return list.toString();
-	}
-
-	private void addThePointsToTheInitialClusters(int start, int length) {
-
-		for(int i = start; i < start + length && i < provider.getNumberOfLines(); i++) {
-			S nextObservation = provider.get(i);
-			if(nextObservation == null)
-				continue;
-			Cluster closest = null;
-			double distance = Double.MAX_VALUE;
-			for (Cluster cluster : clusters) {
-				final double toCentroid = distanceMeasurer.distanceToCentroid(cluster, nextObservation);
-				if (toCentroid < distance) {
-					closest = cluster;
-					distance = toCentroid;
-				}
-			}
-			//noinspection ConstantConditions
-
-			closest.add(nextObservation);
-		}
-	}
-
-	private void initializeClusters(int numberOfClusters, List<Cluster<S>> clusters, DataProvider<S> provider) {
-		for (int i = 0; i < numberOfClusters; i++) {
-			final S next = provider.get(i);
-			final Cluster<S> cluster = new Cluster<>(provider.getLengthOfObservation());
+	private void initializeClusters(int numberOfClusters, List<Cluster<S, T>> clusters,
+			ObservationProviderInterface<S, T> provider) {
+		Iterator<T> iterator = provider.iterator();
+		int clusterIndex = 0;
+		while (iterator.hasNext() && clusterIndex++ < numberOfClusters) {
+			T next = iterator.next();
+			Cluster<S, T> cluster = new Cluster<>(next.numberOfFeatures());
 			cluster.add(next);
 			clusters.add(cluster);
 		}
+		addThePointsToTheInitialClusters();
 	}
 
-	private class MultiThreadingHelper implements Runnable {
-
-		private final int start;
-		private final int length;
-
-		MultiThreadingHelper(int start, int length) {
-			this.start = start;
-			this.length = length;
-		}
-
-		@Override
-		public void run() {
-			try {
-				addThePointsToTheInitialClusters(start, length);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
 }

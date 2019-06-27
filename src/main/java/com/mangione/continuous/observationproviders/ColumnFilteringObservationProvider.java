@@ -1,11 +1,16 @@
 package com.mangione.continuous.observationproviders;
 
-import com.mangione.continuous.observations.ObservationInterface;
-
-import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+
+import com.mangione.continuous.observations.ObservationInterface;
 
 public class ColumnFilteringObservationProvider<S, T extends ObservationInterface<S>> implements ObservationProviderInterface<S, T> {
 
@@ -22,8 +27,8 @@ public class ColumnFilteringObservationProvider<S, T extends ObservationInterfac
 				.boxed()
 				.collect(Collectors.toList()));
 		this.factory = valuesColumnsToObservationFactory;
-	}
 
+	}
 
 	@Nonnull
 	@Override
@@ -51,4 +56,5 @@ public class ColumnFilteringObservationProvider<S, T extends ObservationInterfac
 			}
 		};
 	}
+
 }

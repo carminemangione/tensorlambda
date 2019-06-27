@@ -1,86 +1,72 @@
 package com.mangione.continuous.classifiers.unsupervised;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.math3.ml.distance.EuclideanDistance;
 
+import com.mangione.continuous.observations.ObservationInterface;
 
-public class Cluster<S> {
 
+public class Cluster<T extends Number, S extends ObservationInterface<T>> {
 
 	private final int numDimensions;
-    private S centroid;
-    private final List<S> observations = new ArrayList<>();
-    private final EuclideanDistance euclideanDistance = new EuclideanDistance();
+	private double[] centroid;
+	private final Set<S> observations = new HashSet<>();
+	private final EuclideanDistance euclideanDistance = new EuclideanDistance();
 
-    public Cluster(int numDimensions) {
+	public Cluster(int numDimensions) {
+		this.numDimensions = numDimensions;
+	}
 
-        this.numDimensions = numDimensions;
-    }
+	@SuppressWarnings("WeakerAccess")
+	public double[] getCentroid() {
+		return centroid;
+	}
 
-    public S getCentroid() {
-        return centroid;
-    }
+	public void add(S observation) {
+		observations.add(observation);
+	}
 
-    public void add(S observation) {
-        observations.add(observation);
-       // updateCentroid();
-    }
+	public Set<S> getObservations() {
+		return observations;
+	}
 
-    public List<S> getObservations() {
-        return observations;
-    }
+	public void remove(S observation) {
+		observations.remove(observation);
+	}
 
-    public void remove(S observation) {
-        observations.remove(observation);
-       // updateCentroid();
-    }
+	public double distanceToCentroid(S observation) {
+		try {
+			return euclideanDistance.compute(centroid, toDoubleArray(observation));
+		} catch (Throwable e) {
+			e.printStackTrace();
+			System.exit(0);
+		}
+		return 0.0;
+	}
 
-    public double distanceToCentroid(double[] observation) {
-    	try {
-		    return euclideanDistance.compute((double[]) centroid, observation);
-	    } catch(Throwable e) {
-		    e.printStackTrace();
-		    System.exit(0);
-	    }
-	    return 0.0;
-    }
+	private double[] toDoubleArray(S observation) {
+		return observation.getFeatures().stream().mapToDouble(Number::doubleValue).toArray();
+	}
 
-//    public double withinClusterSumOfSquares() {
-//        final double[] sumOfSquares = {0};
-//        observations.forEach(x->
-//                sumOfSquares[0] +=
-//                        Math.pow(euclideanDistance.compute(centroid, x), 2));
-//        return sumOfSquares[0];
-//    }
-
-//    void updateCentroid() {
-//        if (observations.isEmpty()) {
-//            centroid = null;
-//        } else {
-//            double[] sumsOfDimensions = new double[numDimensions];
-//            observations.forEach(x -> {
-//                for (int i = 0; i < sumsOfDimensions.length; i++) {
-//	                try {
-//		                sumsOfDimensions[i] += x[i] / observations.size();
-//	                } catch (Throwable e) {
-//						if(x == null)
-//							continue;
-//	                }
-//                }
-//            });
-//            centroid = sumsOfDimensions;
-//        }
-//    }
-
-    @Override
+	@Override
 	public String toString() {
-    	return observations.size() + "";
-    }
+		return observations.size() + "";
+	}
 
-	void setCentroid(S obs) {
-		this.centroid = obs;
+	void updateCentroid() {
+		centroid = new double[numDimensions];
+		observations.forEach(this::addToCentroid);
+		centroid = Arrays.stream(centroid)
+				.map(point -> point / observations.size())
+				.toArray();
+	}
+
+	private void addToCentroid(S observation) {
+		for (int i = 0; i < numDimensions; i++)
+			centroid[i] = centroid[i] + observation.getFeature(i).doubleValue();
 	}
 
 	int getNumDimensions() {

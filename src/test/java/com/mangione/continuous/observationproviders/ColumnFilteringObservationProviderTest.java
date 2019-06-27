@@ -57,7 +57,6 @@ public class ColumnFilteringObservationProviderTest {
 			iterator.next();
 	}
 
-
 	private static class ExceptionIfGetFeaturesCalledObservationProvider
 			extends ArrayObservationProvider<Integer, Observation<Integer>> {
 
