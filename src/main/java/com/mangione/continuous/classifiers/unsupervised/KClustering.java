@@ -69,7 +69,7 @@ public class KClustering<S extends Number, T extends ObservationInterface<S>> {
 		Cluster<S, T> closest = null;
 		double distance = Double.MAX_VALUE;
 		for (Cluster<S, T> cluster : clusters) {
-			double toCentroid = distanceMeasurer.distanceToCentroid(cluster, observation);
+			double toCentroid = cluster.distanceToCentroid(observation);
 			if (toCentroid < distance) {
 				closest = cluster;
 				distance = toCentroid;
