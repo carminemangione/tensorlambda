@@ -1,7 +1,5 @@
 package com.mangione.continuous.calculators;
 
-import static org.junit.Assert.*;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -9,6 +7,7 @@ import java.io.ObjectOutputStream;
 
 import org.junit.Test;
 
+import com.mangione.continuous.calculators.scaling.MinMaxScaling;
 import com.mangione.continuous.calculators.stats.ColumnStats;
 
 

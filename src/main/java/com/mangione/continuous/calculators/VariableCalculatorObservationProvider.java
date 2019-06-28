@@ -1,4 +1,4 @@
-package com.mangione.continuous.observationproviders;
+package com.mangione.continuous.calculators;
 
 import java.util.Iterator;
 import java.util.List;
@@ -9,6 +9,7 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 
 import com.mangione.continuous.calculators.VariableCalculations;
+import com.mangione.continuous.observationproviders.ObservationProviderInterface;
 import com.mangione.continuous.observations.ObservationInterface;
 
 public class VariableCalculatorObservationProvider<R, S, T extends ObservationInterface<S>> implements ObservationProviderInterface<S, T> {

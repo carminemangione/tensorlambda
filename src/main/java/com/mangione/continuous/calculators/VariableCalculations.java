@@ -1,10 +1,10 @@
 package com.mangione.continuous.calculators;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class VariableCalculations<R, S> implements Serializable {
 	private static final long serialVersionUID = -2819411644387468769L;
@@ -20,18 +20,10 @@ public class VariableCalculations<R, S> implements Serializable {
 	public List<S> translateAllVariables(List<R> features) {
 		AtomicInteger i = new AtomicInteger();
 
-		final List<S> translatedVariables = new ArrayList<>();
-
-		features.stream()
+		return features.stream()
 				.map(x -> calculateVariableWithIndexedCalculatorOrDefault(x, i.getAndIncrement(), features))
-				.forEach(translatedVariables::addAll);
-
-		return translatedVariables;
-	}
-
-	public  VariableCalculator<R, S> getCalculator(int index) {
-		final VariableCalculator<R, S> variableCalculator = indexToCalculator.get(index);
-		return variableCalculator !=null ? variableCalculator : defaultCalculator;
+				.flatMap(List::stream)
+				.collect(Collectors.toList());
 	}
 
 	private List<S> calculateVariableWithIndexedCalculatorOrDefault(R variable, int index, List<R> feature) {

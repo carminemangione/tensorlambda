@@ -21,6 +21,10 @@ public interface ObservationProviderInterface <S, T extends ObservationInterface
 		return new ProxyValues();
 	}
 
+	default int getNumberOfColumns() {
+		return iterator().next().getFeatures().size();
+	}
+
 	@Override
 	@Nonnull
 	Iterator<T> iterator();

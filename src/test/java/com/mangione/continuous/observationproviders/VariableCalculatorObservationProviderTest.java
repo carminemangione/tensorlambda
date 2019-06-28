@@ -10,6 +10,7 @@ import org.junit.Before;
 
 import com.mangione.continuous.calculators.VariableCalculations;
 import com.mangione.continuous.calculators.VariableCalculator;
+import com.mangione.continuous.calculators.VariableCalculatorObservationProvider;
 import com.mangione.continuous.observations.dense.Observation;
 import com.mangione.continuous.observations.ObservationInterface;
 import org.junit.Test;
