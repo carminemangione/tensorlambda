@@ -4,20 +4,19 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.math3.ml.distance.EuclideanDistance;
-
 import com.mangione.continuous.observations.ObservationInterface;
 
 
 public class Cluster<T extends Number, S extends ObservationInterface<T>> {
 
 	private final int numDimensions;
+	private final DistanceMeasureInterface<T, S> distanceMeasure;
 	private double[] centroid;
 	private final Set<S> observations = new HashSet<>();
-	private final EuclideanDistance euclideanDistance = new EuclideanDistance();
 
-	public Cluster(int numDimensions) {
+	Cluster(int numDimensions, DistanceMeasureInterface<T, S> distanceMeasure) {
 		this.numDimensions = numDimensions;
+		this.distanceMeasure = distanceMeasure;
 	}
 
 	@SuppressWarnings("WeakerAccess")
@@ -37,18 +36,14 @@ public class Cluster<T extends Number, S extends ObservationInterface<T>> {
 		observations.remove(observation);
 	}
 
-	public double distanceToCentroid(S observation) {
+	double distanceToCentroid(S observation) {
 		try {
-			return euclideanDistance.compute(centroid, toDoubleArray(observation));
+			return distanceMeasure.distanceToCentroid(centroid, observation);
 		} catch (Throwable e) {
 			e.printStackTrace();
 			System.exit(0);
 		}
 		return 0.0;
-	}
-
-	private double[] toDoubleArray(S observation) {
-		return observation.getFeatures().stream().mapToDouble(Number::doubleValue).toArray();
 	}
 
 	@Override
@@ -67,9 +62,5 @@ public class Cluster<T extends Number, S extends ObservationInterface<T>> {
 	private void addToCentroid(S observation) {
 		for (int i = 0; i < numDimensions; i++)
 			centroid[i] = centroid[i] + observation.getFeature(i).doubleValue();
-	}
-
-	int getNumDimensions() {
-		return numDimensions;
 	}
 }

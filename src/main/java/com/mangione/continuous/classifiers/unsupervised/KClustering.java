@@ -14,11 +14,11 @@ public class KClustering<S extends Number, T extends ObservationInterface<S>> {
 
 	private final List<Cluster<S, T>> clusters = new ArrayList<>();
 	private final ObservationProviderInterface<S, T> provider;
-	private final DistanceMeasurer<S, T> distanceMeasurer;
+	private final DistanceMeasureInterface<S, T> distanceMeasureInterface;
 
 	public KClustering(int numberOfClusters,  ObservationProviderInterface<S, T> provider,
-			DistanceMeasurer<S, T> distanceMeasurer)  {
-		this.distanceMeasurer = distanceMeasurer;
+			DistanceMeasureInterface<S, T> distanceMeasureInterface)  {
+		this.distanceMeasureInterface = distanceMeasureInterface;
 		this.provider = provider;
 
 		initializeClusters(numberOfClusters, clusters, provider);
@@ -85,7 +85,7 @@ public class KClustering<S extends Number, T extends ObservationInterface<S>> {
 		int clusterIndex = 0;
 		while (iterator.hasNext() && clusterIndex++ < numberOfClusters) {
 			T next = iterator.next();
-			Cluster<S, T> cluster = new Cluster<>(next.numberOfFeatures());
+			Cluster<S, T> cluster = new Cluster<>(next.numberOfFeatures(), distanceMeasureInterface);
 			cluster.add(next);
 			clusters.add(cluster);
 		}

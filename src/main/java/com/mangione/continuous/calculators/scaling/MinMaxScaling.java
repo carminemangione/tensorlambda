@@ -14,6 +14,6 @@ public class MinMaxScaling<R extends Number> implements VariableScalingInterface
 
 	@Override
 	public Double apply(R valueToScale) {
-		return valueToScale.doubleValue() - stats.min() / (stats.max() - stats.min());
+		return (valueToScale.doubleValue() - stats.min()) / (stats.max() - stats.min());
 	}
 }
