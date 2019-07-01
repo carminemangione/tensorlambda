@@ -1,10 +1,14 @@
 package com.mangione.continuous.classifiers.unsupervised;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
+import java.util.stream.DoubleStream;
 import javax.annotation.Nonnull;
+import java.util.concurrent.ThreadLocalRandom;
+
 
 import com.mangione.continuous.observationproviders.ObservationProviderInterface;
 import com.mangione.continuous.observations.ObservationInterface;
@@ -91,5 +95,101 @@ public class KClustering<S extends Number, T extends ObservationInterface<S>> {
 		}
 		addThePointsToTheInitialClusters();
 	}
+
+
+	/*
+	#############################
+	kmeans++
+	#############################
+	 */
+
+
+	/* takes 2 of same sized double arrays for subtraction */
+	private double[] matSub(double[] X1, double[] X2) {
+		double[] result = new double[X1.length];
+		int i;
+		for(i = 0; i < X1.length; i++) {
+			result[i] = X1[i] - X2[i];
+		}
+		return result;
+	}
+
+	/* dot product: X1 T X2 */
+	private double matDot(double[] X1, double[] X2) {
+		double dotProd = 0;
+		int i;
+		for(i = 0; i < X1.length; i++) {
+			dotProd += X1[i] * X2[i];
+		}
+		return dotProd;
+	}
+
+//	/* Calculates the D values */
+//	private double[] Dx(int i, List<double[]> centroids,
+//						ObservationProviderInterface<S, T> provider) {
+//
+//		int num_features = provider.iterator().next().numberOfFeatures();
+//		double[] dFinals = new double[num_features];
+//		int l = 0;
+//
+//		for(T observation: provider) {
+//
+//			List<Double> dChoices  = new ArrayList<Double>();
+//
+//			// over however many cluster centers we have thus far
+//			for(int k = 0; k < i; k++) {
+//
+//				// the matrix subtraction
+//				double [] xcDiff = matSub(toDoubleArray(observation), centroids.get(k));
+//
+//				// the matrix multiplication
+//				double index = matDot(xcDiff, xcDiff);
+//
+//				dChoices.add(index);
+//			}
+//			double min_index = Collections.min(dChoices);
+//			dFinals[l] = min_index;
+//			l++;
+//		}
+//		return dFinals;
+//	}
+
+	/* assigns the probabilities as per the Dx values */
+	private double[] assignProbs(double[] Dx) {
+		double[] probs = new double[Dx.length];
+		double sumOfDx = DoubleStream.of(Dx).sum();
+		int i;
+		for(i = 0; i < Dx.length; i++) {
+			probs[i] = Dx[i] / sumOfDx;
+		}
+		return probs;
+	}
+
+	/* finds cumulative sum of entries */
+	private double[] cumSum(double[] probs) {
+		int pLen = probs.length;
+		double[] cumProbs = new double[pLen];
+		double accum = 0;
+		int i;
+		for (i = 0; i < pLen; i++) {
+			accum += probs[i];
+			cumProbs[i] = accum;
+		}
+		return cumProbs;
+	}
+
+//	private centroidDistribution(ArrayList<>) {
+//
+//	}
+//	private void initializeClustersPlusPlus(int numberOfClusters, List<Cluster<S, T>> clusters,
+//											ObservationProviderInterface<S, T> provider) {
+//		int num_features = provider.iterator().next().numberOfFeatures();
+//		int initCentroidIndex = ThreadLocalRandom.current().nextInt(0, num_features);
+//
+//
+//
+//
+//	}
+
 
 }
