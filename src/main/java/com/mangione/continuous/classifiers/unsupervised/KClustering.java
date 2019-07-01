@@ -178,18 +178,38 @@ public class KClustering<S extends Number, T extends ObservationInterface<S>> {
 		return cumProbs;
 	}
 
-//	private centroidDistribution(ArrayList<>) {
-//
-//	}
+	private int centroidDistribution(double[] cumProbs) {
+	    double d = Math.random();
+	    int i, index = 0;
+	    for(i = 0; i < cumProbs.length; i++) {
+	        if(d <= cumProbs[i]) {
+	            index = i;
+	            break;
+            }
+	    }
+	    return index;
+	}
+
+//	/* need to finish - issue with iterator*/
 //	private void initializeClustersPlusPlus(int numberOfClusters, List<Cluster<S, T>> clusters,
 //											ObservationProviderInterface<S, T> provider) {
 //		int num_features = provider.iterator().next().numberOfFeatures();
 //		int initCentroidIndex = ThreadLocalRandom.current().nextInt(0, num_features);
+//        ArrayList<double[]> centroids = new ArrayList<>();
+//        centroids.add(/*initial centroid*/);
+//        int i;
+//        for(i = 1; i < clusters.size(); i++) {
+//            double[] dxVals = Dx(i, centroids, provider);
+//            double[] probs = assignProbs(dxVals);
+//            double[] cumProbs = cumSum(probs);
+//            int centroidIndex = centroidDistribution(cumProbs);
+//            centroids.add(/*observation with this index*/)
+//        }
 //
-//
-//
-//
-//	}
+
+
+
+	}
 
 
 }
