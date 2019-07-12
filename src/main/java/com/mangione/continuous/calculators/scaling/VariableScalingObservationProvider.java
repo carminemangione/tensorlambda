@@ -22,7 +22,7 @@ public class VariableScalingObservationProvider<R extends Number, S extends Numb
 			VariableScalingAbstractFactory<R, S> variableScalingFactory, Function<List<S>, T> observationFactory) {
 
 		this.provider = provider;
-		variableScalings = new VariableScalings<>(variableScalingFactory, provider);
+		this.variableScalings = new VariableScalings<>(variableScalingFactory, provider);
 		this.observationFactory = observationFactory;
 	}
 
