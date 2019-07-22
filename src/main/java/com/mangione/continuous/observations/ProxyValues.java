@@ -1,13 +1,11 @@
 package com.mangione.continuous.observations;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Arrays;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,17 +48,20 @@ public class ProxyValues {
 		return biMap.containsKey(i);
 	}
 
-	synchronized public void addPair(Integer i, String val) {
+	synchronized public ProxyValues addPair(Integer i, String val) {
 		biMap.inverse().put(i, val);
+		return this;
 	}
 
-	synchronized public void addPair(String i, Integer val) {
+	private synchronized void addPair(String i, Integer val) {
 		biMap.put(i, val);
 	}
 
-	synchronized public void add(String i) {
+	@Nonnull
+	synchronized public ProxyValues add(String i) {
 		if(!contains(i))
 			biMap.put(i, biMap.size());
+		return this;
 	}
 
 	synchronized public String getName(Integer i) {

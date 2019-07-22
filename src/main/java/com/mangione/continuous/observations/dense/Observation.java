@@ -19,4 +19,11 @@ public class Observation<T> implements ObservationInterface<T> {
     public List<T> getAllColumns() {
         return features;
     }
+
+    @Override
+    public String toString() {
+        return "Observation{" +
+                "features=" + features +
+                '}';
+    }
 }
