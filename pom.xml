@@ -103,7 +103,21 @@
             <artifactId>compactmap</artifactId>
             <version>1.2.1</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/cljsjs/vega -->
+        <dependency>
+            <groupId>cljsjs</groupId>
+            <artifactId>vega</artifactId>
+            <version>5.3.4-0</version>
+        </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>clojars</id>
+            <name>Clojure Repository</name>
+            <url>https://clojars.org/repo/</url>
+        </repository>
+    </repositories>
 
     <build>
         <pluginManagement>
@@ -139,7 +153,5 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-
-
     </build>
 </project>
