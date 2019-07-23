@@ -11,13 +11,11 @@ import java.util.stream.IntStream;
 public class ArrayObservationProvider<S, T extends ObservationInterface<S>> extends ListObservationProvider<S, T> {
     public ArrayObservationProvider(S[][] arrayOfObservations, Function<S[], T> observationFromArrayFactory) {
         super(Arrays.stream(arrayOfObservations)
-                .map(observationFromArrayFactory::apply)
+                .map(observationFromArrayFactory)
                 .collect(Collectors.toList()));
     }
 
-    @SuppressWarnings("WeakerAccess")
     public static Double[][] doubleFromPrimitive(double[][] doubles) {
-
         Double[][] objects = new Double[doubles.length][];
         for (int i = 0; i < objects.length; i++) {
             objects[i] = DoubleStream.of(doubles[i]).boxed().toArray(Double[]::new);

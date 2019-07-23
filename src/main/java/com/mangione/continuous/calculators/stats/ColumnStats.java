@@ -1,11 +1,17 @@
 package com.mangione.continuous.calculators.stats;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.random.EmpiricalDistribution;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+
+import com.mangione.continuous.observationproviders.ObservationProviderInterface;
+import com.mangione.continuous.observations.ObservationInterface;
 
 @SuppressWarnings("WeakerAccess")
 public class ColumnStats implements Serializable {
@@ -44,6 +50,17 @@ public class ColumnStats implements Serializable {
 
 	public long[] getHistogram() {
 		return histogram;
+	}
+
+	@Override
+	public String toString() {
+		return "ColumnStats{" +
+				"avg=" + avg +
+				", max=" + max +
+				", min=" + min +
+				", std=" + std +
+				", histogram=" + Arrays.toString(histogram) +
+				'}';
 	}
 
 	public static class Builder {
