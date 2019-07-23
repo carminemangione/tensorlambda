@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import com.mangione.continuous.observationproviders.ObservationProviderInterface;
 import com.mangione.continuous.observations.ObservationInterface;
 
+@SuppressWarnings("WeakerAccess")
 public class StatsFromProvider {
 	private final List<ColumnStats> columnStats;
 
