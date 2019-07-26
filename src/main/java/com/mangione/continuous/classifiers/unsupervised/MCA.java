@@ -1,8 +1,10 @@
 package com.mangione.continuous.classifiers.unsupervised;
 
+import org.ejml.*;
 import com.mangione.continuous.observationproviders.ObservationProviderInterface;
 import com.mangione.continuous.observations.ObservationInterface;
 import com.mangione.continuous.observations.dense.Observation;
+import org.ejml.simple.SimpleMatrix;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +14,7 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
     private ObservationProviderInterface<S, T> provider;
     private int r;
     private int batchSize;
-
+    private int n;
 
     /* Args:
         r - the rank of our svd
@@ -28,10 +30,45 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
         this.r = r;
         this.batchSize = batchSize;
 
+
     }
 
-//    private double[][] burt(double[][] Z) {
-//        return;
-//    }
+
+    /*
+    ##############################################
+                        Update
+    ##############################################
+     */
+
+
+    private SimpleMatrix burt(SimpleMatrix Z) {
+        return Z.transpose().mult(Z);
+    }
+
+    private SimpleMatrix pUpdate(SimpleMatrix C, int Q, int n, int nPlus) {
+        return C.divide((n + nPlus) + Q * Q);
+    }
+
+    private ArrayList sUpdate(SimpleMatrix Dr, SimpleMatrix P, SimpleMatrix r, int update){
+        SimpleMatrix DrMod = Dr.elementPower(-1/2);
+        SimpleMatrix mid = P.minus(r.transpose().mult(r));
+        SimpleMatrix A = DrMod.mult(mid);
+        SimpleMatrix S = A.mult(DrMod);
+        ArrayList<SimpleMatrix> sabHolder = new ArrayList<>();
+        sabHolder.add(S);
+        if(update == 1) {
+            sabHolder.add(A);
+            sabHolder.add(DrMod);
+        }
+        return sabHolder;
+    }
+
+    /*
+    ##############################################
+                        Update
+    ##############################################
+     */
+
+
 
 }
