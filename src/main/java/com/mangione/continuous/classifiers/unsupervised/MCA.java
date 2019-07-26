@@ -1,9 +1,10 @@
 package com.mangione.continuous.classifiers.unsupervised;
 
-import org.ejml.*;
 import com.mangione.continuous.observationproviders.ObservationProviderInterface;
 import com.mangione.continuous.observations.ObservationInterface;
 import com.mangione.continuous.observations.dense.Observation;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.simple.SimpleMatrix;
 
 import java.util.ArrayList;
@@ -15,6 +16,9 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
     private int r;
     private int batchSize;
     private int n;
+    private SimpleMatrix U;
+    private SimpleMatrix S;
+    private SimpleMatrix V;
 
     /* Args:
         r - the rank of our svd
@@ -36,13 +40,17 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
 
     /*
     ##############################################
-                        Update
+                  Init and Modification
     ##############################################
      */
 
 
-    private SimpleMatrix burt(SimpleMatrix Z) {
-        return Z.transpose().mult(Z);
+    private DMatrixRMaj burt(DMatrixRMaj Z) {
+        DMatrixRMaj Zt = Z.copy();
+        DMatrixRMaj C = new DMatrixRMaj();
+        CommonOps_DDRM.transpose(Zt);
+        CommonOps_DDRM.mult(Zt, Z, C);
+        return C;
     }
 
     private SimpleMatrix pUpdate(SimpleMatrix C, int Q, int n, int nPlus) {
@@ -62,6 +70,29 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
         }
         return sabHolder;
     }
+
+    /*
+    ##############################################
+                  Init and Modification
+    ##############################################
+     */
+
+
+    /*
+    ##############################################
+                        Update
+    ##############################################
+     */
+
+//    private SimpleMatrix updateSVD(SimpleMatrix U, SimpleMatrix S,
+//                                   SimpleMatrix V, SimpleMatrix A, SimpleMatrix B) {
+//
+//    }
+
+
+
+
+
 
     /*
     ##############################################
