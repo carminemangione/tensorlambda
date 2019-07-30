@@ -24,6 +24,8 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
     private int nPlus;
     private int Q;
 
+    private DMatrixRMaj C;
+    private DMatrixRMaj P;
     private DMatrixRMaj U;
     private DMatrixRMaj S;
     private DMatrixRMaj Vt;
@@ -144,15 +146,21 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
         DMatrixRMaj Ra;
         DMatrixRMaj Pb;
         DMatrixRMaj Rb;
+        QRColPivDecompositionHouseholderColumn_DDRM QR
+                = new QRColPivDecompositionHouseholderColumn_DDRM();
         DMatrixRMaj uTa = new DMatrixRMaj();
         DMatrixRMaj vTb = new DMatrixRMaj();
         CommonOps_DDRM.multTransA(U, A, uTa);
         CommonOps_DDRM.multTransA(Vt, B, vTb);
-
-
-        QRColPivDecompositionHouseholderColumn_DDRM QR
-                = new QRColPivDecompositionHouseholderColumn_DDRM();
-
+        DMatrixRMaj uuTa = new DMatrixRMaj();
+        DMatrixRMaj vvTb = new DMatrixRMaj();
+        CommonOps_DDRM.mult(U, uTa, uuTa);
+        CommonOps_DDRM.multTransA(Vt, vTb, vvTb);
+        DMatrixRMaj QRa = new DMatrixRMaj();
+        DMatrixRMaj QRb = new DMatrixRMaj();
+        CommonOps_DDRM.subtract(A, uuTa, QRa);
+        CommonOps_DDRM.subtract(B, vvTb, QRb);
+        QR.decompose(QRa);
     }
 
 
