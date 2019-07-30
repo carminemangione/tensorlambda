@@ -7,8 +7,9 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.dense.row.CommonOps_DDRM;
-import org.ejml.simple.SimpleMatrix;
 import org.ejml.sparse.csc.CommonOps_DSCC;
+import org.ejml.dense.row.decomposition.qr.QRColPivDecompositionHouseholderColumn_DDRM;
+
 import sun.java2d.marlin.DMarlinRenderingEngine;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
 
     private DMatrixRMaj U;
     private DMatrixRMaj S;
-    private DMatrixRMaj V;
+    private DMatrixRMaj Vt;
     private DMatrixRMaj A;
     private DMatrixRMaj B;
 
@@ -137,10 +138,22 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
     ##############################################
      */
 
-//    private SimpleMatrix updateSVD(SimpleMatrix U, SimpleMatrix S,
-//                                   SimpleMatrix V, SimpleMatrix A, SimpleMatrix B) {
-//
-//    }
+    private void updateSVD(DMatrixRMaj U, DMatrixRMaj S,
+                           DMatrixRMaj Vt, DMatrixRMaj A, DMatrixRMaj B) {
+        DMatrixRMaj Pa;
+        DMatrixRMaj Ra;
+        DMatrixRMaj Pb;
+        DMatrixRMaj Rb;
+        DMatrixRMaj uTa = new DMatrixRMaj();
+        DMatrixRMaj vTb = new DMatrixRMaj();
+        CommonOps_DDRM.multTransA(U, A, uTa);
+        CommonOps_DDRM.multTransA(Vt, B, vTb);
+
+
+        QRColPivDecompositionHouseholderColumn_DDRM QR
+                = new QRColPivDecompositionHouseholderColumn_DDRM();
+
+    }
 
 
 
