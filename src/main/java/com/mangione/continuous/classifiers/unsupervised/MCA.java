@@ -11,8 +11,6 @@ import org.ejml.simple.SimpleMatrix;
 import org.ejml.sparse.csc.CommonOps_DSCC;
 import sun.java2d.marlin.DMarlinRenderingEngine;
 
-import javax.annotation.Nullable;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,9 +20,14 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
     private int r; /* the rank of our SVD */
     private int batchSize;
     private int n;
+    private int nPlus;
+    private int Q;
+
     private DMatrixRMaj U;
     private DMatrixRMaj S;
     private DMatrixRMaj V;
+    private DMatrixRMaj A;
+    private DMatrixRMaj B;
 
     /* Args:
         r - the rank of our svd
@@ -39,6 +42,7 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
         this.provider = provider;
         this.r = r;
         this.batchSize = batchSize;
+        this.nPlus = 0;
 
 
     }
@@ -50,6 +54,23 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
     ##############################################
      */
 
+    /* returns single column vector of row sums */
+    private DMatrixRMaj makeR(DMatrixRMaj P) {
+        DMatrixRMaj r = new DMatrixRMaj();
+        CommonOps_DDRM.sumRows(P, r);
+        return r;
+    }
+
+    /* returns diagonalized row sums */
+    private DMatrixRMaj makeDr(DMatrixRMaj r) {
+        double[] rArray = new double[r.numRows];
+        int i;
+        for(i = 0; i < r.numRows; i++) {
+            rArray[i] = r.get(i, 0);
+        }
+        return CommonOps_DDRM.diag(rArray);
+    }
+
     /* square sparse matrix to dense matrix */
     private DMatrixRMaj sparseToDense(DMatrixSparseCSC A) {
         int cols = A.numCols;
@@ -59,7 +80,7 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
         return C;
     }
 
-
+    /* makes burt matrix */
     private DMatrixRMaj burt(DMatrixSparseCSC Z) {
         DMatrixSparseCSC lowerC = new DMatrixSparseCSC(Z.numRows, Z.numCols);
         CommonOps_DSCC.innerProductLower(Z, lowerC, null, null);
@@ -68,26 +89,40 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
         return sparseToDense(C);
     }
 
+    /* update for p */
     private DMatrixRMaj pUpdate(DMatrixRMaj C, int Q, int n, int nPlus) {
-        double a = (n + nPlus) + Q * Q;
-        CommonOps_DDRM.divide(a, C);
-        return C;
+        DMatrixRMaj P = new DMatrixRMaj();
+        double gTotal = (n + nPlus) + Q * Q;
+        this.n += this.nPlus;
+        CommonOps_DDRM.divide(C, gTotal, P);
+        return P;
     }
 
-//    private ArrayList sUpdate(DMatrixRMaj Dr, DMatrixRMaj P, DMatrixRMaj r, int update){
-//        DMatrixRMaj B = new DMatrixRMaj();
-//        CommonOps_DDRM.elementPower(-1/2, Dr, B);
-//        DMatrixRMaj mid = P.minus(r.transpose().mult(r));
-//        DMatrixRMaj A = DrMod.mult(mid);
-//        DMatrixRMaj S = A.mult(DrMod);
-//        ArrayList<DMatrixRMaj> sabHolder = new ArrayList<>();
-//        sabHolder.add(S);
-//        if(update == 1) {
-//            sabHolder.add(A);
-//            sabHolder.add(DrMod);
-//        }
-//        return sabHolder;
-//    }
+    /* update for s */
+    private void sUpdate(DMatrixRMaj Dr, DMatrixRMaj P, DMatrixRMaj r) {
+        DMatrixRMaj B = new DMatrixRMaj();
+        this.B = B;
+        CommonOps_DDRM.elementPower(-1/2, Dr, B);
+        DMatrixRMaj rrT = new DMatrixRMaj();
+        CommonOps_DDRM.multTransB(r, r, rrT);
+        DMatrixRMaj mid = new DMatrixRMaj();
+        CommonOps_DDRM.subtract(P, rrT, mid);
+        DMatrixRMaj A = new DMatrixRMaj();
+        this.A = A;
+        CommonOps_DDRM.mult(B, mid, A);
+        DMatrixRMaj S = new DMatrixRMaj();
+        CommonOps_DDRM.mult(A, B, S);
+        CommonOps_DDRM.addEquals(this.S, S);
+    }
+
+    /* creates our modification matrices, updates S, P, A, B */
+    private void modSuite(DMatrixSparseCSC Z) {
+        DMatrixRMaj C = burt(Z);
+        DMatrixRMaj P = pUpdate(C, this.Q, this.n, this.nPlus);
+        DMatrixRMaj r = makeR(P);
+        DMatrixRMaj Dr = makeDr(r);
+        sUpdate(Dr, P, r);
+    }
 
     /*
     ##############################################
