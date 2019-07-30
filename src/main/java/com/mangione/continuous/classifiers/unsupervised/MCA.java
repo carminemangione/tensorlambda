@@ -22,9 +22,9 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
     private int r; /* the rank of our SVD */
     private int batchSize;
     private int n;
-    private SimpleMatrix U;
-    private SimpleMatrix S;
-    private SimpleMatrix V;
+    private DMatrixRMaj U;
+    private DMatrixRMaj S;
+    private DMatrixRMaj V;
 
     /* Args:
         r - the rank of our svd
@@ -50,18 +50,15 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
     ##############################################
      */
 
+    /* square sparse matrix to dense matrix */
     private DMatrixRMaj sparseToDense(DMatrixSparseCSC A) {
         int cols = A.numCols;
-        double[] ones = new double[cols];
-        int i;
-        for(i = 0; i < cols; i++) {
-            ones[i] = 1;
-        }
-        DMatrixRMaj I = CommonOps_DDRM.diag(ones);
+        DMatrixRMaj I = CommonOps_DDRM.identity(cols);
         DMatrixRMaj C = new DMatrixRMaj();
         CommonOps_DSCC.mult(A, I, C);
         return C;
     }
+
 
     private DMatrixRMaj burt(DMatrixSparseCSC Z) {
         DMatrixSparseCSC lowerC = new DMatrixSparseCSC(Z.numRows, Z.numCols);
@@ -78,11 +75,12 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
     }
 
 //    private ArrayList sUpdate(DMatrixRMaj Dr, DMatrixRMaj P, DMatrixRMaj r, int update){
-//        DMatrixRMaj DrMod = Dr.elementPower(-1/2);
+//        DMatrixRMaj B = new DMatrixRMaj();
+//        CommonOps_DDRM.elementPower(-1/2, Dr, B);
 //        DMatrixRMaj mid = P.minus(r.transpose().mult(r));
 //        DMatrixRMaj A = DrMod.mult(mid);
 //        DMatrixRMaj S = A.mult(DrMod);
-//        ArrayList<SimpleMatrix> sabHolder = new ArrayList<>();
+//        ArrayList<DMatrixRMaj> sabHolder = new ArrayList<>();
 //        sabHolder.add(S);
 //        if(update == 1) {
 //            sabHolder.add(A);
