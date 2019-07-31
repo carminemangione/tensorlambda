@@ -8,6 +8,7 @@ import java.util.*;
 
 import org.junit.Before;
 
+import com.mangione.continuous.calculators.StringToDoubleVariableCalculator;
 import com.mangione.continuous.calculators.VariableCalculations;
 import com.mangione.continuous.calculators.VariableCalculator;
 import com.mangione.continuous.calculators.VariableCalculatorObservationProvider;
@@ -21,7 +22,7 @@ public class VariableCalculatorObservationProviderTest {
 	private VariableCalculatorObservationProvider<String, Double, ObservationInterface<Double>> variableCalculatorProvider;
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		Map<Integer, VariableCalculator<String, Double>> calculators = new HashMap<>();
 
 		ArrayObservationProvider<String, ? extends ObservationInterface<String>> abcObservationProvider
@@ -65,7 +66,7 @@ public class VariableCalculatorObservationProviderTest {
 	}
 
 	@Test
-	public void forEachRemaining() throws Exception {
+	public void forEachRemaining() {
 		final int[] i = {1};
 		Iterator<ObservationInterface<Double>> iterator = variableCalculatorProvider.iterator();
 		iterator.next();
@@ -74,7 +75,7 @@ public class VariableCalculatorObservationProviderTest {
 	}
 
 	@Test
-	public void remove() throws Exception {
+	public void remove() {
 		Iterator<ObservationInterface<Double>> iterator = variableCalculatorProvider.iterator();
 		iterator.next();
 		iterator.remove();
@@ -88,7 +89,7 @@ public class VariableCalculatorObservationProviderTest {
 	}
 
 	@Test
-	public void multipleIterators() throws Exception {
+	public void multipleIterators() {
 		final int[] i = {0};
 		variableCalculatorProvider.forEach(observation -> {
 			assertArrayEquals(CONVERTED[i[0]++], observation.getFeatures().toArray());

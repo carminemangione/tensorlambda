@@ -8,7 +8,6 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
-import com.mangione.continuous.calculators.VariableCalculations;
 import com.mangione.continuous.observationproviders.ObservationProviderInterface;
 import com.mangione.continuous.observations.ObservationInterface;
 

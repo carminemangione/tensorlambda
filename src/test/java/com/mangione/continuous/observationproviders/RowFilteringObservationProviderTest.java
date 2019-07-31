@@ -47,6 +47,7 @@ public class RowFilteringObservationProviderTest {
 		Iterator<Observation<Integer>> iterator = rfop.iterator();
 
 		assertEquals(2, rfop.getNumberOfLines());
+		assertTrue(iterator.hasNext());
 
 		assertArrayEquals(DATA[0], iterator.next().getFeatures().toArray());
 		assertTrue(iterator.hasNext());
@@ -63,6 +64,7 @@ public class RowFilteringObservationProviderTest {
 
 		Iterator<Observation<Integer>> iterator = rfop.iterator();
 
+		assertTrue(iterator.hasNext());
 		assertArrayEquals(DATA[0], iterator.next().getFeatures().toArray());
 		assertTrue(iterator.hasNext());
 		assertArrayEquals(DATA[1], iterator.next().getFeatures().toArray());
@@ -75,7 +77,6 @@ public class RowFilteringObservationProviderTest {
 				new RowFilteringObservationProvider<>(provider,
 						observation -> true);
 		assertEquals(0, rfop.getNumberOfLines());
-
 		Iterator<Observation<Integer>> iterator = rfop.iterator();
 		assertFalse(iterator.hasNext());
 	}
@@ -92,7 +93,6 @@ public class RowFilteringObservationProviderTest {
 	}
 
 
-	@SuppressWarnings("ConstantConditions")
 	@Test
 	public void callingHasNextMultipleTimesDoesNotAdvance() {
 		RowFilteringObservationProvider<Integer, Observation<Integer>> rfop =
@@ -100,13 +100,8 @@ public class RowFilteringObservationProviderTest {
 						observation -> observation.getFeatures().get(1).equals(0));
 
 		Iterator<Observation<Integer>> iterator = rfop.iterator();
-
+		assertTrue(iterator.hasNext());
 		assertArrayEquals(DATA[0], iterator.next().getFeatures().toArray());
-		assertTrue(iterator.hasNext());
-		assertTrue(iterator.hasNext());
-		assertTrue(iterator.hasNext());
-		assertTrue(iterator.hasNext());
-		assertTrue(iterator.hasNext());
 		assertTrue(iterator.hasNext());
 		assertArrayEquals(DATA[1], iterator.next().getFeatures().toArray());
 		assertFalse(iterator.hasNext());

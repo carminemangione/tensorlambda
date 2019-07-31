@@ -22,13 +22,15 @@ public class ColumnStats implements Serializable {
 	private final double min;
 	private final double std;
 	private final long[] histogram;
+	private long numberOfValues;
 
-	private ColumnStats(DescriptiveStatistics stats, long[] histogram) {
+	private ColumnStats(DescriptiveStatistics stats, long[] histogram, long numberOfValues) {
 
 		avg = stats.getMean();
 		max = stats.getMax();
 		min = stats.getMin();
 		std = stats.getStandardDeviation();
+		this.numberOfValues = numberOfValues;
 		this.histogram = histogram;
 	}
 
@@ -60,13 +62,19 @@ public class ColumnStats implements Serializable {
 				", min=" + min +
 				", std=" + std +
 				", histogram=" + Arrays.toString(histogram) +
+				", numberOfValues=" + numberOfValues +
 				'}';
+	}
+
+	public long getNumberOfValues() {
+		return numberOfValues;
 	}
 
 	public static class Builder {
 
 		private final DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics();
 		private final EmpiricalDistribution empiricalDistribution;
+		private long numberOfValues;
 
 		public Builder(int numberOfBins) {
 			empiricalDistribution = new EmpiricalDistribution(numberOfBins);
@@ -74,6 +82,7 @@ public class ColumnStats implements Serializable {
 
 		public void add(double value) {
 			descriptiveStatistics.addValue(value);
+			numberOfValues++;
 		}
 
 		public ColumnStats build() {
@@ -83,7 +92,7 @@ public class ColumnStats implements Serializable {
 					.stream()
 					.map(SummaryStatistics::getN).toArray(Long[]::new));
 
-			return new ColumnStats(descriptiveStatistics, histogram);
+			return new ColumnStats(descriptiveStatistics, histogram, numberOfValues);
 		}
 	}
 

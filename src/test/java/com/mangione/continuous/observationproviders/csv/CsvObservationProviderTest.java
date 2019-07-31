@@ -1,12 +1,7 @@
 package com.mangione.continuous.observationproviders.csv;
 
-import com.mangione.continuous.observationproviders.csv.CsvObservationProvider;
-import com.mangione.continuous.observations.ProxyValues;
-import com.mangione.continuous.observations.ObservationInterface;
-import com.mangione.continuous.observations.dense.Observation;
-import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Test;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.fail;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -18,8 +13,13 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.fail;
+import org.apache.commons.io.FileUtils;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.mangione.continuous.observations.ObservationInterface;
+import com.mangione.continuous.observations.ProxyValues;
+import com.mangione.continuous.observations.dense.Observation;
 
 public class CsvObservationProviderTest {
 
@@ -135,6 +135,12 @@ public class CsvObservationProviderTest {
 
 
 	}
+
+	@Test
+	public void stringObservationProvider() {
+
+	}
+
 
 	private void validateFeatures(int i, ObservationInterface<String> next) {
 		final List<String> features = next.getFeatures();

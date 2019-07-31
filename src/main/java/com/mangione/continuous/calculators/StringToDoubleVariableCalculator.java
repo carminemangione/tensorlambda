@@ -1,4 +1,4 @@
-package com.mangione.continuous.observationproviders;
+package com.mangione.continuous.calculators;
 
 import java.util.Collections;
 import java.util.List;

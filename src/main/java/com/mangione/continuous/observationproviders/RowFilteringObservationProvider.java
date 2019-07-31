@@ -15,7 +15,6 @@ public class RowFilteringObservationProvider<S, T extends ObservationInterface<S
 	private final Predicate<T> predicate;
 	private Integer numberOfLines;
 
-	@SuppressWarnings("WeakerAccess")
 	public RowFilteringObservationProvider(ObservationProviderInterface<S, T> provider, Predicate<T> predicate) {
 		if (predicate == null)
 			throw new IllegalArgumentException("predicate can not be null");
@@ -54,24 +53,18 @@ public class RowFilteringObservationProvider<S, T extends ObservationInterface<S
 
 			@Override
 			public T next() {
-				fillNextValueIfNeeded();
-				i = 0;
 				if (next == null)
-					throw new IllegalStateException("There is no next there...");
-				T nextValue = next;
-				next = null;
-				return nextValue;
+					throw new IllegalStateException("There is no next there... Did you call hasNext?");
+				return next;
 			}
 
 			private void fillNextValueIfNeeded() {
+				next = null;
 				while (next == null && iterator.hasNext()) {
 					T nextTest = iterator.next();
-					System.out.println(i++);
 					next = !predicate.test(nextTest) ? nextTest : null;
 				}
 			}
 		};
 	}
-
-	int i = 0;
 }
