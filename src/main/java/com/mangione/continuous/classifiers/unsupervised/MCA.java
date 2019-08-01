@@ -26,8 +26,12 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
 
     private DMatrixRMaj C;
     private DMatrixRMaj P;
-    private DMatrixRMaj U;
+    private DMatrixRMaj R;
+    private DMatrixRMaj Dr;
     private DMatrixRMaj S;
+
+    private DMatrixRMaj U;
+    private DMatrixRMaj Sig;
     private DMatrixRMaj Vt;
     private DMatrixRMaj A;
     private DMatrixRMaj B;
@@ -58,11 +62,15 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
                 ctr ++;
             }
         }
-        this.Q = 3;
-        this.n = 2;
-        this.nPlus = 0;
-        this.S = new DMatrixRMaj(this.r, this.r);
-        modSuite((Z));
+        DMatrixRMaj b = new DMatrixRMaj(3,3);
+        DMatrixRMaj c = new DMatrixRMaj(4,3);
+        DMatrixRMaj e = new DMatrixRMaj(7, 3);
+
+//        this.Q = 3;
+//        this.n = 2;
+//        this.nPlus = 0;
+//        this.Sig = new DMatrixRMaj(this.r, this.r);
+//        modSuite((Z));
     }
 
 
@@ -167,25 +175,42 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
 
     private void updateSVD(DMatrixRMaj U, DMatrixRMaj S,
                            DMatrixRMaj Vt, DMatrixRMaj A, DMatrixRMaj B) {
-        DMatrixRMaj Pa;
-        DMatrixRMaj Ra;
-        DMatrixRMaj Pb;
-        DMatrixRMaj Rb;
+        DMatrixRMaj Pa, Ra, Pb, Rb, uTa, vTb, uuTa, vvTb, QRa, QRb;
         QRColPivDecompositionHouseholderColumn_DDRM QR
                 = new QRColPivDecompositionHouseholderColumn_DDRM();
-        DMatrixRMaj uTa = new DMatrixRMaj();
-        DMatrixRMaj vTb = new DMatrixRMaj();
+        uTa = new DMatrixRMaj();
+        vTb = new DMatrixRMaj();
         CommonOps_DDRM.multTransA(U, A, uTa);
         CommonOps_DDRM.multTransA(Vt, B, vTb);
-        DMatrixRMaj uuTa = new DMatrixRMaj();
-        DMatrixRMaj vvTb = new DMatrixRMaj();
+        uuTa = new DMatrixRMaj();
+        vvTb = new DMatrixRMaj();
         CommonOps_DDRM.mult(U, uTa, uuTa);
         CommonOps_DDRM.multTransA(Vt, vTb, vvTb);
-        DMatrixRMaj QRa = new DMatrixRMaj();
-        DMatrixRMaj QRb = new DMatrixRMaj();
+        QRa = new DMatrixRMaj();
+        QRb = new DMatrixRMaj();
         CommonOps_DDRM.subtract(A, uuTa, QRa);
         CommonOps_DDRM.subtract(B, vvTb, QRb);
         QR.decompose(QRa);
+    }
+
+    private void makeK(DMatrixRMaj Sig, DMatrixRMaj uTa,
+                   DMatrixRMaj uTb, DMatrixRMaj Ra, DMatrixRMaj Rb) {
+        int aRows = uTa.numRows + Ra.numRows;
+        int bRows = uTb.numRows + Rb.numRows;
+        DMatrixRMaj uTaRa = new DMatrixRMaj(aRows, uTa.numCols);
+        DMatrixRMaj uTbRb = new DMatrixRMaj(bRows, uTb.numCols);
+        CommonOps_DDRM.concatRows(uTa, Ra, uTaRa);
+        CommonOps_DDRM.concatRows(uTb, Rb, uTbRb);
+        DMatrixRMaj aTimesBt = new DMatrixRMaj(aRows, bRows);
+        CommonOps_DDRM.multTransB(uTaRa, uTbRb, aTimesBt);
+        DMatrixRMaj K = new DMatrixRMaj(aRows, bRows);
+        int i, j;
+        for(i = 0; i < Sig.numRows; i++){
+            for(j = 0; j < Sig.numCols; j++) {
+                K.set(i, j, Sig.get(i,j));
+            }
+        }
+        CommonOps_DDRM.addEquals(K, aTimesBt);
     }
 
     public static void main(String[] args) {
