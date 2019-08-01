@@ -9,10 +9,13 @@ import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.sparse.csc.CommonOps_DSCC;
 import org.ejml.dense.row.decomposition.qr.QRColPivDecompositionHouseholderColumn_DDRM;
+import org.ejml.dense.row.decomposition.svd.SvdImplicitQrDecompose_DDRM;
+
 
 //import sun.java2d.marlin.DMarlinRenderingEngine;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class MCA<S extends Number, T extends ObservationInterface<S>> {
@@ -173,15 +176,18 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
     ##############################################
      */
 
-    private void updateSVD(DMatrixRMaj U, DMatrixRMaj S,
+    private HashMap<String, DMatrixRMaj> updateSVD(DMatrixRMaj U, DMatrixRMaj S,
                            DMatrixRMaj Vt, DMatrixRMaj A, DMatrixRMaj B) {
+        HashMap<String, DMatrixRMaj> retMap = new HashMap<>();
         DMatrixRMaj Pa, Ra, Pb, Rb, uTa, vTb, uuTa, vvTb, QRa, QRb;
         QRColPivDecompositionHouseholderColumn_DDRM QR
                 = new QRColPivDecompositionHouseholderColumn_DDRM();
         uTa = new DMatrixRMaj();
         vTb = new DMatrixRMaj();
         CommonOps_DDRM.multTransA(U, A, uTa);
+        retMap.put("uTa", uTa);
         CommonOps_DDRM.multTransA(Vt, B, vTb);
+        retMap.put("vTb", vTb);
         uuTa = new DMatrixRMaj();
         vvTb = new DMatrixRMaj();
         CommonOps_DDRM.mult(U, uTa, uuTa);
@@ -190,10 +196,24 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
         QRb = new DMatrixRMaj();
         CommonOps_DDRM.subtract(A, uuTa, QRa);
         CommonOps_DDRM.subtract(B, vvTb, QRb);
+        Pa = new DMatrixRMaj(QRa.numRows, QRa.numCols);
+        Ra = new DMatrixRMaj(QRa.numCols, QRa.numCols);
         QR.decompose(QRa);
+        QR.getQ(Pa,false);
+        QR.getR(Ra, false);
+        retMap.put("Pa", Pa);
+        retMap.put("Ra", Ra);
+        Pb = new DMatrixRMaj(QRb.numRows, QRb.numCols);
+        Rb = new DMatrixRMaj(QRb.numCols, QRb.numCols);
+        QR.decompose(QRb);
+        QR.getQ(Pa,false);
+        QR.getR(Ra, false);
+        retMap.put("Pb", Pb);
+        retMap.put("Rb", Rb);
+        return retMap;
     }
 
-    private void makeK(DMatrixRMaj Sig, DMatrixRMaj uTa,
+    private DMatrixRMaj makeK(DMatrixRMaj Sig, DMatrixRMaj uTa,
                    DMatrixRMaj uTb, DMatrixRMaj Ra, DMatrixRMaj Rb) {
         int aRows = uTa.numRows + Ra.numRows;
         int bRows = uTb.numRows + Rb.numRows;
@@ -211,6 +231,15 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
             }
         }
         CommonOps_DDRM.addEquals(K, aTimesBt);
+        return K;
+    }
+
+    private DMatrixRMaj kSVD(DMatrixRMaj K) {
+        SvdImplicitQrDecompose_DDRM svd = new SvdImplicitQrDecompose_DDRM(false, true,
+                                                                            true, true);
+        svd.decompose(K);
+//        svd.getU()
+
     }
 
     public static void main(String[] args) {
