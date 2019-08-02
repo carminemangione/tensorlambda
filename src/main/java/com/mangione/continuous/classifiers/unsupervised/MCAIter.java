@@ -175,13 +175,4 @@ public class MCAIter<S extends Number, T extends ObservationInterface<S>> {
 
 
 
-
-    /*
-    ##############################################
-                        Update
-    ##############################################
-     */
-
-
-
 }
