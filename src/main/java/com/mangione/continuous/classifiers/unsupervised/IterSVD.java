@@ -10,9 +10,16 @@ import java.util.HashMap;
 
 
 /*
-  - Based on implementation from Brand's Fast low-rank modifications of the thin singular value
+    - Based on implementation from Brand's Fast low-rank modifications of the thin singular value
         decomposition (2006), section 2
-  - Should be called in loop by another class
+    - Should be called in loop by another class
+ */
+
+/*
+    - Usage:
+        - instantiate IterSVD class
+        - call updateSVD
+        - use getters to pull updated versions of our SVD
  */
 public class IterSVD {
 
