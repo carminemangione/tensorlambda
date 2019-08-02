@@ -12,11 +12,10 @@ import java.util.HashMap;
    decomposition (2006), section 2
 */
 public class IterSVD {
-    private DMatrixRMaj A;
-    private DMatrixRMaj B;
+    private DMatrixRMaj X;
     private DMatrixRMaj U;
     private DMatrixRMaj Sig;
-    private DMatrixRMaj V;
+    private DMatrixRMaj Vt;
 
 
     /*
@@ -25,9 +24,27 @@ public class IterSVD {
     ##############################################
      */
 
+    public IterSVD(DMatrixRMaj A, DMatrixRMaj B) {
+        HashMap<String, DMatrixRMaj> holder;
+//        holder = updateSVD(A, B);
+
+    }
+
+    public DMatrixRMaj getU() {
+        return this.U;
+    }
+
+    public DMatrixRMaj getSig() {
+        return this.Sig;
+    }
+
+    public DMatrixRMaj getVt() {
+        return this.Vt;
+    }
+
     /* Equation 2 */
-    private HashMap<String, DMatrixRMaj> updateSVD(DMatrixRMaj U, DMatrixRMaj S,
-                                                   DMatrixRMaj Vt, DMatrixRMaj A, DMatrixRMaj B) {
+    private HashMap<String, DMatrixRMaj> updateSVD(DMatrixRMaj U, DMatrixRMaj Vt,
+                                                   DMatrixRMaj A, DMatrixRMaj B) {
         HashMap<String, DMatrixRMaj> retMap = new HashMap<>();
         DMatrixRMaj Pa, Ra, Pb, Rb, uTa, vTb, uuTa, vvTb, QRa, QRb;
         QRColPivDecompositionHouseholderColumn_DDRM QR

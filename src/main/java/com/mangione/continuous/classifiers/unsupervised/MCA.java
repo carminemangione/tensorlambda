@@ -6,6 +6,7 @@ import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.sparse.csc.CommonOps_DSCC;
+import com.mangione.continuous.classifiers.unsupervised.IterSVD;
 import org.ejml.dense.row.decomposition.qr.QRColPivDecompositionHouseholderColumn_DDRM;
 import org.ejml.dense.row.decomposition.svd.SvdImplicitQrDecompose_DDRM;
 
@@ -23,17 +24,15 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
     private int nPlus;
     private int Q;
 
+    private DMatrixRMaj A;
+    private DMatrixRMaj B;
+
     private DMatrixRMaj C;
     private DMatrixRMaj P;
     private DMatrixRMaj R;
     private DMatrixRMaj Dr;
     private DMatrixRMaj S;
 
-    private DMatrixRMaj U;
-    private DMatrixRMaj Sig;
-    private DMatrixRMaj Vt;
-    private DMatrixRMaj A;
-    private DMatrixRMaj B;
 
     /* Args:
         r - the rank of our svd
@@ -49,8 +48,7 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
         this.r = r;
         this.batchSize = batchSize;
         this.nPlus = 0;
-        this.Sig = new DMatrixRMaj();
-        this.U = new DMatrixRMaj();
+
     }
 
     public MCA() {
