@@ -15,7 +15,7 @@ import org.ejml.dense.row.decomposition.svd.SvdImplicitQrDecompose_DDRM;
 
 import java.util.HashMap;
 
-public class MCA<S extends Number, T extends ObservationInterface<S>> {
+public class MCAIter<S extends Number, T extends ObservationInterface<S>> {
 
     private ObservationProviderInterface<S, T> provider;
     private int r; /* the rank of our SVD */
@@ -43,7 +43,7 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
         Conducts an MCA transform on the data
 
      */
-    public MCA(int r, int batchSize, ObservationProviderInterface<S, T> provider){
+    public MCAIter(int r, int batchSize, ObservationProviderInterface<S, T> provider){
         this.provider = provider;
         this.r = r;
         this.batchSize = batchSize;
@@ -51,7 +51,7 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
 
     }
 
-    public MCA() {
+    public MCAIter() {
         DMatrixSparseCSC Z = new DMatrixSparseCSC(5, 3);
         int i, j, ctr = 0;
         for(i = 0; i < 2; i++) {
@@ -168,7 +168,7 @@ public class MCA<S extends Number, T extends ObservationInterface<S>> {
 
 
     public static void main(String[] args) {
-        MCA fork = new MCA();
+        MCAIter fork = new MCAIter();
 
 
     }

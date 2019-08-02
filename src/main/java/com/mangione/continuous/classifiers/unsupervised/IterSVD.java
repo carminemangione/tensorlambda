@@ -8,11 +8,12 @@ import org.ejml.dense.row.decomposition.svd.SvdImplicitQrDecompose_DDRM;
 import java.util.HashMap;
 
 
-/* Based on implementation from Brand's Fast low-rank modifications of the thin singular value
-   decomposition (2006), section 2
-*/
+/*
+  - Based on implementation from Brand's Fast low-rank modifications of the thin singular value
+        decomposition (2006), section 2
+  - Should be called in loop by another class
+ */
 public class IterSVD {
-    private DMatrixRMaj X;
     private DMatrixRMaj U;
     private DMatrixRMaj Sig;
     private DMatrixRMaj Vt;
@@ -24,9 +25,10 @@ public class IterSVD {
     ##############################################
      */
 
-    public IterSVD(DMatrixRMaj A, DMatrixRMaj B) {
+    public IterSVD(DMatrixRMaj U, DMatrixRMaj Sig,
+                   DMatrixRMaj Vt, DMatrixRMaj A, DMatrixRMaj B) {
         HashMap<String, DMatrixRMaj> holder;
-//        holder = updateSVD(A, B);
+        holder = updateSVD(U, Vt, A, B);
 
     }
 
