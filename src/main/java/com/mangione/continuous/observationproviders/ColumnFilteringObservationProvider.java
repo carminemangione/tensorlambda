@@ -1,7 +1,5 @@
 package com.mangione.continuous.observationproviders;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -18,16 +16,11 @@ public class ColumnFilteringObservationProvider<S, T extends ObservationInterfac
 	private final Set<Integer> columnsToFilter;
 	private final BiFunction<List<S>, List<Integer>, T> factory;
 
-	@SuppressWarnings("WeakerAccess")
-	public ColumnFilteringObservationProvider(ObservationProviderInterface<S, T> provider, int[] columnsToFilter,
+	public ColumnFilteringObservationProvider(ObservationProviderInterface<S, T> provider, Set<Integer> columnsToFilter,
 											  BiFunction<List<S>, List<Integer>, T> valuesColumnsToObservationFactory) {
 		this.provider = provider;
-		this.columnsToFilter = new HashSet<>();
-		this.columnsToFilter.addAll(Arrays.stream(columnsToFilter)
-				.boxed()
-				.collect(Collectors.toList()));
+		this.columnsToFilter = columnsToFilter;
 		this.factory = valuesColumnsToObservationFactory;
-
 	}
 
 	@Nonnull

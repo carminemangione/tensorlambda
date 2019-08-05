@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.function.Function;
 
@@ -28,7 +29,7 @@ public class ColumnFilteringObservationProviderTest {
 				new ArrayObservationProvider<>(observations, observationFunction);
 
 		ColumnFilteringObservationProvider<Integer, Observation<Integer>> cfop = new ColumnFilteringObservationProvider<>(aop,
-				new int[]{0, 2}, (values, columns)->new Observation<>(values));
+				new HashSet<>(Arrays.asList(0, 2)), (values, columns)->new Observation<>(values));
 
 	    Iterator<Observation<Integer>> iterator = cfop.iterator();
 		assertTrue(iterator.hasNext());
@@ -49,7 +50,7 @@ public class ColumnFilteringObservationProviderTest {
 
 		ColumnFilteringObservationProvider<Integer, Observation<Integer>> cfop =
 				new ColumnFilteringObservationProvider<>(provider,
-						new int[]{0, 2}, (values, columns) -> new Observation<>(values));
+						new HashSet<>(Arrays.asList(0, 2)), (values, columns) -> new Observation<>(values));
 
 		Iterator<Observation<Integer>> iterator = cfop.iterator();
 		//noinspection WhileLoopReplaceableByForEach
