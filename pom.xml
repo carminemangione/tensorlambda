@@ -103,11 +103,18 @@
             <artifactId>compactmap</artifactId>
             <version>1.2.1</version>
         </dependency>
+<<<<<<< HEAD
         <!-- https://mvnrepository.com/artifact/cljsjs/vega -->
         <dependency>
             <groupId>cljsjs</groupId>
             <artifactId>vega</artifactId>
             <version>5.3.4-0</version>
+=======
+        <dependency>
+            <groupId>org.ejml</groupId>
+            <artifactId>ejml-all</artifactId>
+            <version>0.37.1</version>
+>>>>>>> added ejml dependency
         </dependency>
     </dependencies>
 
