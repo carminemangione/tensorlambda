@@ -58,6 +58,27 @@ public class ColumnFilteringObservationProviderTest {
 			iterator.next();
 	}
 
+	@Test
+	public void coerceNonIntegerTypes() {
+		Integer[][] observations = {{1, 2, 3}, {4, 5, 6}};
+
+		ObservationProviderInterface<Integer, Observation<Integer>> aop =
+				new ArrayObservationProvider<>(observations, observationFunction);
+
+		ColumnFilteringObservationProvider<Integer, Observation<Integer>> cfop = new ColumnFilteringObservationProvider<>(aop,
+				new HashSet<>(Arrays.asList(0L, 2L)), (values, columns)->new Observation<>(values));
+
+		Iterator<Observation<Integer>> iterator = cfop.iterator();
+		assertTrue(iterator.hasNext());
+		Observation<Integer> next = iterator.next();
+		assertEquals(Collections.singletonList(2), next.getFeatures());
+
+		assertTrue(iterator.hasNext());
+		next = iterator.next();
+		assertEquals(Collections.singletonList(5), next.getFeatures());
+		assertFalse(iterator.hasNext());
+	}
+
 	private static class ExceptionIfGetFeaturesCalledObservationProvider
 			extends ArrayObservationProvider<Integer, Observation<Integer>> {
 

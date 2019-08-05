@@ -16,10 +16,10 @@ public class ColumnFilteringObservationProvider<S, T extends ObservationInterfac
 	private final Set<Integer> columnsToFilter;
 	private final BiFunction<List<S>, List<Integer>, T> factory;
 
-	public ColumnFilteringObservationProvider(ObservationProviderInterface<S, T> provider, Set<Integer> columnsToFilter,
-											  BiFunction<List<S>, List<Integer>, T> valuesColumnsToObservationFactory) {
+	public ColumnFilteringObservationProvider(ObservationProviderInterface<S, T> provider, Set<? extends Number> columnsToFilter,
+			BiFunction<List<S>, List<Integer>, T> valuesColumnsToObservationFactory) {
 		this.provider = provider;
-		this.columnsToFilter = columnsToFilter;
+		this.columnsToFilter = coerceToIntForInterop(columnsToFilter);
 		this.factory = valuesColumnsToObservationFactory;
 	}
 
@@ -45,9 +45,15 @@ public class ColumnFilteringObservationProvider<S, T extends ObservationInterfac
 						.map(next::getFeature)
 						.collect(Collectors.toList());
 
-				return factory.apply(filteredFeatures,columnIndexes);
+				return factory.apply(filteredFeatures, columnIndexes);
 			}
 		};
 	}
 
+	@Nonnull
+	private Set<Integer> coerceToIntForInterop(Set<? extends Number> columnsToFilter) {
+		return columnsToFilter.stream()
+				.map(Number::intValue)
+				.collect(Collectors.toSet());
+	}
 }
