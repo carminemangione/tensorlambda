@@ -1,6 +1,5 @@
 package com.mangione.continuous.classifiers.unsupervised;
 
-import clojure.lang.IFn;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.dense.row.decomposition.qr.QRColPivDecompositionHouseholderColumn_DDRM;
@@ -127,6 +126,7 @@ public class IterSVD {
         return retMap;
     }
 
+    /* equation 5 */
     private void eqFive(DMatrixRMaj U, DMatrixRMaj V, DMatrixRMaj U_,
                         DMatrixRMaj V_, DMatrixRMaj Pa, DMatrixRMaj Pb) {
         DMatrixRMaj UPa, U__, VPb, V__;
@@ -142,6 +142,7 @@ public class IterSVD {
         this.V = V__;
     }
 
+    /* wrapper for entire svd update procedure */
     public void svdUpdate() {
         HashMap<String, DMatrixRMaj> eqTwoMap ,kSVDMap;
         DMatrixRMaj K;
