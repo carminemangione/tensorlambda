@@ -5,12 +5,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import java.util.*;
+import java.util.function.Function;
 
 import org.junit.Before;
 
 import com.mangione.continuous.calculators.StringToDoubleVariableCalculator;
 import com.mangione.continuous.calculators.VariableCalculations;
-import com.mangione.continuous.calculators.VariableCalculator;
 import com.mangione.continuous.calculators.VariableCalculatorObservationProvider;
 import com.mangione.continuous.observations.dense.Observation;
 import com.mangione.continuous.observations.ObservationInterface;
@@ -23,13 +23,11 @@ public class VariableCalculatorObservationProviderTest {
 
 	@Before
 	public void setUp() {
-		Map<Integer, VariableCalculator<String, Double>> calculators = new HashMap<>();
-
 		ArrayObservationProvider<String, ? extends ObservationInterface<String>> abcObservationProvider
 				= new ArrayObservationProvider<String, ObservationInterface<String>>(new String[][]{{"a", "234"}, {"b", "321"}, {"c", "987"}},
                 (features1) -> new Observation<>(Arrays.asList(features1)));
 
-		calculators.put(0, (feature, features) -> {
+		Function<String, List<Double>> stringListFunction = (feature) -> {
 			Double[] out = new Double[]{0d, 0d, 0d};
 			switch (feature) {
 				case "a":
@@ -43,9 +41,16 @@ public class VariableCalculatorObservationProviderTest {
 					break;
 			}
 			return Arrays.asList(out);
-		});
+		};
+
+		VariableCalculations.Builder<String, Double> builder =
+				new VariableCalculations.Builder<>();
+		builder
+				.addListCalculator(0, stringListFunction)
+		.setDefaultListCalculator(new StringToDoubleVariableCalculator());
+
 		variableCalculatorProvider = new VariableCalculatorObservationProvider<>(abcObservationProvider,
-				new VariableCalculations<>(calculators, new StringToDoubleVariableCalculator()),
+				builder.build(),
 				Observation::new);
 	}
 

@@ -2,12 +2,12 @@ package com.mangione.continuous.calculators;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
-import com.mangione.continuous.calculators.VariableCalculator;
 
-public class StringToDoubleVariableCalculator implements VariableCalculator<String, Double> {
+public class StringToDoubleVariableCalculator implements Function<String, List<Double>> {
     @Override
-    public List<Double> apply(String feature, List<String> features) {
+    public List<Double> apply(String feature) {
         return Collections.singletonList(Double.parseDouble(feature));
     }
 }
