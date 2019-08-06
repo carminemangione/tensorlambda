@@ -73,8 +73,6 @@ public class IterSVD {
         CommonOps_DDRM.subtract(B, vvTb, QRb);
         Pa = new DMatrixRMaj(QRa.numRows, QRa.numCols);
         Ra = new DMatrixRMaj(QRa.numCols, QRa.numCols);
-//        System.out.println(QRa);
-//        System.out.println(QRb);
         QR.decompose(QRa);
         QR.getQ(Pa,false);
         QR.getR(Ra, false);
@@ -83,10 +81,14 @@ public class IterSVD {
         Pb = new DMatrixRMaj(QRb.numRows, QRb.numCols);
         Rb = new DMatrixRMaj(QRb.numCols, QRb.numCols);
         QR.decompose(QRb);
-        QR.getQ(Pa,false);
-        QR.getR(Ra, false);
+        QR.getQ(Pb,false);
+        QR.getR(Rb, false);
         retMap.put("Pb", Pb);
         retMap.put("Rb", Rb);
+        System.out.println(Pa);
+        System.out.println(Ra);
+        System.out.println(Pb);
+        System.out.println(Rb);
         return retMap;
     }
 
@@ -179,7 +181,7 @@ public class IterSVD {
             }
         }
 
-        /*
+        /* eqTwo with these matrices
 (array([[-0.13471586,  0.90287594,  0.40824829],
        [-0.49620342,  0.29515335, -0.81649658],
        [-0.85769097, -0.31256924,  0.40824829]]),
