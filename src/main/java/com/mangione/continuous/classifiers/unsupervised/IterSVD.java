@@ -33,7 +33,10 @@ public class IterSVD {
         this.V = V;
         this.A = A;
         this.B = B;
+
+        svdUpdate();
     }
+
 
     public DMatrixRMaj getU() {
         return this.U;
@@ -54,22 +57,24 @@ public class IterSVD {
         DMatrixRMaj Pa, Ra, Pb, Rb, uTa, vTb, uuTa, vvTb, QRa, QRb;
         QRColPivDecompositionHouseholderColumn_DDRM QR
                 = new QRColPivDecompositionHouseholderColumn_DDRM();
-        uTa = new DMatrixRMaj();
-        vTb = new DMatrixRMaj();
+        uTa = new DMatrixRMaj(U.numCols, A.numCols);
+        vTb = new DMatrixRMaj(V.numCols, B.numCols);
         CommonOps_DDRM.multTransA(U, A, uTa);
         retMap.put("uTa", uTa);
         CommonOps_DDRM.multTransA(V, B, vTb);
         retMap.put("vTb", vTb);
-        uuTa = new DMatrixRMaj();
-        vvTb = new DMatrixRMaj();
+        uuTa = new DMatrixRMaj(U.numRows, uTa.numCols);
+        vvTb = new DMatrixRMaj(V.numRows, vTb.numCols);
         CommonOps_DDRM.mult(U, uTa, uuTa);
         CommonOps_DDRM.mult(V, vTb, vvTb);
-        QRa = new DMatrixRMaj();
-        QRb = new DMatrixRMaj();
+        QRa = new DMatrixRMaj(U.numRows, uTa.numCols);
+        QRb = new DMatrixRMaj(V.numRows, vTb.numCols);
         CommonOps_DDRM.subtract(A, uuTa, QRa);
         CommonOps_DDRM.subtract(B, vvTb, QRb);
         Pa = new DMatrixRMaj(QRa.numRows, QRa.numCols);
         Ra = new DMatrixRMaj(QRa.numCols, QRa.numCols);
+//        System.out.println(QRa);
+//        System.out.println(QRb);
         QR.decompose(QRa);
         QR.getQ(Pa,false);
         QR.getR(Ra, false);
@@ -147,15 +152,52 @@ public class IterSVD {
         HashMap<String, DMatrixRMaj> eqTwoMap ,kSVDMap;
         DMatrixRMaj K;
         eqTwoMap = eqTwo(this.U, this.V, this.A, this.B);
-
-        K = eqFour(this.Sig, eqTwoMap.get("uTa"),
-                            eqTwoMap.get("vTb"), eqTwoMap.get("Ra"), eqTwoMap.get("Rb"));
-        kSVDMap = kSVD(K);
-        eqFive(this.U, this.V, kSVDMap.get("U_"),
-                kSVDMap.get("V_"), eqTwoMap.get("Pa"), eqTwoMap.get("Pb"));
+//        K = eqFour(this.Sig, eqTwoMap.get("uTa"),
+//                            eqTwoMap.get("vTb"), eqTwoMap.get("Ra"), eqTwoMap.get("Rb"));
+//        kSVDMap = kSVD(K);
+//        eqFive(this.U, this.V, kSVDMap.get("U_"),
+//                kSVDMap.get("V_"), eqTwoMap.get("Pa"), eqTwoMap.get("Pb"));
 
 
     }
+
+    public static void main(String[] args) {
+        int i, j, ctr = 0;
+        DMatrixRMaj U = new DMatrixRMaj(3,3);
+        DMatrixRMaj Sig = new DMatrixRMaj(3,3);
+        DMatrixRMaj V = new DMatrixRMaj(3,3);
+        DMatrixRMaj A = new DMatrixRMaj(3,3);
+        DMatrixRMaj B = new DMatrixRMaj(3,3);
+        for (i = 0; i < 3; i++) {
+            for (j = 0; j < 3; j++) {
+                U.set(i, j, ctr);
+                Sig.set(i, j, ctr);
+                V.set(i, j, ctr);
+                A.set(i, j, ctr);
+                B.set(i, j, ctr);
+                ctr++;
+            }
+        }
+
+        /*
+(array([[-0.13471586,  0.90287594,  0.40824829],
+       [-0.49620342,  0.29515335, -0.81649658],
+       [-0.85769097, -0.31256924,  0.40824829]]),
+ array([[ 1.33614558e+03,  1.63602982e+03,  1.93591406e+03],
+       [ 0.00000000e+00, -6.65469985e-01, -1.33093997e+00],
+       [ 0.00000000e+00,  0.00000000e+00, -1.60597618e-14]]))
+(array([[-0.13471586,  0.90287594,  0.40824829],
+       [-0.49620342,  0.29515335, -0.81649658],
+       [-0.85769097, -0.31256924,  0.40824829]]),
+ array([[ 1.33614558e+03,  1.63602982e+03,  1.93591406e+03],
+       [ 0.00000000e+00, -6.65469985e-01, -1.33093997e+00],
+       [ 0.00000000e+00,  0.00000000e+00, -1.60597618e-14]]))
+         */
+        IterSVD kapow = new IterSVD(U, Sig, V, A, B);
+
+
+    }
+
 
 }
 

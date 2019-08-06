@@ -2,6 +2,7 @@ package com.mangione.continuous.classifiers.unsupervised;
 
 import com.mangione.continuous.observationproviders.ObservationProviderInterface;
 import com.mangione.continuous.observations.ObservationInterface;
+import com.mangione.continuous.observations.ProxyValues;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.dense.row.CommonOps_DDRM;
@@ -13,7 +14,9 @@ import org.ejml.dense.row.decomposition.svd.SvdImplicitQrDecompose_DDRM;
 
 //import sun.java2d.marlin.DMarlinRenderingEngine;
 
+import java.io.*;
 import java.util.HashMap;
+import java.util.stream.Stream;
 
 public class MCAIter<S extends Number, T extends ObservationInterface<S>> {
 
@@ -41,42 +44,19 @@ public class MCAIter<S extends Number, T extends ObservationInterface<S>> {
 
         What it does:
         Conducts an MCA transform on the data
-
      */
-    public MCAIter(int r, int batchSize, ObservationProviderInterface<S, T> provider){
+
+    public MCAIter(int r, int batchSize, ObservationProviderInterface<S, T> provider) {
         this.provider = provider;
         this.r = r;
         this.batchSize = batchSize;
-        this.nPlus = 0;
+        this.n = (int) provider.getNumberOfLines();
+        this.nPlus = 0; /* for now */
+        this.Q = provider.getNumberOfColumns();
+
+
 
     }
-
-    public MCAIter() {
-        DMatrixSparseCSC Z = new DMatrixSparseCSC(5, 3);
-        int i, j, ctr = 0;
-        for(i = 0; i < 2; i++) {
-            for(j = 0; j < 3; j++) {
-                Z.set(i, j, ctr);
-                ctr ++;
-            }
-        }
-        DMatrixRMaj b = new DMatrixRMaj(3,3);
-        DMatrixRMaj c = new DMatrixRMaj(4,3);
-        DMatrixRMaj e = new DMatrixRMaj(7, 3);
-
-//        this.Q = 3;
-//        this.n = 2;
-//        this.nPlus = 0;
-//        this.Sig = new DMatrixRMaj(this.r, this.r);
-//        modSuite((Z));
-    }
-
-
-    /*
-    ##############################################
-           Finding out Modification Matrices
-    ##############################################
-     */
 
     /* returns single column vector of row sums */
     /* YE */
@@ -158,19 +138,36 @@ public class MCAIter<S extends Number, T extends ObservationInterface<S>> {
 
     }
 
-    /*
-    ##############################################
-                  Init and Modification
-    ##############################################
-     */
+    public MCAIter() {
+        DMatrixSparseCSC Z = new DMatrixSparseCSC(5, 3);
+        int i, j, ctr = 0;
+        for(i = 0; i < 2; i++) {
+            for(j = 0; j < 3; j++) {
+                Z.set(i, j, ctr);
+                ctr ++;
+            }
+        }
+        DMatrixRMaj b = new DMatrixRMaj(3,3);
+        DMatrixRMaj c = new DMatrixRMaj(4,3);
+        DMatrixRMaj e = new DMatrixRMaj(7, 3);
+
+//        this.Q = 3;
+//        this.n = 2;
+//        this.nPlus = 0;
+//        this.Sig = new DMatrixRMaj(this.r, this.r);
+//        modSuite((Z));
+    }
 
 
 
 
-    public static void main(String[] args) {
-        MCAIter fork = new MCAIter();
-
-
+    public static void main(String[] args) throws FileNotFoundException, IOException {
+//        MCAIter fork = new MCAIter();
+        File file = new File("/Users/aditya.yellumahanti/test/envDataMini.csv");
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        reader.readLine();
+        ProxyValues pv = new ProxyValues(reader);
+        pv.toString();
     }
 
 
