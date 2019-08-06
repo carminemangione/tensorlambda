@@ -73,6 +73,8 @@ public class IterSVD {
         CommonOps_DDRM.subtract(B, vvTb, QRb);
         Pa = new DMatrixRMaj(QRa.numRows, QRa.numCols);
         Ra = new DMatrixRMaj(QRa.numCols, QRa.numCols);
+        System.out.println(QRa);
+        System.out.println(QRb);
         QR.decompose(QRa);
         QR.getQ(Pa,false);
         QR.getR(Ra, false);
@@ -85,10 +87,10 @@ public class IterSVD {
         QR.getR(Rb, false);
         retMap.put("Pb", Pb);
         retMap.put("Rb", Rb);
-        System.out.println(Pa);
-        System.out.println(Ra);
-        System.out.println(Pb);
-        System.out.println(Rb);
+//        System.out.println(Pa);
+//        System.out.println(Ra);
+//        System.out.println(Pb);
+//        System.out.println(Rb);
         return retMap;
     }
 
@@ -181,7 +183,8 @@ public class IterSVD {
             }
         }
 
-        /* eqTwo with these matrices
+        /* eqTwo with these matrices, all these should be within some
+            small epsilon of these digits
 (array([[-0.13471586,  0.90287594,  0.40824829],
        [-0.49620342,  0.29515335, -0.81649658],
        [-0.85769097, -0.31256924,  0.40824829]]),
