@@ -54,6 +54,13 @@ public class GroupedStatsFromProviderTest {
 		assertEquals(7./3., stats.get(0).avg(), Double.MIN_VALUE);
 	}
 
+	@Test(expected = IllegalStateException.class)
+	public void nonNumericColumnNotGroupExcepts()  {
+		Object[][]  values = {{"one", 9.0}, {"one", 3.0}, {"one", 3.0}, {"two", 1.0}, {"two", 3.0}, {"two", 3.0}};
+		ObservationProviderInterface<Object, ObservationInterface<Object>> provider = new ArrayObservationProvider<>(values,
+				row->new Observation<>(Arrays.asList(row)));
+		new GroupedStatsFromProvider(provider, 1);
+	}
 }
 
 

@@ -1,5 +1,7 @@
 package com.mangione.continuous.util;
 
+import java.text.NumberFormat;
+
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 
@@ -23,7 +25,9 @@ public class LoggingTimer {
 			stopWatch.split();
 			long numberOfSeconds = stopWatch.getSplitTime() / 1000;
 			if (numberOfSeconds > 0)
-				logger.info(String.format("Processed %d %s at %d per second", numProcessed, logMessage, numProcessed / numberOfSeconds));
+				logger.info(String.format("Processed %,d %s at %,d per second",
+						numProcessed,
+						logMessage, numProcessed / numberOfSeconds));
 		}
 	}
 }

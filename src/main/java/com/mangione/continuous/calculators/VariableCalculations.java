@@ -1,6 +1,7 @@
 package com.mangione.continuous.calculators;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -9,8 +10,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class VariableCalculations<R, S> implements Serializable {
 	private static final long serialVersionUID = -2819411644387468769L;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(VariableCalculations.class);
 	private final Map<Integer, Function<R, List<S>>> indexToListCalculator;
 	private final Map<Integer, Function<R, S>> indexToCalculator;
 	private final Function<R, List<S>> defaultListCalculator;
@@ -28,10 +34,15 @@ public class VariableCalculations<R, S> implements Serializable {
 	List<S> translateAllVariables(List<R> features) {
 		AtomicInteger i = new AtomicInteger();
 
-		return features.stream()
-				.map(x -> calculateVariableWithIndexedCalculatorOrDefault(x, i.getAndIncrement()))
-				.flatMap(List::stream)
-				.collect(Collectors.toList());
+		try {
+			return features.stream()
+					.map(x -> calculateVariableWithIndexedCalculatorOrDefault(x, i.getAndIncrement()))
+					.flatMap(List::stream)
+					.collect(Collectors.toList());
+		} catch (Exception e) {
+			LOGGER.error("Could not process features: " + Arrays.toString(features.toArray()));
+			throw e;
+		}
 	}
 
 	private List<S> calculateVariableWithIndexedCalculatorOrDefault(R variable, int index) {

@@ -22,7 +22,10 @@ public interface ObservationProviderInterface <S, T extends ObservationInterface
 	}
 
 	default int getNumberOfColumns() {
-		return iterator().next().getFeatures().size();
+		Iterator<T> iterator = iterator();
+		if (!iterator.hasNext())
+			throw new IllegalStateException("Can not get number of columns as provider is empty.");
+		return iterator.next().getFeatures().size();
 	}
 
 	@Override

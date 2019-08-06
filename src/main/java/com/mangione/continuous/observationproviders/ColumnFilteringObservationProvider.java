@@ -8,10 +8,15 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.mangione.continuous.observations.ObservationInterface;
+import com.mangione.continuous.util.LoggingTimer;
 
 public class ColumnFilteringObservationProvider<S, T extends ObservationInterface<S>> implements ObservationProviderInterface<S, T> {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(ColumnFilteringObservationProvider.class);
 	private final ObservationProviderInterface<S, T> provider;
 	private final Set<Integer> columnsToFilter;
 	private final BiFunction<List<S>, List<Integer>, T> factory;
@@ -27,6 +32,8 @@ public class ColumnFilteringObservationProvider<S, T extends ObservationInterfac
 	@Override
 	public Iterator<T> iterator() {
 		return new Iterator<T>() {
+			private final LoggingTimer loggingTimer = new LoggingTimer(LOGGER, 100000, "ColumnFilteringObservationProvider processed lines: ");
+
 			private final Iterator<T> iterator = provider.iterator();
 
 			@Override
@@ -44,7 +51,7 @@ public class ColumnFilteringObservationProvider<S, T extends ObservationInterfac
 				List<S> filteredFeatures = columnIndexes.stream()
 						.map(next::getFeature)
 						.collect(Collectors.toList());
-
+				loggingTimer.nextStep();
 				return factory.apply(filteredFeatures, columnIndexes);
 			}
 		};
