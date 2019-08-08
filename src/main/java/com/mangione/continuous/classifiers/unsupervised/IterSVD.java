@@ -24,15 +24,18 @@ public class IterSVD {
 
 
     private DMatrixRMaj U, Sig, V, A, B;
+    private int r, c;
 
 
-    public IterSVD(DMatrixRMaj U, DMatrixRMaj Sig,
+    public IterSVD(int r, int c, DMatrixRMaj U, DMatrixRMaj Sig,
                    DMatrixRMaj V, DMatrixRMaj A, DMatrixRMaj B) {
         this.U = U;
         this.Sig = Sig;
         this.V = V;
         this.A = A;
         this.B = B;
+        this.r = r;
+        this.c = c;
 
         svdUpdate();
     }
@@ -117,7 +120,7 @@ public class IterSVD {
     }
 
     /* taking SVD of K */
-    private void kSVD(DMatrixRMaj K) {
+    private HashMap<String, DMatrixRMaj> kSVD(DMatrixRMaj K) {
         HashMap<String, DMatrixRMaj> svdMap = new HashMap<>();
         DMatrixRMaj U_, Sig_, V_;
         U_ = new DMatrixRMaj();
@@ -127,15 +130,17 @@ public class IterSVD {
                 true, true);
         svd.decompose(K);
         svd.getU(U_, false);
-        this.U = U_;
+        svdMap.put("U_", U_);
         svd.getW(Sig_);
-        this.Sig = Sig_;
+        svdMap.put("Sig_", Sig_);
         svd.getV(V_, false);
-        this.V = V_;
+        svdMap.put("V_", V_);
+        return svdMap;
     }
 
     /* taking our Rank(r + c) svd */
-    private void rankRC(HashMap<String, DMatrixRMaj> svdMap, int r, int c) {
+    private HashMap<String, DMatrixRMaj> rankRC(HashMap<String, DMatrixRMaj> svdMap, int r, int c) {
+        HashMap<String, DMatrixRMaj> rcMap = new HashMap<>();
         DMatrixRMaj Ur, Sigr, Vr;
         int rc = r + c;
         int uRows = svdMap.get("U_").numRows;
@@ -147,9 +152,11 @@ public class IterSVD {
         CommonOps_DDRM.extract(svdMap.get("U_"), 0, uRows, 0, rc + 1, Ur);
         CommonOps_DDRM.extract(svdMap.get("Sig_"), 0, sigRows, 0, rc + 1, Sigr);
         CommonOps_DDRM.extract(svdMap.get("V_"), 0, vRows, 0, rc + 1, Vr);
-        this.U = Ur;
         this.Sig = Sigr;
-        this.V = Vr;
+        rcMap.put("U_", Ur);
+        rcMap.put("V_", Vr);
+        return rcMap;
+
     }
 
     /* equation 5 */
@@ -170,20 +177,19 @@ public class IterSVD {
 
     /* wrapper for entire svd update procedure */
     public void svdUpdate() {
-        HashMap<String, DMatrixRMaj> eqTwoMap ,kSVDMap;
+        HashMap<String, DMatrixRMaj> eqTwoMap ,kSVDMap, rcMap;
         DMatrixRMaj K;
         eqTwoMap = eqTwo(this.U, this.V, this.A, this.B);
         K = eqFour(this.Sig, eqTwoMap.get("uTa"),
                             eqTwoMap.get("vTb"), eqTwoMap.get("Ra"), eqTwoMap.get("Rb"));
-//        kSVDMap = kSVD(K);
-//        eqFive(this.U, this.V, kSVDMap.get("U_"),
-//                kSVDMap.get("V_"), eqTwoMap.get("Pa"), eqTwoMap.get("Pb"));
-
-
+        kSVDMap = kSVD(K);
+        rcMap = rankRC(kSVDMap, this.r, this.c);
+        eqFive(this.U, this.V, kSVDMap.get("U_"),
+                kSVDMap.get("V_"), eqTwoMap.get("Pa"), eqTwoMap.get("Pb"));
     }
 
     public static void main(String[] args) {
-        int i, j, ctr = 0;
+        int i, j, ctr = 0, r = 2, c = 0;
         DMatrixRMaj U = new DMatrixRMaj(3,3);
         DMatrixRMaj Sig = new DMatrixRMaj(3,3);
         DMatrixRMaj V = new DMatrixRMaj(3,3);
@@ -230,7 +236,7 @@ public class IterSVD {
         2.13745789e-14  2.57915950e-28]]
 
          */
-        IterSVD kapow = new IterSVD(U, Sig, V, A, B);
+        IterSVD kapow = new IterSVD(r, c, U, Sig, V, A, B);
 
 
     }
