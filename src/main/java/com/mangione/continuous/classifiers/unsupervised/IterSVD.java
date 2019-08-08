@@ -117,8 +117,8 @@ public class IterSVD {
     }
 
     /* taking SVD of K */
-    private HashMap<String, DMatrixRMaj> kSVD(DMatrixRMaj K) {
-        HashMap<String, DMatrixRMaj> retMap = new HashMap<>();
+    private void kSVD(DMatrixRMaj K) {
+        HashMap<String, DMatrixRMaj> svdMap = new HashMap<>();
         DMatrixRMaj U_, Sig_, V_;
         U_ = new DMatrixRMaj();
         Sig_ = new DMatrixRMaj();
@@ -127,12 +127,29 @@ public class IterSVD {
                 true, true);
         svd.decompose(K);
         svd.getU(U_, false);
-        retMap.put("U_", U_);
+        this.U = U_;
         svd.getW(Sig_);
         this.Sig = Sig_;
         svd.getV(V_, false);
-        retMap.put("V_", V_);
-        return retMap;
+        this.V = V_;
+    }
+
+    /* taking our Rank(r + c) svd */
+    private void rankRC(HashMap<String, DMatrixRMaj> svdMap, int r, int c) {
+        DMatrixRMaj Ur, Sigr, Vr;
+        int rc = r + c;
+        int uRows = svdMap.get("U_").numRows;
+        int sigRows = svdMap.get("Sig_").numRows;
+        int vRows = svdMap.get("V_").numRows;
+        Ur = new DMatrixRMaj(uRows, rc);
+        Sigr = new DMatrixRMaj(sigRows, rc);
+        Vr = new DMatrixRMaj(vRows, rc);
+        CommonOps_DDRM.extract(svdMap.get("U_"), 0, uRows, 0, rc + 1, Ur);
+        CommonOps_DDRM.extract(svdMap.get("Sig_"), 0, sigRows, 0, rc + 1, Sigr);
+        CommonOps_DDRM.extract(svdMap.get("V_"), 0, vRows, 0, rc + 1, Vr);
+        this.U = Ur;
+        this.Sig = Sigr;
+        this.V = Vr;
     }
 
     /* equation 5 */
@@ -156,8 +173,8 @@ public class IterSVD {
         HashMap<String, DMatrixRMaj> eqTwoMap ,kSVDMap;
         DMatrixRMaj K;
         eqTwoMap = eqTwo(this.U, this.V, this.A, this.B);
-//        K = eqFour(this.Sig, eqTwoMap.get("uTa"),
-//                            eqTwoMap.get("vTb"), eqTwoMap.get("Ra"), eqTwoMap.get("Rb"));
+        K = eqFour(this.Sig, eqTwoMap.get("uTa"),
+                            eqTwoMap.get("vTb"), eqTwoMap.get("Ra"), eqTwoMap.get("Rb"));
 //        kSVDMap = kSVD(K);
 //        eqFive(this.U, this.V, kSVDMap.get("U_"),
 //                kSVDMap.get("V_"), eqTwoMap.get("Pa"), eqTwoMap.get("Pb"));
@@ -197,6 +214,21 @@ public class IterSVD {
  array([[ 1.33614558e+03,  1.63602982e+03,  1.93591406e+03],
        [ 0.00000000e+00, -6.65469985e-01, -1.33093997e+00],
        [ 0.00000000e+00,  0.00000000e+00, -1.60597618e-14]]))
+
+        eqFour with these matrices
+        [[ 8.91000000e+03  1.09090000e+04  1.29080000e+04  2.70434746e+05
+                -1.19784597e+02 -1.01176499e-12]
+        [ 1.09110000e+04  1.33600000e+04  1.58090000e+04  3.31131125e+05
+                -1.47734337e+02 -1.25266142e-12]
+ [ 1.29120000e+04  1.58110000e+04  1.87100000e+04  3.91827504e+05
+                -1.75684076e+02 -1.49355785e-12]
+ [ 2.70434746e+05  3.31131125e+05  3.91827504e+05  8.20964179e+06
+                -3.66531413e+03 -3.10903186e-11]
+ [-1.19784597e+02 -1.47734337e+02 -1.75684076e+02 -3.66531413e+03
+        2.21425151e+00  2.13745789e-14]
+ [-1.01176499e-12 -1.25266142e-12 -1.49355785e-12 -3.10903186e-11
+        2.13745789e-14  2.57915950e-28]]
+
          */
         IterSVD kapow = new IterSVD(U, Sig, V, A, B);
 
