@@ -2,8 +2,6 @@ package com.mangione.continuous.observations;
 
 import java.io.*;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
@@ -102,8 +100,9 @@ public class ProxyValuesMultiColumn {
                 .collect(Collectors.joining("\n"));
     }
 
-    synchronized public int size() {
-        return biMaps.get(0).size();
+    synchronized public int size(int col) {
+        return biMaps.get(col).size();
     }
+
 
 }
