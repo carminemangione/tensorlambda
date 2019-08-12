@@ -3,6 +3,7 @@ package com.mangione.continuous.classifiers.unsupervised;
 import com.mangione.continuous.observationproviders.ObservationProviderInterface;
 import com.mangione.continuous.observations.ObservationInterface;
 import com.mangione.continuous.observations.ProxyValues;
+import com.mangione.continuous.observations.dense.Observation;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.dense.row.CommonOps_DDRM;
@@ -16,26 +17,17 @@ import org.ejml.dense.row.decomposition.svd.SvdImplicitQrDecompose_DDRM;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.stream.Stream;
 
+/* gotta run this stuff iteratively - calling sabUpdate then itersvd until our batches have run out */
 public class MCAIter<S extends Number, T extends ObservationInterface<S>> {
 
     private ObservationProviderInterface<S, T> provider;
-    private int r; /* the rank of our SVD */
-    private int batchSize;
-    private int n;
-    private int nPlus;
-    private int Q;
+    private int r, c, batchSize, numRows, n, nPlus, Q;
+    Boolean firstIteration, finalIteration;
 
-    private DMatrixRMaj A;
-    private DMatrixRMaj B;
-
-    private DMatrixRMaj C;
-    private DMatrixRMaj P;
-    private DMatrixRMaj R;
-    private DMatrixRMaj Dr;
-    private DMatrixRMaj S;
-
+    private DMatrixRMaj A, B, C, P, R, Dr, S;
 
     /* Args:
         r - the rank of our svd
@@ -50,9 +42,22 @@ public class MCAIter<S extends Number, T extends ObservationInterface<S>> {
         this.provider = provider;
         this.r = r;
         this.batchSize = batchSize;
-        this.n = (int) provider.getNumberOfLines();
+        this.numRows = (int) provider.getNumberOfLines();
+        int numBatches = (int) Math.floor(this.numRows / batchSize);
+        int bb = batchSize * numBatches;
+        int leftover = 0;
+        if(numBatches != bb) {
+            leftover = this.numRows - bb;
+        }
         this.nPlus = 0; /* for now */
         this.Q = provider.getNumberOfColumns();
+        this.firstIteration = true;
+        int ctr = 0;
+        Iterator<T> iter = provider.iterator();
+        while(iter.hasNext()){
+            T o = iter.next();
+            firstIteration = false;
+        }
 
 
 
@@ -110,7 +115,7 @@ public class MCAIter<S extends Number, T extends ObservationInterface<S>> {
 
     /* update for s */
     /* YE */
-    private void sUpdate(DMatrixRMaj Dr, DMatrixRMaj P, DMatrixRMaj r) {
+    private void sabUpdate(DMatrixRMaj Dr, DMatrixRMaj P, DMatrixRMaj r) {
         DMatrixRMaj B = new DMatrixRMaj(Dr.numRows, Dr.numCols);
         CommonOps_DDRM.elementPower(-1/2, Dr, B);
         this.B = B;
@@ -127,12 +132,14 @@ public class MCAIter<S extends Number, T extends ObservationInterface<S>> {
     }
 
     /* creates our modification matrices, updates S, P, A, B */
-    private void modSuite(DMatrixSparseCSC Z) {
+    private void modSuite(DMatrixSparseCSC Z, Boolean firstIteration) {
         DMatrixRMaj C = burt(Z);
         DMatrixRMaj P = pUpdate(C, this.Q, this.n, this.nPlus);
         DMatrixRMaj r = makeR(P);
-        DMatrixRMaj Dr = makeDr(r);
-        sUpdate(Dr, P, r);
+        if(firstIteration) {
+            this.Dr = makeDr(r);
+        }
+        sabUpdate(this.Dr, P, r);
 
 
 

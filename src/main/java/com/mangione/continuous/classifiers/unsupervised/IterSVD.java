@@ -139,53 +139,51 @@ public class IterSVD {
     }
 
     /* taking our Rank(r + c) svd */
-    private HashMap<String, DMatrixRMaj> rankRC(HashMap<String, DMatrixRMaj> svdMap, int r, int c) {
+    private HashMap<String, DMatrixRMaj> rankRC(DMatrixRMaj U_, DMatrixRMaj Sig_, DMatrixRMaj V_, int r, int c) {
         HashMap<String, DMatrixRMaj> rcMap = new HashMap<>();
         DMatrixRMaj Ur, Sigr, Vr;
         int rc = r + c;
-        int uRows = svdMap.get("U_").numRows;
-        int sigRows = svdMap.get("Sig_").numRows;
-        int vRows = svdMap.get("V_").numRows;
+        int uRows = U_.numRows;
+        int sigRows = Sig_.numRows;
+        int vRows = V_.numRows;
         Ur = new DMatrixRMaj(uRows, rc);
         Sigr = new DMatrixRMaj(sigRows, rc);
         Vr = new DMatrixRMaj(vRows, rc);
-        CommonOps_DDRM.extract(svdMap.get("U_"), 0, uRows, 0, rc + 1, Ur);
-        CommonOps_DDRM.extract(svdMap.get("Sig_"), 0, sigRows, 0, rc + 1, Sigr);
-        CommonOps_DDRM.extract(svdMap.get("V_"), 0, vRows, 0, rc + 1, Vr);
+        CommonOps_DDRM.extract(U_, 0, uRows, 0, rc + 1, Ur);
+        CommonOps_DDRM.extract(Sig_, 0, sigRows, 0, rc + 1, Sigr);
+        CommonOps_DDRM.extract(V_, 0, vRows, 0, rc + 1, Vr);
         this.Sig = Sigr;
-        rcMap.put("U_", Ur);
-        rcMap.put("V_", Vr);
+        rcMap.put("Ur_", Ur);
+        rcMap.put("Vr_", Vr);
         return rcMap;
 
     }
 
     /* equation 5 */
-    private void eqFive(DMatrixRMaj U, DMatrixRMaj V, DMatrixRMaj U_,
-                        DMatrixRMaj V_, DMatrixRMaj Pa, DMatrixRMaj Pb) {
+    private void eqFive(DMatrixRMaj U, DMatrixRMaj V, DMatrixRMaj Ur,
+                        DMatrixRMaj Vr, DMatrixRMaj Pa, DMatrixRMaj Pb) {
         DMatrixRMaj UPa, U__, VPb, V__;
         UPa = new DMatrixRMaj();
         CommonOps_DDRM.concatColumns(U, Pa, UPa);
         U__ = new DMatrixRMaj();
-        CommonOps_DDRM.mult(UPa, U_, U__);
+        CommonOps_DDRM.mult(UPa, Ur, U__);
         this.U = U__;
         VPb = new DMatrixRMaj();
         CommonOps_DDRM.concatColumns(V, Pb, VPb);
         V__ = new DMatrixRMaj();
-        CommonOps_DDRM.mult(VPb, V_, V__);
+        CommonOps_DDRM.mult(VPb, Vr, V__);
         this.V = V__;
     }
 
     /* wrapper for entire svd update procedure */
-    public void svdUpdate() {
+    private void svdUpdate() {
         HashMap<String, DMatrixRMaj> eqTwoMap ,kSVDMap, rcMap;
         DMatrixRMaj K;
         eqTwoMap = eqTwo(this.U, this.V, this.A, this.B);
-        K = eqFour(this.Sig, eqTwoMap.get("uTa"),
-                            eqTwoMap.get("vTb"), eqTwoMap.get("Ra"), eqTwoMap.get("Rb"));
+        K = eqFour(this.Sig, eqTwoMap.get("uTa"), eqTwoMap.get("vTb"), eqTwoMap.get("Ra"), eqTwoMap.get("Rb"));
         kSVDMap = kSVD(K);
-        rcMap = rankRC(kSVDMap, this.r, this.c);
-        eqFive(this.U, this.V, kSVDMap.get("U_"),
-                kSVDMap.get("V_"), eqTwoMap.get("Pa"), eqTwoMap.get("Pb"));
+        rcMap = rankRC(kSVDMap.get("U_"), kSVDMap.get("Sig_"), kSVDMap.get("V_"), this.r, this.c);
+        eqFive(this.U, this.V, rcMap.get("Ur_"), rcMap.get("Vr_"), eqTwoMap.get("Pa"), eqTwoMap.get("Pb"));
     }
 
     public static void main(String[] args) {
