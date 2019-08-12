@@ -1,8 +1,6 @@
 package com.mangione.continuous.observations;
 
 import java.io.*;
-import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,7 +18,6 @@ public class ProxyValuesMultiColumn {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProxyValues.class);
 
     private HashMap<Integer, BiMap<String, Integer>> biMaps = new HashMap<>();
-    private HashMap<Integer, HashSet<Integer>> setMap= new HashMap<>();
     private int numCols;
 
     public static ProxyValuesMultiColumn fromFile(File file) throws IOException {
@@ -38,7 +35,6 @@ public class ProxyValuesMultiColumn {
         int i;
         for(i = 0; i < numCols; i++) {
             this.biMaps.put(i, HashBiMap.create());
-            this.setMap.put(i, new HashSet<>());
             ctrMap.put(i, 0);
         }
         return ctrMap;
@@ -47,7 +43,6 @@ public class ProxyValuesMultiColumn {
 	public ProxyValuesMultiColumn(File file) throws IOException {
 		try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
             HashMap<Integer, Integer> ctrMap = initMaps(raf);
-            System.out.println(raf.readLine());
             int i;
 			for(String line = raf.readLine(); line != null; line = raf.readLine()) {
 				String[] values = line.split(",");
@@ -55,13 +50,12 @@ public class ProxyValuesMultiColumn {
                     try {
                         String level = values[i];
                         if(!contains(i, level)) {
-
-//                            System.out.println(l);
-//                            addPair(i, level, l);
+                            int index = ctrMap.get(i);
+                            addPair(i, level, index);
+                            ctrMap.put(i, index + 1);
                         }
                     } catch (NumberFormatException e) {
-//                        System.out.println("heeb");
-//                        LOGGER.error("Bad input line: " + line);
+                        LOGGER.error("Bad input line: " + line);
                     }
                 }
 
@@ -89,33 +83,27 @@ public class ProxyValuesMultiColumn {
         biMaps.get(col).put(key, val);
     }
 
-//    @Nonnull
-//    synchronized public ProxyValuesMultiColumn add(int col, String level) {
-//        if(!contains(col, level))
-//            biMaps.get(col).put(level, biMaps.get(col).size());
-//        return this;
-//    }
+    @Nonnull
+    synchronized public ProxyValuesMultiColumn add(int col, String level) {
+        if(!contains(col, level))
+            biMaps.get(col).put(level, biMaps.get(col).size());
+        return this;
+    }
 
-    synchronized public String getIntValOfLevel(int col, Integer intRepOfLevel) {
+    synchronized public String getLevel(int col, Integer intRepOfLevel) {
         return biMaps.get(col).inverse().get(intRepOfLevel);
     }
 
-    synchronized public Integer getLevel(int col, String level) { return biMaps.get(col).get(level); }
+    synchronized public Integer getIndex(int col, String level) { return biMaps.get(col).get(level); }
 
-//    @Override
-//    synchronized public String toString(){
-//        return biMap.entrySet().stream()
-//                .map(entry -> entry.getKey() + "," + entry.getValue())
-//                .collect(Collectors.joining("\n"));
-//    }
+    synchronized public String toString(int col){
+        return biMaps.get(col).entrySet().stream()
+                .map(entry -> entry.getKey() + ", " + entry.getValue())
+                .collect(Collectors.joining("\n"));
+    }
 
     synchronized public int size() {
         return biMaps.get(0).size();
     }
 
-    public static void main(String[] args) throws IOException {
-        File file = new File("/Users/aditya.yellumahanti/Downloads/adult+stretch.data");
-        ProxyValuesMultiColumn pv = new ProxyValuesMultiColumn(file);
-        System.out.println(pv.biMaps.get(0));
-    }
 }
