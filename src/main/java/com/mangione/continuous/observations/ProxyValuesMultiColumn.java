@@ -21,33 +21,39 @@ public class ProxyValuesMultiColumn {
 
     private HashMap<Integer, BiMap<String, Integer>> biMaps = new HashMap<>();
     private HashMap<Integer, HashSet<Integer>> setMap= new HashMap<>();
-    private HashMap<Integer, Integer> ctrMap = new HashMap<>();
+    private int numCols;
 
-    public static ProxyValues fromReader(Reader reader) throws IOException {
-        return new ProxyValues(reader);
+    public static ProxyValuesMultiColumn fromFile(File file) throws IOException {
+        return new ProxyValuesMultiColumn(file);
+    }
+
+    private HashMap<Integer, Integer> initMaps(RandomAccessFile raf) throws IOException{
+        HashMap<Integer, Integer> ctrMap = new HashMap<>();
+        raf.seek(0);
+        String line = raf.readLine();
+        String[] split = line.split(",");
+        this.numCols = split.length;
+        raf.getFilePointer();
+
+        int i;
+        for(i = 0; i < numCols; i++) {
+            this.biMaps.put(i, HashBiMap.create());
+            this.setMap.put(i, new HashSet<>());
+            ctrMap.put(i, 0);
+        }
+        return ctrMap;
     }
 
 	public ProxyValuesMultiColumn(File file) throws IOException {
 		try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
-		    raf.seek(0);
-			String line = raf.readLine();
-			String[] split = line.split(",");
-			int lenLine = split.length;
-			raf.getFilePointer();
-
-			int i;
-			for(i = 0; i < lenLine; i++) {
-                biMaps.put(i, HashBiMap.create());
-                setMap.put(i, new HashSet<>());
-                ctrMap.put(i, 0);
-            }
-			int ctr = 0;
-			for(line = raf.readLine(); line != null; line = raf.readLine()) {
+            HashMap<Integer, Integer> ctrMap = initMaps(raf);
+            System.out.println(raf.readLine());
+            int i;
+			for(String line = raf.readLine(); line != null; line = raf.readLine()) {
 				String[] values = line.split(",");
-				for(i = 0; i < lenLine; i++) {
+				for(i = 0; i < numCols; i++) {
                     try {
                         String level = values[i];
-//                        System.out.println(level);
                         if(!contains(i, level)) {
 
 //                            System.out.println(l);
@@ -107,7 +113,7 @@ public class ProxyValuesMultiColumn {
         return biMaps.get(0).size();
     }
 
-    public static void main(String[] args) throws FileNotFoundException, IOException {
+    public static void main(String[] args) throws IOException {
         File file = new File("/Users/aditya.yellumahanti/Downloads/adult+stretch.data");
         ProxyValuesMultiColumn pv = new ProxyValuesMultiColumn(file);
         System.out.println(pv.biMaps.get(0));
