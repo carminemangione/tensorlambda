@@ -32,8 +32,9 @@ public class GroupedStatsFromProvider {
 		int numberOfColumns = provider.getNumberOfColumns() - 1;
 		for (ObservationInterface<Object> observation : provider) {
 			try {
-				AllColumnsStats allColumnsStats = nameToColumnStats.computeIfAbsent(keyFactory.generateKey(observation),
-						key -> new AllColumnsStats(numberOfColumns));
+				Object key = keyFactory.generateKey(observation);
+				AllColumnsStats allColumnsStats = nameToColumnStats.computeIfAbsent(key,
+						x -> new AllColumnsStats(numberOfColumns));
 				allColumnsStats.add(convertToDoubleRemovingGroupByColumn(observation));
 			} catch (Exception e) {
 				LOGGER.error("Could not process stats for observation: " + observation, e);
@@ -46,7 +47,6 @@ public class GroupedStatsFromProvider {
 				.entrySet()
 				.stream()
 				.collect(Collectors.toMap(Map.Entry::getKey, x -> x.getValue().getColumnStats()));
-
 	}
 
 	public Map<Object, List<ColumnStats>> getStats() {
