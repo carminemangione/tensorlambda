@@ -1,6 +1,7 @@
 package com.mangione.continuous.calculators.stats;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +20,7 @@ public class GroupedStatsFromProviderTest {
 		Object[][]  values = {{"one", 9.0}, {"one", 3.0}, {"one", 3.0}};
 		ObservationProviderInterface<Object, ObservationInterface<Object>> provider = new ArrayObservationProvider<>(values,
 				row->new Observation<>(Arrays.asList(row)));
-		GroupedStatsFromProvider groupedStatsFromProvider = new GroupedStatsFromProvider(provider, 0);
+		GroupedStatsFromProvider groupedStatsFromProvider = new GroupedStatsFromProvider(provider, observation -> observation.getFeature(0));
 		Map<Object, List<ColumnStats>> statsMap = groupedStatsFromProvider.getStats();
 		assertEquals(1, statsMap.size());
 		List<ColumnStats> stats = statsMap.get("one");
@@ -32,7 +33,7 @@ public class GroupedStatsFromProviderTest {
 		Object[][]  values = {{9.0, "one"}, {3.0, "one"}, {3.0, "one"}};
 		ObservationProviderInterface<Object, ObservationInterface<Object>> provider = new ArrayObservationProvider<>(values,
 				row->new Observation<>(Arrays.asList(row)));
-		GroupedStatsFromProvider groupedStatsFromProvider = new GroupedStatsFromProvider(provider, 1);
+		GroupedStatsFromProvider groupedStatsFromProvider = new GroupedStatsFromProvider(provider, observation -> observation.getFeature(1));
 		Map<Object, List<ColumnStats>> statsMap = groupedStatsFromProvider.getStats();
 		assertEquals(1, statsMap.size());
 		List<ColumnStats> stats = statsMap.get("one");
@@ -44,7 +45,7 @@ public class GroupedStatsFromProviderTest {
 		Object[][]  values = {{"one", 9.0}, {"one", 3.0}, {"one", 3.0}, {"two", 1.0}, {"two", 3.0}, {"two", 3.0}};
 		ObservationProviderInterface<Object, ObservationInterface<Object>> provider = new ArrayObservationProvider<>(values,
 				row->new Observation<>(Arrays.asList(row)));
-		GroupedStatsFromProvider groupedStatsFromProvider = new GroupedStatsFromProvider(provider, 0);
+		GroupedStatsFromProvider groupedStatsFromProvider = new GroupedStatsFromProvider(provider, observation -> observation.getFeature(0));
 		Map<Object, List<ColumnStats>> statsMap = groupedStatsFromProvider.getStats();
 		assertEquals(2, statsMap.size());
 		List<ColumnStats> stats = statsMap.get("one");
@@ -54,12 +55,13 @@ public class GroupedStatsFromProviderTest {
 		assertEquals(7./3., stats.get(0).avg(), Double.MIN_VALUE);
 	}
 
-	@Test(expected = IllegalStateException.class)
-	public void nonNumericColumnNotGroupExcepts()  {
-		Object[][]  values = {{"one", 9.0}, {"one", 3.0}, {"one", 3.0}, {"two", 1.0}, {"two", 3.0}, {"two", 3.0}};
+	@Test
+	public void nonNumericColumnsFiltered() {
+		Object[][]  values = {{9.0, "one"}, {3.0, "one"}, {3.0, "one"}};
 		ObservationProviderInterface<Object, ObservationInterface<Object>> provider = new ArrayObservationProvider<>(values,
 				row->new Observation<>(Arrays.asList(row)));
-		new GroupedStatsFromProvider(provider, 1);
+		GroupedStatsFromProvider stats = new GroupedStatsFromProvider(provider, observation -> observation.getFeature(1));
+		assertEquals(5., stats.getStats().get("one").get(0).avg(), 0);
 	}
 }
 

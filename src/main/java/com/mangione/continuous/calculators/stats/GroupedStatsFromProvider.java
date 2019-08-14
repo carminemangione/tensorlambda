@@ -4,33 +4,35 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.mangione.continuous.calculators.KeyFactory;
 import com.mangione.continuous.observationproviders.ObservationProviderInterface;
 import com.mangione.continuous.observations.ObservationInterface;
 import com.mangione.continuous.util.LoggingTimer;
 
 public class GroupedStatsFromProvider {
 
-	private final Map<Object, List<ColumnStats>> columnStats;
 	private static final Logger LOGGER = LoggerFactory.getLogger(GroupedStatsFromProvider.class);
-	private final int groupByColumn;
 
-	public GroupedStatsFromProvider(ObservationProviderInterface<Object, ObservationInterface<Object>> provider, int groupByColumn) {
-		this.groupByColumn = groupByColumn;
+	private final Map<Object, List<ColumnStats>> columnStats;
+	private final Set<Integer> numericColumnIndexes;
+
+	public GroupedStatsFromProvider(ObservationProviderInterface<Object, ObservationInterface<Object>> provider,
+			 KeyFactory<Object, ObservationInterface<Object>> keyFactory) {
 		Map<Object, AllColumnsStats> nameToColumnStats = new HashMap<>();
 
-		validateThatColumnsAreNumeric(provider, groupByColumn);
+		numericColumnIndexes = findNonNumericColumns(provider);
 		LoggingTimer loggingTimer = new LoggingTimer(LOGGER, 1000, "Processed observations: ");
 		int numberOfColumns = provider.getNumberOfColumns() - 1;
 		for (ObservationInterface<Object> observation : provider) {
 			try {
-				AllColumnsStats allColumnsStats = nameToColumnStats.computeIfAbsent(observation.getFeature(groupByColumn),
+				AllColumnsStats allColumnsStats = nameToColumnStats.computeIfAbsent(keyFactory.generateKey(observation),
 						key -> new AllColumnsStats(numberOfColumns));
 				allColumnsStats.add(convertToDoubleRemovingGroupByColumn(observation));
 			} catch (Exception e) {
@@ -51,25 +53,21 @@ public class GroupedStatsFromProvider {
 		return columnStats;
 	}
 
-	private void validateThatColumnsAreNumeric(ObservationProviderInterface<Object, ObservationInterface<Object>> provider,
-			int groupByColumn) {
+	private Set<Integer> findNonNumericColumns(ObservationProviderInterface<Object, ObservationInterface<Object>> provider) {
 		Iterator<ObservationInterface<Object>> iterator = provider.iterator();
 		if (!iterator.hasNext())
 			throw new IllegalStateException("Provider returned empty iterator");
 		ObservationInterface<Object> next = iterator.next();
-		Optional<Integer> nonNumbericValue = next.getColumnIndexes()
+		return next.getColumnIndexes()
 				.stream()
-				.filter(index -> !index.equals(groupByColumn))
-				.filter(index -> !(next.getFeature(index) instanceof Number))
-				.findFirst();
-		if (nonNumbericValue.isPresent())
-			throw new IllegalStateException("Observation contains a non-numeric value: " + nonNumbericValue.get());
+				.filter(index -> next.getFeature(index) instanceof Number)
+				.collect(Collectors.toSet());
 	}
 
 	private List<Double> convertToDoubleRemovingGroupByColumn(ObservationInterface<Object> observation) {
 		return IntStream.range(0, observation.getFeatures().size())
 				.boxed()
-				.filter(index -> index != groupByColumn)
+				.filter(numericColumnIndexes::contains)
 				.map(index -> ((Number) observation.getFeature(index)).doubleValue())
 				.collect(Collectors.toList());
 	}
