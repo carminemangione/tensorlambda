@@ -150,7 +150,7 @@ public class IterSVD {
             }
         }
         rcMap.put("Ur", U_);
-        rcMap.put("Sigr", Sig_);
+        this.Sig = Sig_;
         rcMap.put("Vr", V_);
         return rcMap;
     }
@@ -159,12 +159,12 @@ public class IterSVD {
     private void eqFive(DMatrixRMaj U, DMatrixRMaj V, DMatrixRMaj Ur,
                         DMatrixRMaj Vr, DMatrixRMaj Pa, DMatrixRMaj Pb) {
         DMatrixRMaj UPa, U__, VPb, V__;
-        UPa = new DMatrixRMaj(U.numRows, U.numRows + Pa.numCols);
+        UPa = new DMatrixRMaj(U.numRows, U.numCols + Pa.numCols);
         CommonOps_DDRM.concatColumns(U, Pa, UPa);
         U__ = new DMatrixRMaj(UPa.numRows, Ur.numCols);
         CommonOps_DDRM.mult(UPa, Ur, U__);
         this.U = U__;
-        VPb = new DMatrixRMaj(V.numRows, V.numRows + Pb.numCols);
+        VPb = new DMatrixRMaj(V.numRows, V.numCols + Pb.numCols);
         CommonOps_DDRM.concatColumns(V, Pb, VPb);
         V__ = new DMatrixRMaj(VPb.numRows, Vr.numCols);
         CommonOps_DDRM.mult(VPb, Vr, V__);
@@ -179,8 +179,7 @@ public class IterSVD {
         K = eqFour(this.Sig, eqTwoMap.get("uTa"), eqTwoMap.get("vTb"), eqTwoMap.get("Ra"), eqTwoMap.get("Rb"));
         kSVDMap = kSVD(K);
         rcMap = rankRC(kSVDMap.get("U_"), kSVDMap.get("Sig_"), kSVDMap.get("V_"), this.r, this.c);
-        System.out.print(rcMap);
-//        eqFive(this.U, this.V, rcMap.get("Ur_"), rcMap.get("Vr_"), eqTwoMap.get("Pa"), eqTwoMap.get("Pb"));
+        eqFive(this.U, this.V, rcMap.get("Ur"), rcMap.get("Vr"), eqTwoMap.get("Pa"), eqTwoMap.get("Pb"));
     }
 
     public static void main(String[] args) {
@@ -203,9 +202,9 @@ public class IterSVD {
         }
 
         IterSVD kapow = new IterSVD(r, c, U, Sig, V, A, B);
-//        System.out.println(kapow.getU());
-//        System.out.println(kapow.getSig());
-//        System.out.println(kapow.getV());
+        System.out.println(kapow.getU());
+        System.out.println(kapow.getSig());
+        System.out.println(kapow.getV());
     }
 
 
