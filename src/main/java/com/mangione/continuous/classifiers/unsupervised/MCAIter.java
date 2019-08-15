@@ -38,29 +38,8 @@ public class MCAIter<S extends Number, T extends ObservationInterface<S>> {
         Conducts an MCA transform on the data
      */
 
-    public MCAIter(int r, int batchSize, ObservationProviderInterface<S, T> provider) {
-        this.provider = provider;
-        this.r = r;
-        this.batchSize = batchSize;
-        this.numRows = (int) provider.getNumberOfLines();
-        int numBatches = (int) Math.floor(this.numRows / batchSize);
-        int bb = batchSize * numBatches;
-        int leftover = 0;
-        if(numBatches != bb) {
-            leftover = this.numRows - bb;
-        }
-        this.nPlus = 0; /* for now */
-        this.Q = provider.getNumberOfColumns();
-        this.firstIteration = true;
-        int ctr = 0;
-        Iterator<T> iter = provider.iterator();
-        while(iter.hasNext()){
-            T o = iter.next();
-            firstIteration = false;
-        }
-
-
-
+    public MCAIter(DMatrixSparseCSC Z, Boolean firstIteration) {
+        modSuite(Z, firstIteration);
     }
 
     /* returns single column vector of row sums */
