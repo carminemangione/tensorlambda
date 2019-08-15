@@ -19,7 +19,7 @@ public class ProxyValuesMultiColumnTest {
         assertSame(2, pv.size(1));
         assertSame(2, pv.size(2));
         assertFalse(pv.contains(2, "fish"));
-
+        assertSame(10, pv.getNumLevels());
 
 
 
