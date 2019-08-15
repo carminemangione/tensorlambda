@@ -17,6 +17,7 @@ public class ProxyValuesMultiColumn {
 
     private HashMap<Integer, BiMap<String, Integer>> biMaps = new HashMap<>();
     private int numCols;
+    private int numLevels = 0;
 
     public static ProxyValuesMultiColumn fromFile(File file) throws IOException {
         return new ProxyValuesMultiColumn(file);
@@ -51,6 +52,7 @@ public class ProxyValuesMultiColumn {
                             int index = ctrMap.get(i);
                             addPair(i, level, index);
                             ctrMap.put(i, index + 1);
+                            this.numLevels++;
                         }
                     } catch (NumberFormatException e) {
                         LOGGER.error("Bad input line: " + line);
@@ -60,6 +62,10 @@ public class ProxyValuesMultiColumn {
 			}
 		}
 	}
+
+    public int getNumLevels() {
+        return this.numLevels;
+    }
 
     public ProxyValuesMultiColumn() {
     }
