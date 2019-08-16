@@ -21,29 +21,40 @@ import java.util.Iterator;
 import java.util.stream.Stream;
 
 /* gotta run this stuff iteratively - calling sabUpdate then itersvd until our batches have run out */
-public class MCAIter<S extends Number, T extends ObservationInterface<S>> {
+public class MCAIter {
 
-    private ObservationProviderInterface<S, T> provider;
-    private int r, c, batchSize, numRows, n, nPlus, Q;
-    Boolean firstIteration, finalIteration;
+    private int n, nPlus, Q;
 
-    private DMatrixRMaj A, B, C, P, R, Dr, S;
+    private DMatrixRMaj A, B, Dr;
 
     /* Args:
         r - the rank of our svd
         batchSize - the size of the batches we use to iteratively update SVD
-        provider - the dataprovider
 
         What it does:
         Conducts an MCA transform on the data
      */
 
-    public MCAIter(DMatrixSparseCSC Z, Boolean firstIteration) {
+    public MCAIter(int nPlus, int Q) {
+        this.nPlus = nPlus;
+        this.Q = Q;
+        this.n = 0;
+
+    }
+    public void init(DMatrixSparseCSC Z, Boolean firstIteration) {
         modSuite(Z, firstIteration);
     }
 
+    public DMatrixRMaj getA() {
+        return A;
+    }
+
+    public DMatrixRMaj getB() {
+        return B;
+    }
+
     /* returns single column vector of row sums */
-    /* YE */
+
     private DMatrixRMaj makeR(DMatrixRMaj P) {
         DMatrixRMaj r = new DMatrixRMaj(P.numRows, 1);
         CommonOps_DDRM.sumRows(P, r);
@@ -62,7 +73,6 @@ public class MCAIter<S extends Number, T extends ObservationInterface<S>> {
     }
 
     /* square sparse matrix to dense matrix */
-    /* YE */
     private DMatrixRMaj sparseToDense(DMatrixSparseCSC A) {
         int cols = A.numCols;
         DMatrixRMaj I = CommonOps_DDRM.identity(cols);
@@ -72,7 +82,6 @@ public class MCAIter<S extends Number, T extends ObservationInterface<S>> {
     }
 
     /* makes burt matrix */
-    /* YE */
     private DMatrixRMaj burt(DMatrixSparseCSC Z) {
         DMatrixSparseCSC lowerC = new DMatrixSparseCSC(Z.numRows, Z.numRows);
         CommonOps_DSCC.innerProductLower(Z, lowerC, null, null);
@@ -83,7 +92,6 @@ public class MCAIter<S extends Number, T extends ObservationInterface<S>> {
     }
 
     /* update for p */
-    /* YE */
     private DMatrixRMaj pUpdate(DMatrixRMaj C, int Q, int n, int nPlus) {
         DMatrixRMaj P = new DMatrixRMaj(C.numRows, C.numCols);
         double gTotal = (n + nPlus) + Q * Q;
@@ -93,8 +101,7 @@ public class MCAIter<S extends Number, T extends ObservationInterface<S>> {
     }
 
     /* update for s */
-    /* YE */
-    private void sabUpdate(DMatrixRMaj Dr, DMatrixRMaj P, DMatrixRMaj r) {
+    private void abUpdate(DMatrixRMaj Dr, DMatrixRMaj P, DMatrixRMaj r) {
         DMatrixRMaj B = new DMatrixRMaj(Dr.numRows, Dr.numCols);
         CommonOps_DDRM.elementPower(-1/2, Dr, B);
         this.B = B;
@@ -105,9 +112,6 @@ public class MCAIter<S extends Number, T extends ObservationInterface<S>> {
         DMatrixRMaj A = new DMatrixRMaj(B.numRows, mid.numCols);
         CommonOps_DDRM.mult(B, mid, A);
         this.A = A;
-        DMatrixRMaj S = new DMatrixRMaj();
-        CommonOps_DDRM.mult(A, B, S);
-        CommonOps_DDRM.addEquals(this.S, S);
     }
 
     /* creates our modification matrices, updates S, P, A, B */
@@ -118,7 +122,7 @@ public class MCAIter<S extends Number, T extends ObservationInterface<S>> {
         if(firstIteration) {
             this.Dr = makeDr(r);
         }
-        sabUpdate(this.Dr, P, r);
+        abUpdate(this.Dr, P, r);
 
 
 
