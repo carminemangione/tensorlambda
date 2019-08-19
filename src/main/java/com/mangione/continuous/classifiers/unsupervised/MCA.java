@@ -7,55 +7,76 @@ import com.mangione.continuous.observations.dense.Observation;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.stream.IntStream;
 
 /* implement using provider at some point, make sure to get the file implementation first */
-public class MCA<S extends Number, T extends ObservationInterface<S>> {
+public class MCA<S extends String, T extends ObservationInterface<S>> {
     private ObservationProviderInterface<S,T> provider;
     private ProxyValuesMultiColumn pv;
     private int rank, batchSize, numRows, numCols;
-    private DMatrixRMaj U, Sig, V, Dr;
+    private DMatrixRMaj U, Sig, V;
     private Boolean firstIteration = true;
 
 
 
-    public MCA(File file, int rank, int batchSize, ObservationProviderInterface provider) throws IOException{
-        /* declare U, S, V for first update */
+    public MCA(File file, int rank, int batchSize, ObservationProviderInterface<S, T> provider) throws IOException{
         this.provider = provider;
         this.batchSize = batchSize;
         this.numCols = provider.getNumberOfColumns();
         this.numRows = (int) provider.getNumberOfLines();
         assert batchSize < this.numRows : "Bro your batchSize cannot be greater than the length of the dataset lol";
+        this.rank = rank;
+        this.pv = new ProxyValuesMultiColumn(file);
+    }
+
+    public void train(){
+        Iterator<T> iter = this.provider.iterator();
+        DMatrixSparseCSC Z;
         int numBatches = this.numRows / this.batchSize;
         int leftover = this.numRows % this.batchSize;
-        initVars(file, rank, provider);
-        Iterator<T> iter = provider.iterator();
-        int i = 0, ctr = 0;
-//        while (i <= numBatches) {
-//
-//        }
+        int batch = this.batchSize;
+        MCAIter mcai = new MCAIter(batch, this.numCols);
+        IterSVD isvd = new IterSVD(this.pv.getNumLevels());
+        int i = 0;
+        while (i <= numBatches) {
+            if(i == numBatches) {
+                batch = leftover;
+            }
+            Z = createZ(batch, pv, iter);
+            mcai.findAB(Z, firstIteration);
+            isvd.svdUpdate(rank, 0, mcai.getA(), mcai.getB());
+            firstIteration = false;
+            i++;
+        }
+        this.U = isvd.getU();
+        this.Sig = isvd.getSig();
+        this.V = isvd.getV();
     }
 
-    private void initVars(File file, int rank, ObservationProviderInterface<S, T> provider) throws IOException {
-        this.rank = rank;
-        this.provider = provider;
-        this.numRows = provider.getNumberOfColumns();
-        this.pv = new ProxyValuesMultiColumn(file);
-        this.U = new DMatrixRMaj(pv.getNumLevels(), pv.getNumLevels());
-        this.Sig = new DMatrixRMaj(pv.getNumLevels(), pv.getNumLevels());
-        this.V = new DMatrixRMaj(pv.getNumLevels(), pv.getNumLevels());
+    public DMatrixRMaj getU() { return U; }
 
-    }
+    public DMatrixRMaj getSig() { return Sig; }
 
-    private void createZ(ProxyValuesMultiColumn pv, Iterator<T> iter) throws IOException {
-        DMatrixSparseCSC Z = new DMatrixSparseCSC(this.batchSize, pv.getNumLevels());
-//        IntStream.range(0, this.batchSize)
+    public DMatrixRMaj getV() { return V; }
+
+    private DMatrixSparseCSC createZ(int numRows, ProxyValuesMultiColumn pv, Iterator<T> iter) {
+        DMatrixSparseCSC Z = new DMatrixSparseCSC(numRows, pv.getNumLevels());
+        T o;
+        String b;
+        int row, col;
+        for(row = 0; row < numRows; row++) {
+            o = iter.next();
+            for(col = 0; col < this.numCols; col++) {
+                Z.set(row, pv.getIndex(col, o.getFeature(col)), 1);
+            }
+        }
+//        IntStream.range(0, numRows)
 //                .forEach(row -> IntStream.range(0, this.numCols)
-//                        .forEach(col -> Z.set(row, pv.getIndex(col, iter.next().getFeature(col)))));
+//                        .forEach(col -> Z.set(row, pv.getIndex(col, iter.next()))));
+        return Z;
 
 
     }
