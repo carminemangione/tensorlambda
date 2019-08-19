@@ -27,7 +27,7 @@ public class MCA<S extends String, T extends ObservationInterface<S>> {
         this.batchSize = batchSize;
         this.numCols = provider.getNumberOfColumns();
         this.numRows = (int) provider.getNumberOfLines();
-        assert batchSize < this.numRows : "Bro your batchSize cannot be greater than the length of the dataset lol";
+        assert batchSize < this.numRows : "Batchsize cannot be larger than the number of entries in dataset";
         this.rank = rank;
         this.pv = new ProxyValuesMultiColumn(file);
     }
