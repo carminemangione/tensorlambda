@@ -3,16 +3,14 @@ package com.mangione.continuous.classifiers.unsupervised;
 import com.mangione.continuous.observationproviders.ObservationProviderInterface;
 import com.mangione.continuous.observations.ObservationInterface;
 import com.mangione.continuous.observations.ProxyValuesMultiColumn;
-import com.mangione.continuous.observations.dense.Observation;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.stream.IntStream;
 
-/* implement using provider at some point, make sure to get the file implementation first */
+/* Figure out what to do about c */
 public class MCA<S extends String, T extends ObservationInterface<S>> {
     private ObservationProviderInterface<S,T> provider;
     private ProxyValuesMultiColumn pv;
@@ -62,10 +60,10 @@ public class MCA<S extends String, T extends ObservationInterface<S>> {
 
     public DMatrixRMaj getV() { return V; }
 
+    /* might create class out of this so that I can test it */
     private DMatrixSparseCSC createZ(int numRows, ProxyValuesMultiColumn pv, Iterator<T> iter) {
         DMatrixSparseCSC Z = new DMatrixSparseCSC(numRows, pv.getNumLevels());
         T o;
-        String b;
         int row, col;
         for(row = 0; row < numRows; row++) {
             o = iter.next();
@@ -73,9 +71,6 @@ public class MCA<S extends String, T extends ObservationInterface<S>> {
                 Z.set(row, pv.getIndex(col, o.getFeature(col)), 1);
             }
         }
-//        IntStream.range(0, numRows)
-//                .forEach(row -> IntStream.range(0, this.numCols)
-//                        .forEach(col -> Z.set(row, pv.getIndex(col, iter.next()))));
         return Z;
 
 
