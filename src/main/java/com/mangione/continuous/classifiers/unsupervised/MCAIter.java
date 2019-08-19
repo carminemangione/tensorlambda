@@ -1,24 +1,15 @@
 package com.mangione.continuous.classifiers.unsupervised;
 
-import com.mangione.continuous.observationproviders.ObservationProviderInterface;
-import com.mangione.continuous.observations.ObservationInterface;
 import com.mangione.continuous.observations.ProxyValues;
-import com.mangione.continuous.observations.dense.Observation;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.sparse.csc.CommonOps_DSCC;
-import com.mangione.continuous.classifiers.unsupervised.IterSVD;
-import org.ejml.dense.row.decomposition.qr.QRColPivDecompositionHouseholderColumn_DDRM;
-import org.ejml.dense.row.decomposition.svd.SvdImplicitQrDecompose_DDRM;
 
 
 //import sun.java2d.marlin.DMarlinRenderingEngine;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.stream.Stream;
 
 /* gotta run this stuff iteratively - calling sabUpdate then itersvd until our batches have run out */
 public class MCAIter {
@@ -41,7 +32,7 @@ public class MCAIter {
         this.n = 0;
 
     }
-    public void init(DMatrixSparseCSC Z, Boolean firstIteration) {
+    public void findAB(DMatrixSparseCSC Z, Boolean firstIteration) {
         modSuite(Z, firstIteration);
     }
 
@@ -148,17 +139,7 @@ public class MCAIter {
 //        modSuite((Z));
     }
 
-
-
-
-    public static void main(String[] args) throws FileNotFoundException, IOException {
-//        MCAIter fork = new MCAIter();
-        File file = new File("/Users/aditya.yellumahanti/test/envDataMini.csv");
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        reader.readLine();
-        ProxyValues pv = new ProxyValues(reader);
-        pv.toString();
-    }
+    
 
 
 
