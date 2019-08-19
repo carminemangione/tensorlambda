@@ -27,17 +27,19 @@ public class IterSVD {
     private int r, c;
 
 
-    public IterSVD(int r, int c, DMatrixRMaj U, DMatrixRMaj Sig,
-                   DMatrixRMaj V, DMatrixRMaj A, DMatrixRMaj B) {
-        this.U = U;
-        this.Sig = Sig;
-        this.V = V;
+    public IterSVD(int pvNumCols) {
+        this.U = new DMatrixRMaj(pvNumCols, pvNumCols);
+        this.Sig = new DMatrixRMaj(pvNumCols, pvNumCols);
+        this.V = new DMatrixRMaj(pvNumCols, pvNumCols);
+
+    }
+    public void svdUpdate(int r, int c, DMatrixRMaj A, DMatrixRMaj B) {
         this.A = A;
         this.B = B;
         this.r = r;
         this.c = c;
 
-        svdUpdate();
+        svdUpdateSuite();
     }
 
 
@@ -170,7 +172,7 @@ public class IterSVD {
     }
 
     /* wrapper for entire svd update procedure */
-    private void svdUpdate() {
+    private void svdUpdateSuite() {
         HashMap<String, DMatrixRMaj> eqTwoMap ,kSVDMap, rcMap;
         DMatrixRMaj K;
         eqTwoMap = eqTwo(this.U, this.V, this.A, this.B);
