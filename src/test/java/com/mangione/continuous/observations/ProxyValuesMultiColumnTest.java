@@ -12,8 +12,8 @@ public class ProxyValuesMultiColumnTest {
         File file = new File("/Users/aditya.yellumahanti/Downloads/adult+stretch.data");
         ProxyValuesMultiColumn pv = new ProxyValuesMultiColumn(file);
         assertTrue(pv.contains(0, "PURPLE"));
-        assertEquals(Integer.valueOf(0), pv.getIndex(0, "YELLOW"));
-        assertEquals(Integer.valueOf(0), pv.getIndex(3, "ADULT"));
+        assertEquals(Integer.valueOf(3), pv.getIndex(1, "LARGE"));
+        assertEquals(Integer.valueOf(8), pv.getIndex(4, "T"));
         assertSame(2, pv.size(4));
         assertSame(2, pv.size(0));
         assertSame(2, pv.size(1));
