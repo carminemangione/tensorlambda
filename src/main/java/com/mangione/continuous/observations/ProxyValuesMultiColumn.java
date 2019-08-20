@@ -23,8 +23,7 @@ public class ProxyValuesMultiColumn {
         return new ProxyValuesMultiColumn(file);
     }
 
-    private HashMap<Integer, Integer> initMaps(RandomAccessFile raf) throws IOException{
-        HashMap<Integer, Integer> ctrMap = new HashMap<>();
+    private void initMaps(RandomAccessFile raf) throws IOException{
         raf.seek(0);
         String line = raf.readLine();
         String[] split = line.split(",");
@@ -34,14 +33,12 @@ public class ProxyValuesMultiColumn {
         int i;
         for(i = 0; i < numCols; i++) {
             this.biMaps.put(i, HashBiMap.create());
-            ctrMap.put(i, 0);
         }
-        return ctrMap;
     }
 
 	public ProxyValuesMultiColumn(File file) throws IOException {
 		try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
-            HashMap<Integer, Integer> ctrMap = initMaps(raf);
+            initMaps(raf);
             int i;
 			for(String line = raf.readLine(); line != null; line = raf.readLine()) {
 				String[] values = line.split(",");
@@ -49,17 +46,21 @@ public class ProxyValuesMultiColumn {
                     try {
                         String level = values[i];
                         if(!contains(i, level)) {
-                            int index = ctrMap.get(i);
-                            addPair(i, level, index);
-                            ctrMap.put(i, index + 1);
+                            addPair(i, level, this.numLevels);
                             this.numLevels++;
                         }
                     } catch (NumberFormatException e) {
                         LOGGER.error("Bad input line: " + line);
                     }
                 }
-
 			}
+            int index = 0;
+            for(i = 0; i < this.biMaps.size(); i++) {
+                for (BiMap.Entry<String, Integer> entry : this.biMaps.get(i).entrySet()) {
+                    entry.setValue(index);
+                    index++;
+                }
+            }
 		}
 	}
 
@@ -67,8 +68,6 @@ public class ProxyValuesMultiColumn {
         return this.numLevels;
     }
 
-    public ProxyValuesMultiColumn() {
-    }
 
     synchronized boolean contains(int col, Integer intRepOfLevel) {
         return biMaps.get(col).inverse().containsKey(intRepOfLevel);
@@ -110,5 +109,10 @@ public class ProxyValuesMultiColumn {
         return biMaps.get(col).size();
     }
 
+    public static void main(String[] args) throws IOException {
+        File file = new File("/Users/aditya.yellumahanti/Downloads/adult+stretch.data");
+        ProxyValuesMultiColumn pv = new ProxyValuesMultiColumn(file);
+        System.out.print(pv.biMaps);
+    }
 
 }
