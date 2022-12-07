@@ -36,10 +36,21 @@ public class ColumnStatsBuilder<R extends Number,
 
 		if (!iterator.hasNext())
 			throw new RuntimeException("the provider is empty can not count columns");
+<<<<<<< HEAD
 		int numberOfColumns = iterator.next().getAllColumns().size();
 
 		AllColumnsStats allColumnsStats = new AllColumnsStats(numberOfColumns);
 		provider.forEach(observation->allColumnsStats.add(observation.getFeatures()));
+=======
+
+		AllColumnsStats allColumnsStats = new AllColumnsStats(provider.getNumberOfFeatures());
+		//noinspection Convert2MethodRef - For some reason it won't compile...
+		provider.forEach(observation->allColumnsStats.add(
+				IntStream.range(0, observation.numberOfFeatures())
+				.boxed()
+				.map(index->observation.getFeature(index))
+				.collect(Collectors.toList())));
+>>>>>>> 73d9563 (Migrated file changes from the source.)
 		return allColumnsStats.getColumnStats();
 	}
 }

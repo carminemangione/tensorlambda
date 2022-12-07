@@ -1,5 +1,6 @@
 package com.mangione.continuous.sampling;
 
+<<<<<<< HEAD
 import com.mangione.continuous.observationproviders.ArrayObservationProvider;
 import com.mangione.continuous.observationproviders.ObservationProviderInterface;
 import com.mangione.continuous.observationproviders.RandomGeneratorFactory;
@@ -185,6 +186,9 @@ public class SampledObservationProviderTest {
 			};
 		}
 	}
+=======
+public class SampledObservationProviderTest {
+>>>>>>> 73d9563 (Migrated file changes from the source.)
 
 }
 

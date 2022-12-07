@@ -10,6 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+<<<<<<< HEAD
 import java.util.Arrays;
 import java.util.function.Function;
 
@@ -18,15 +19,34 @@ import static org.junit.Assert.assertEquals;
 public class ColumnStatsBuilderTest {
 
 	private ColumnStatsBuilder columnStatsBuilder;
+=======
+import java.util.function.Function;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.mangione.continuous.observationproviders.ArrayObservationProvider;
+import com.mangione.continuous.observationproviders.ObservationProviderInterface;
+import com.mangione.continuous.observations.ObservationInterface;
+import com.mangione.continuous.observations.dense.Observation;
+
+public class ColumnStatsBuilderTest {
+
+	private ColumnStatsBuilder<Double, ObservationProviderInterface<Double, ObservationInterface<Double>>> columnStatsBuilder;
+>>>>>>> 73d9563 (Migrated file changes from the source.)
 	private Function<Double[], ObservationInterface<Double>> factory;
 
 	@Before
 	public void setUp() {
+<<<<<<< HEAD
 		factory = doubles -> new Observation<>(Arrays.asList(doubles));
+=======
+		factory = Observation::new;
+>>>>>>> 73d9563 (Migrated file changes from the source.)
 		ArrayObservationProvider<Double, ObservationInterface<Double>> provider =
 				new ArrayObservationProvider<>(new Double[][]{{2., 1.0}, {20., 2.0}, {18., 4.0}, {0., 1.0}}, factory);
 
-		columnStatsBuilder = new ColumnStatsBuilder(provider);
+		columnStatsBuilder = new ColumnStatsBuilder<>(provider);
 	}
 
 	@Test
@@ -39,7 +59,7 @@ public class ColumnStatsBuilderTest {
 		ArrayObservationProvider<Double, ObservationInterface<Double>> provider =
 				new ArrayObservationProvider<>(new Double[0][0], factory);
 
-		new ColumnStatsBuilder(provider);
+		new ColumnStatsBuilder<>(provider);
 	}
 
 	@Test
@@ -50,12 +70,13 @@ public class ColumnStatsBuilderTest {
 		stream.flush();
 		stream.close();
 
-		ColumnStatsBuilder reconstituted = (ColumnStatsBuilder) new ObjectInputStream(
+		@SuppressWarnings("unchecked") ColumnStatsBuilder<Double, ObservationProviderInterface<Double, ObservationInterface<Double>>> reconstituted =
+				(ColumnStatsBuilder<Double, ObservationProviderInterface<Double, ObservationInterface<Double>>>) new ObjectInputStream(
 				new ByteArrayInputStream(baos.toByteArray())).readObject();
 		validateBuiltColumnStats(reconstituted);
 	}
 
-	private void validateBuiltColumnStats(ColumnStatsBuilder columnStatsBuilder) {
+	private void validateBuiltColumnStats(ColumnStatsBuilder<Double, ObservationProviderInterface<Double, ObservationInterface<Double>>> columnStatsBuilder) {
 		ColumnStats stats = columnStatsBuilder.get(1);
 		assertEquals(2.0, stats.avg(), Double.MIN_VALUE);
 		assertEquals(4.0, stats.max(), Double.MIN_VALUE);

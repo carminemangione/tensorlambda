@@ -1,5 +1,6 @@
 package com.mangione.continuous.sampling;
 
+<<<<<<< HEAD
 import com.mangione.continuous.observationproviders.ObservationProviderInterface;
 import com.mangione.continuous.observationproviders.RandomGeneratorFactory;
 import com.mangione.continuous.observations.ObservationInterface;
@@ -34,14 +35,41 @@ public class SampledObservationProvider<S, T extends ObservationInterface<S>> im
 		this.seed = seed;
 		this.isTestSet = isTestSet;
 		this.numberOfObservations = numberOfObservations;
+=======
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.Consumer;
 
+import javax.annotation.Nonnull;
+
+import com.mangione.continuous.observationproviders.ListObservationProvider;
+import com.mangione.continuous.observationproviders.ObservationProviderInterface;
+import com.mangione.continuous.observations.ObservationInterface;
+import com.mangione.continuous.sampling.reservoir.SamplerFactoryInterface;
+import com.mangione.continuous.sampling.reservoir.SamplerInterface;
+
+
+public class SampledObservationProvider<S, T extends ObservationInterface<S>> implements ObservationProviderInterface<S, T> {
+	private final ListObservationProvider<S, T> sampledObservations;
+>>>>>>> 73d9563 (Migrated file changes from the source.)
+
+	public SampledObservationProvider(ObservationProviderInterface<S, T> providerToSample, int sampleSize, int seed, SamplerFactoryInterface<T> factory) {
+		SamplerInterface<T> sampler = factory.createSampler(providerToSample.iterator(), sampleSize, seed);
+		sampledObservations = new ListObservationProvider<>(sampler.sample());
 	}
 
+	public SampledObservationProvider(ObservationProviderInterface<S, T> providerToSample, int sampleSize, int seed, SamplerFactoryInterface<T> factory, Comparator<T> sortFunction) {
+		SamplerInterface<T> sampler = factory.createSampler(providerToSample.iterator(), sampleSize, seed);
+		List<T> sample = sampler.sample();
+		sample.sort(sortFunction);
+		sampledObservations = new ListObservationProvider<>(sample);
+	}
 
 	@Override
 	@Nonnull
 	public Iterator<T> iterator() {
-		return new SampledObservationProviderIterator();
+		return sampledObservations.iterator();
 	}
 
 	@Override
@@ -49,6 +77,7 @@ public class SampledObservationProvider<S, T extends ObservationInterface<S>> im
 		Iterator<T> iterator = iterator();
 		iterator.forEachRemaining(action);
 	}
+<<<<<<< HEAD
 
 	@Override
 	public Spliterator<T> spliterator() {
@@ -112,4 +141,6 @@ public class SampledObservationProvider<S, T extends ObservationInterface<S>> im
 			nextObservation = iterator.next();
 		}
 	}
+=======
+>>>>>>> 73d9563 (Migrated file changes from the source.)
 }

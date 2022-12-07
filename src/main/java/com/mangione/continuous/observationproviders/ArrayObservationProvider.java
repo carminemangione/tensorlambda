@@ -8,8 +8,14 @@ import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 
+<<<<<<< HEAD
 public class ArrayObservationProvider<S, T extends ObservationInterface<S>> extends ListObservationProvider<S, T> {
     public ArrayObservationProvider(S[][] arrayOfObservations, Function<S[], T> observationFromArrayFactory) {
+=======
+public class ArrayObservationProvider<FEATURE, OBSERVATION extends ObservationInterface<FEATURE>>
+        extends ListObservationProvider<FEATURE, OBSERVATION> {
+    public ArrayObservationProvider(FEATURE[][] arrayOfObservations, Function<FEATURE[], OBSERVATION> observationFromArrayFactory) {
+>>>>>>> 73d9563 (Migrated file changes from the source.)
         super(Arrays.stream(arrayOfObservations)
                 .map(observationFromArrayFactory)
                 .collect(Collectors.toList()));

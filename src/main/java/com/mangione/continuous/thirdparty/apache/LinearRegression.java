@@ -1,6 +1,6 @@
 package com.mangione.continuous.thirdparty.apache;
 
-import java.util.List;
+import java.util.Arrays;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -12,10 +12,14 @@ import Jama.Matrix;
 import Jama.QRDecomposition;
 import com.mangione.continuous.model.SupervisedModelInterace;
 import com.mangione.continuous.observationproviders.ObservationProviderInterface;
+<<<<<<< HEAD
 import com.mangione.continuous.observations.dense.DiscreteExemplar;
+=======
+>>>>>>> 73d9563 (Migrated file changes from the source.)
 import com.mangione.continuous.observations.ObservationInterface;
+import com.mangione.continuous.observations.dense.ContinuousExemplar;
 
-public class LinearRegression implements SupervisedModelInterace<Double, Integer, DiscreteExemplar<Double>> {
+public class LinearRegression implements SupervisedModelInterace<Double, Double, ContinuousExemplar> {
 	private static final long serialVersionUID = 5422020901503909935L;
 
 
@@ -24,16 +28,16 @@ public class LinearRegression implements SupervisedModelInterace<Double, Integer
 	private double SST;
 
 	@Override
-	public void train(ObservationProviderInterface<Double, DiscreteExemplar<Double>> provider) {
+	public void train(ObservationProviderInterface<Double, ContinuousExemplar> provider) {
 
-		double[][] inputs = new double[(int) provider.getNumberOfLines()][];
-		double[] targets = new double[(int) provider.getNumberOfLines()];
+		double[][] inputs = new double[provider.size()][];
+		double[] targets = new double[provider.size()];
 		AtomicInteger index = new AtomicInteger();
 		StreamSupport
 				.stream(Spliterators.spliteratorUnknownSize(provider.iterator(), Spliterator.ORDERED), false)
 				.forEach(exemplar -> {
-					inputs[index.get()] = toPrimitiveArray(exemplar.getFeatures());
-					targets[index.getAndIncrement()] = exemplar.getContinuousValue();
+					inputs[index.get()] = toPrimitiveArray(exemplar.getFeatures(Double[]::new));
+					targets[index.getAndIncrement()] = exemplar.getLabel();
 				});
 		linearRegression(inputs, targets);
 	}
@@ -41,17 +45,17 @@ public class LinearRegression implements SupervisedModelInterace<Double, Integer
 	@Override
 	public double score(ObservationInterface<Double> observation) {
 		double[][] obs = new double[1][];
-		obs[0] = ArrayUtils.toPrimitive(observation.getFeatures().toArray(new Double[observation.getFeatures().size()]));
+		obs[0] = ArrayUtils.toPrimitive(observation.getFeatures(Double[]::new));
 		Matrix matrix = new Matrix(obs);
 		Matrix estimate = matrix.times(beta);
 
 		return estimate.get(0, 0);
 	}
 
-	private double[] toPrimitiveArray(List<Double> doubleList) {
-		double[] doubles = new double[doubleList.size()];
+	private double[] toPrimitiveArray(Double[] doubleList) {
+		double[] doubles = new double[doubleList.length];
 		AtomicInteger index = new AtomicInteger();
-		doubleList.forEach(x -> doubles[index.getAndIncrement()] = x);
+		Arrays.stream(doubleList).forEach(x -> doubles[index.getAndIncrement()] = x);
 		return doubles;
 	}
 

@@ -11,7 +11,11 @@ import java.util.function.Function;
 public class ObservationToExemplarProvider<S extends Number, T extends ExemplarInterface<S, Integer>>
         implements ObservationProviderInterface<S, T> {
     private final ObservationProviderInterface<S, ? extends ObservationInterface<S>> provider;
+<<<<<<< HEAD
     private Function<ObservationInterface<S>, T> factory;
+=======
+    private final Function<ObservationInterface<S>, T> factory;
+>>>>>>> 73d9563 (Migrated file changes from the source.)
 
     public ObservationToExemplarProvider(ObservationProviderInterface<S, ? extends ObservationInterface<S>> provider,
                                          Function<ObservationInterface<S>, T> observationToExemplarFactory) {

@@ -2,17 +2,23 @@ package com.mangione.continuous.calculators.stats;
 
 import java.io.Serializable;
 import java.util.Arrays;
+<<<<<<< HEAD
 import java.util.Iterator;
 import java.util.List;
+=======
+>>>>>>> 73d9563 (Migrated file changes from the source.)
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.random.EmpiricalDistribution;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
+<<<<<<< HEAD
 import com.mangione.continuous.observationproviders.ObservationProviderInterface;
 import com.mangione.continuous.observations.ObservationInterface;
 
+=======
+>>>>>>> 73d9563 (Migrated file changes from the source.)
 @SuppressWarnings("WeakerAccess")
 public class ColumnStats implements Serializable {
 

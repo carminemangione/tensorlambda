@@ -1,8 +1,10 @@
 package com.mangione.continuous.sampling;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
-import static org.junit.Assert.*;
+import java.util.Random;
+
+import org.junit.Test;
 
 public class UrnSamplerTest {
 
@@ -12,6 +14,14 @@ public class UrnSamplerTest {
 
     @Test
     public void hasNext() {
+        UrnSampler urnSampler = new UrnSampler(false, new Random(), 1000, 5000, 7000);
+        int i = 0;
+        while (urnSampler.hasNext()) {
+            i++;
+            urnSampler.pick();
+        }
+        assertEquals(13000, i);
+
     }
 
     @Test

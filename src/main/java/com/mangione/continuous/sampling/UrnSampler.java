@@ -17,10 +17,13 @@ public class UrnSampler {
 		this.totalNumberOfBalls = IntStream.of(countOfEachColor).sum();
 	}
 
+<<<<<<< HEAD
 	public UrnSampler(Random random, int... countOfEachColor) {
 		this(false, random, countOfEachColor);
 	}
 
+=======
+>>>>>>> 73d9563 (Migrated file changes from the source.)
 	private void remove(int index) {
 		if (countOfEachColor[index] > 0) {
 			countOfEachColor[index] -= 1;

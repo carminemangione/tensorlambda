@@ -1,6 +1,18 @@
 package com.mangione.continuous.observations;
 
-public interface ExemplarInterface <S, T> extends ObservationInterface<S> {
-	T getTarget();
-	int getTargetIndex();
+import java.util.List;
+import java.util.function.IntFunction;
+import java.util.stream.IntStream;
+
+public interface ExemplarInterface <FEATURE, TAG> extends ObservationInterface<FEATURE> {
+	TAG getLabel();
+
+	default double[] convertExemplarToDoubleArray() {
+		return IntStream.range(0, numberOfFeatures())
+				.boxed()
+				.map(this::getFeature)
+				.map(feat -> (Number)feat)
+				.mapToDouble(Number::doubleValue)
+				.toArray();
+	}
 }

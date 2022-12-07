@@ -7,6 +7,12 @@ public class SamplingWithoutReplacement {
     private double numberNeeded;
     private double numberLeft;
 
+    public SamplingWithoutReplacement(long numberDesired, long totalNumber, RandomGenerator random) {
+        numberNeeded = numberDesired;
+        numberLeft = totalNumber;
+        this.random = random;
+    }
+
     public SamplingWithoutReplacement(double samplePercent, long totalNumber, RandomGenerator random) {
         numberNeeded = Math.round(samplePercent * totalNumber);
         numberLeft = totalNumber;

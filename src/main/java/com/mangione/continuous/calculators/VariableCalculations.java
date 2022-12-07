@@ -31,16 +31,28 @@ public class VariableCalculations<R, S> implements Serializable {
 		this.defaultCalculator = defaultCalculator;
 	}
 
+<<<<<<< HEAD
 	List<S> translateAllVariables(List<R> features) {
 		AtomicInteger i = new AtomicInteger();
 
 		try {
 			return features.stream()
+=======
+	List<S> translateAllVariables(R[] features) {
+		AtomicInteger i = new AtomicInteger();
+
+		try {
+			return Arrays.stream(features)
+>>>>>>> 73d9563 (Migrated file changes from the source.)
 					.map(x -> calculateVariableWithIndexedCalculatorOrDefault(x, i.getAndIncrement()))
 					.flatMap(List::stream)
 					.collect(Collectors.toList());
 		} catch (Exception e) {
+<<<<<<< HEAD
 			LOGGER.error("Could not process features: " + Arrays.toString(features.toArray()));
+=======
+			LOGGER.error("Could not process features: " + Arrays.toString(features));
+>>>>>>> 73d9563 (Migrated file changes from the source.)
 			throw e;
 		}
 	}
