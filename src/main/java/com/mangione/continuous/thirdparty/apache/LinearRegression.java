@@ -1,25 +1,24 @@
 package com.mangione.continuous.thirdparty.apache;
 
+import java.io.Serial;
 import java.util.Arrays;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.StreamSupport;
 
+import com.mangione.continuous.model.SupervisedModelInterace;
+import com.mangione.continuous.observationproviders.ObservationProviderInterface;
+import com.mangione.continuous.observations.dense.ContinuousExemplar;
 import org.apache.commons.lang3.ArrayUtils;
 
 import Jama.Matrix;
 import Jama.QRDecomposition;
-import com.mangione.continuous.model.SupervisedModelInterace;
-import com.mangione.continuous.observationproviders.ObservationProviderInterface;
-<<<<<<< HEAD
-import com.mangione.continuous.observations.dense.DiscreteExemplar;
-=======
->>>>>>> 73d9563 (Migrated file changes from the source.)
 import com.mangione.continuous.observations.ObservationInterface;
-import com.mangione.continuous.observations.dense.ContinuousExemplar;
+
 
 public class LinearRegression implements SupervisedModelInterace<Double, Double, ContinuousExemplar> {
+	@Serial
 	private static final long serialVersionUID = 5422020901503909935L;
 
 

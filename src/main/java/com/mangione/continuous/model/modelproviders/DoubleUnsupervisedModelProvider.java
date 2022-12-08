@@ -1,19 +1,20 @@
 package com.mangione.continuous.model.modelproviders;
 
-import com.mangione.continuous.observationproviders.ObservationProviderInterface;
-import com.mangione.continuous.observations.ObservationInterface;
-
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import com.mangione.continuous.observationproviders.ObservationProviderInterface;
+import com.mangione.continuous.observations.ObservationInterface;
 
 public class DoubleUnsupervisedModelProvider implements DataProvider<double[]> {
 	private final double[][] inputArray;
 
 
 	public DoubleUnsupervisedModelProvider(ObservationProviderInterface<? extends Number,
-				? extends ObservationInterface<? extends Number>> observationProvider) {
+			? extends ObservationInterface<? extends Number>> observationProvider) {
 		inputArray = buildDoubleArrayFromProvider(observationProvider);
 	}
 
@@ -44,8 +45,11 @@ public class DoubleUnsupervisedModelProvider implements DataProvider<double[]> {
 	private double[][] buildDoubleArrayFromProvider(ObservationProviderInterface<? extends Number,
 			? extends ObservationInterface<? extends Number>> observationProvider) {
 		Stream<double[]> stream = iterableToStream(iteratorToIterable(observationProvider.iterator()))
-				.map(ObservationInterface::getFeatures)
-				.map(features -> features.stream().mapToDouble(Number::doubleValue).toArray());
+				.map(obs->IntStream.range(0, obs.numberOfFeatures())
+						.boxed()
+						.map(index -> obs.getFeature(index))
+						.mapToDouble(Number::doubleValue)
+						.toArray());
 		return stream.toArray(double[][]::new);
 	}
 

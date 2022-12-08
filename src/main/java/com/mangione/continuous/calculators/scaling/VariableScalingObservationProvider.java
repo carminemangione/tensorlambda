@@ -5,12 +5,15 @@ import java.util.List;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.annotation.Nonnull;
 
 import com.mangione.continuous.observationproviders.ObservationProviderInterface;
 import com.mangione.continuous.observations.ObservationInterface;
 
+@SuppressWarnings("unused")
 public class VariableScalingObservationProvider<R extends Number, S extends Number,
 		T extends ObservationInterface<S>> implements ObservationProviderInterface<S, T> {
 
@@ -44,7 +47,7 @@ public class VariableScalingObservationProvider<R extends Number, S extends Numb
 
 
 	private class VariableCalculatorObservationProviderIterator implements Iterator<T> {
-		private Iterator<? extends ObservationInterface<R>> iterator;
+		private final Iterator<? extends ObservationInterface<R>> iterator;
 
 		private VariableCalculatorObservationProviderIterator() {
 			iterator = provider.iterator();
@@ -57,7 +60,10 @@ public class VariableScalingObservationProvider<R extends Number, S extends Numb
 
 		@Override
 		public T next() {
-			return observationFactory.apply(variableScalings.apply(iterator.next().getFeatures()));
+
+			ObservationInterface<R> next = iterator.next();
+			return observationFactory.apply(
+					variableScalings.apply(IntStream.range(0, next.numberOfFeatures()).boxed().map(next::getFeature).collect(Collectors.toList())));
 		}
 
 		@Override

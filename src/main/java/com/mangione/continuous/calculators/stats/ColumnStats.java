@@ -1,34 +1,25 @@
 package com.mangione.continuous.calculators.stats;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
-<<<<<<< HEAD
-import java.util.Iterator;
-import java.util.List;
-=======
->>>>>>> 73d9563 (Migrated file changes from the source.)
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.random.EmpiricalDistribution;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
-<<<<<<< HEAD
-import com.mangione.continuous.observationproviders.ObservationProviderInterface;
-import com.mangione.continuous.observations.ObservationInterface;
-
-=======
->>>>>>> 73d9563 (Migrated file changes from the source.)
 @SuppressWarnings("WeakerAccess")
 public class ColumnStats implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 7889775836422189051L;
 	private final double avg;
 	private final double max;
 	private final double min;
 	private final double std;
 	private final long[] histogram;
-	private long numberOfValues;
+	private final long numberOfValues;
 
 	private ColumnStats(DescriptiveStatistics stats, long[] histogram, long numberOfValues) {
 

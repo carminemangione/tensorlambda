@@ -5,9 +5,9 @@ import java.util.Random;
 import java.util.stream.IntStream;
 
 public class UrnSampler {
-	private boolean replace;
-	private Random random;
-	private int[] countOfEachColor;
+	private final boolean replace;
+	private final Random random;
+	private final int[] countOfEachColor;
 	private int totalNumberOfBalls;
 
 	public UrnSampler(boolean replace, Random random, int... countOfEachColor) {
@@ -17,13 +17,6 @@ public class UrnSampler {
 		this.totalNumberOfBalls = IntStream.of(countOfEachColor).sum();
 	}
 
-<<<<<<< HEAD
-	public UrnSampler(Random random, int... countOfEachColor) {
-		this(false, random, countOfEachColor);
-	}
-
-=======
->>>>>>> 73d9563 (Migrated file changes from the source.)
 	private void remove(int index) {
 		if (countOfEachColor[index] > 0) {
 			countOfEachColor[index] -= 1;
@@ -36,13 +29,12 @@ public class UrnSampler {
 		return totalNumberOfBalls > 0;
 	}
 
-	public int pick() {
+	public void pick() {
 		double r = random.nextDouble() * this.totalNumberOfBalls;
 		int index = findIndexForReplacement(r);
 
 		if (!replace)
 			remove(index);
-		return index;
 	}
 
 	private int findIndexForReplacement(double r) {
@@ -53,11 +45,6 @@ public class UrnSampler {
 		}
 		index--;
 		return index;
-	}
-
-	public static void main(String[] args) {
-		Random random = new Random(1305385);
-		UrnSampler urn = new UrnSampler(true, random, 2, 2);
 	}
 
 	@Override

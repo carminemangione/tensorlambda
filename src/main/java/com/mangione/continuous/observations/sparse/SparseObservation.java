@@ -1,64 +1,52 @@
 package com.mangione.continuous.observations.sparse;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.function.IntFunction;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
-@SuppressWarnings("ALL")
-public class SparseObservation<T> implements SparseObservationInterface<T> {
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-	private final Map<Integer, T> columnIndexToValueMap;
+import com.mangione.continuous.observations.ObservationInterface;
+
+public class SparseObservation<FEATURE> implements ObservationInterface<FEATURE> {
+
+	private final int[] columns;
+	private final FEATURE[] features;
 	private final int numberOfColumns;
-	private final T missingValue;
+	private final FEATURE missingValue;
 
-	public SparseObservation(T[] values, int[] columns, int numberOfColumns, T missingValue) {
-		this(createAndFillIndexToValueMap(columns, values), numberOfColumns, missingValue);
-	}
-
-	public SparseObservation(int numberOfColumns, T missingValue) {
-		columnIndexToValueMap = new HashMap<>();
+	public SparseObservation(FEATURE[] features, int[] columns, int numberOfColumns, FEATURE missingValue) {
+		if (features.length != columns.length)
+			throw new IllegalArgumentException(String.format(
+					"Length of features must be the same as columns. features:%d, columns:%d", features.length, columns.length));
+		this.columns = columns;
+		this.features = features;
 		this.numberOfColumns = numberOfColumns;
 		this.missingValue = missingValue;
 	}
 
-	protected SparseObservation(Map<Integer, T> columnIndexToValueMap, int numberOfColumns, T missingValue) {
-		this.columnIndexToValueMap = columnIndexToValueMap;
-		this.numberOfColumns = numberOfColumns;
-		this.missingValue = missingValue;
+	public FEATURE getMissingValue() {
+		return missingValue;
 	}
 
-	public Set<Integer> getColumnIndexes() {
-		return Collections.unmodifiableSet(columnIndexToValueMap.keySet());
+	public int[] getColumnIndexes() {
+		return columns;
 	}
 
-	@Override
-	public List<T> getFeatures() {
-		List<T> features = new ArrayList<>(generateListWithMissingValues());
-		columnIndexToValueMap.forEach(features::set);
-		return Collections.unmodifiableList(features);
-	}
-
-	public List<T> getFeatureValues() {
-		return Collections.unmodifiableList(new ArrayList<>(columnIndexToValueMap.values()));
+	public FEATURE[] getSparseFeatureValues() {
+		return features;
 	}
 
 	@Override
-	public List<T> getAllColumns() {
-		return getFeatures();
+	public FEATURE[] getFeatures(IntFunction<FEATURE[]> featureBuilder) {
+		return IntStream.range(0, numberOfColumns).boxed().map(this::getFeature).toArray(featureBuilder);
 	}
 
-
 	@Override
-	public T getFeature(int index) {
+	public FEATURE getFeature(Integer index) {
 		validateIndex(index);
-		return columnIndexToValueMap.getOrDefault(index, missingValue);
-	}
-
-	@Override
-	public void setFeature(int index, T value) {
-		validateIndex(index);
-		columnIndexToValueMap.put(index, value);
+		return getValue(index);
 	}
 
 	@Override
@@ -70,26 +58,35 @@ public class SparseObservation<T> implements SparseObservationInterface<T> {
 		if (index < 0)
 			throw new IllegalArgumentException("Index may not be negative");
 		if (index >= numberOfColumns)
-			throw new IllegalArgumentException(String.format("Index of value %d exceeds maximum of %d", index, numberOfColumns - 1));
+			throw new IllegalArgumentException(String.format("Index of value %d exceeds maximum of %d", index, numberOfColumns));
 	}
 
-	private List<T> generateListWithMissingValues() {
-		return Stream.generate(() -> missingValue)
-				.limit(numberOfColumns)
-				.collect(Collectors.toList());
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+
+		if (!(o instanceof SparseObservation<?> that)) return false;
+
+		return new EqualsBuilder()
+				.append(numberOfColumns, that.numberOfColumns)
+				.append(columns, that.columns)
+				.append(features, that.features)
+				.append(getMissingValue(), that.getMissingValue())
+				.isEquals();
 	}
 
-	private static <T> Map<Integer, T> createAndFillIndexToValueMap(int[] columns, T[] values) {
-		if (values.length != columns.length) {
-			throw new IllegalArgumentException("Length of values must equal number of columns");
-		}
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(17, 37)
+				.append(columns)
+				.append(features)
+				.append(numberOfColumns)
+				.append(getMissingValue())
+				.toHashCode();
+	}
 
-		Map<Integer, T> indexToValueMap = new TreeMap<>();
-
-		IntStream.range(0, columns.length)
-				.boxed()
-				.forEach(index -> indexToValueMap.put(columns[index], values[index]));
-
-		return indexToValueMap;
+	private FEATURE getValue(int col) {
+		int index = Arrays.binarySearch(columns, col);
+		return index < 0 ? missingValue : features[index];
 	}
 }

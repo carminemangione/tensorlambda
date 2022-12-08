@@ -1,9 +1,10 @@
 package com.mangione.continuous.observationproviders;
 
+import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
@@ -19,19 +20,21 @@ public class ColumnFilteringObservationProvider<S, T extends ObservationInterfac
 	private static final Logger LOGGER = LoggerFactory.getLogger(ColumnFilteringObservationProvider.class);
 	private final ObservationProviderInterface<S, T> provider;
 	private final Set<Integer> columnsToFilter;
-	private final BiFunction<List<S>, List<Integer>, T> factory;
+	private final BiFunction<S[], int[], T> factory;
+	private final IntFunction<S[]> featureBuilder;
 
 	public ColumnFilteringObservationProvider(ObservationProviderInterface<S, T> provider, Set<? extends Number> columnsToFilter,
-			BiFunction<List<S>, List<Integer>, T> valuesColumnsToObservationFactory) {
+			BiFunction<S[], int[], T> valuesColumnsToObservationFactory, IntFunction<S[]> featureBuilder) {
 		this.provider = provider;
 		this.columnsToFilter = coerceToIntForInterop(columnsToFilter);
 		this.factory = valuesColumnsToObservationFactory;
+		this.featureBuilder = featureBuilder;
 	}
 
 	@Nonnull
 	@Override
 	public Iterator<T> iterator() {
-		return new Iterator<T>() {
+		return new Iterator<>() {
 			private final LoggingTimer loggingTimer = new LoggingTimer(LOGGER, 100000, "ColumnFilteringObservationProvider processed lines: ");
 
 			private final Iterator<T> iterator = provider.iterator();
@@ -44,13 +47,16 @@ public class ColumnFilteringObservationProvider<S, T extends ObservationInterfac
 			@Override
 			public T next() {
 				T next = iterator.next();
-				List<Integer> columnIndexes = next.getColumnIndexes().stream()
+				int[] columnIndexes = Arrays.stream(next.getColumnIndexes())
+						.boxed()
 						.filter(column -> !columnsToFilter.contains(column))
-						.collect(Collectors.toList());
+						.mapToInt(Integer::intValue)
+						.toArray();
 
-				List<S> filteredFeatures = columnIndexes.stream()
+				S[] filteredFeatures = Arrays.stream(columnIndexes)
+						.boxed()
 						.map(next::getFeature)
-						.collect(Collectors.toList());
+						.toArray(featureBuilder);
 				loggingTimer.nextStep();
 				return factory.apply(filteredFeatures, columnIndexes);
 			}

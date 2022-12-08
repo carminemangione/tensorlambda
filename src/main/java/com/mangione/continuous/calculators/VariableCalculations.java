@@ -1,5 +1,6 @@
 package com.mangione.continuous.calculators;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class VariableCalculations<R, S> implements Serializable {
+	@Serial
 	private static final long serialVersionUID = -2819411644387468769L;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(VariableCalculations.class);
@@ -31,28 +33,16 @@ public class VariableCalculations<R, S> implements Serializable {
 		this.defaultCalculator = defaultCalculator;
 	}
 
-<<<<<<< HEAD
-	List<S> translateAllVariables(List<R> features) {
-		AtomicInteger i = new AtomicInteger();
-
-		try {
-			return features.stream()
-=======
 	List<S> translateAllVariables(R[] features) {
 		AtomicInteger i = new AtomicInteger();
 
 		try {
 			return Arrays.stream(features)
->>>>>>> 73d9563 (Migrated file changes from the source.)
 					.map(x -> calculateVariableWithIndexedCalculatorOrDefault(x, i.getAndIncrement()))
 					.flatMap(List::stream)
 					.collect(Collectors.toList());
 		} catch (Exception e) {
-<<<<<<< HEAD
-			LOGGER.error("Could not process features: " + Arrays.toString(features.toArray()));
-=======
 			LOGGER.error("Could not process features: " + Arrays.toString(features));
->>>>>>> 73d9563 (Migrated file changes from the source.)
 			throw e;
 		}
 	}

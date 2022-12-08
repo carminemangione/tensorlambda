@@ -5,10 +5,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.jetbrains.annotations.NotNull;
 
 import com.mangione.continuous.observationproviders.ObservationProviderInterface;
 import com.mangione.continuous.observations.ObservationInterface;
+
+import javax.annotation.Nonnull;
 
 @SuppressWarnings("WeakerAccess")
 public class StatsFromProvider {
@@ -19,7 +20,7 @@ public class StatsFromProvider {
 		this.columnStats = calculateColumnStats(provider, builders);
 	}
 
-	@NotNull
+	@Nonnull
 	private List<ColumnStats> calculateColumnStats(ObservationProviderInterface<Double, ? extends ObservationInterface<Double>> provider, List<ColumnStats.Builder> builders) {
 		for (ObservationInterface<Double> observation : provider) {
 			for (int i = 0; i < builders.size(); i++) {
@@ -31,7 +32,7 @@ public class StatsFromProvider {
 				.collect(Collectors.toList());
 	}
 
-	@NotNull
+	@Nonnull
 	private List<ColumnStats.Builder> initializeBuilders(ObservationProviderInterface<Double, ? extends ObservationInterface<Double>> provider, int numberOfBins) {
 		Iterator<? extends ObservationInterface<Double>> iterator = provider.iterator();
 		ObservationInterface<Double> next = iterator.next();

@@ -1,7 +1,5 @@
 package com.mangione.continuous.observations;
 
-import java.util.List;
-import java.util.function.IntFunction;
 import java.util.stream.IntStream;
 
 public interface ExemplarInterface <FEATURE, TAG> extends ObservationInterface<FEATURE> {

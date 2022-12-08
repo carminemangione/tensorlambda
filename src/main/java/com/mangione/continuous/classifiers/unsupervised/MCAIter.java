@@ -1,6 +1,5 @@
 package com.mangione.continuous.classifiers.unsupervised;
 
-import com.mangione.continuous.observations.ProxyValues;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.dense.row.CommonOps_DDRM;
@@ -9,7 +8,6 @@ import org.ejml.sparse.csc.CommonOps_DSCC;
 
 //import sun.java2d.marlin.DMarlinRenderingEngine;
 
-import java.io.*;
 
 /* gotta run this stuff iteratively - calling sabUpdate then itersvd until our batches have run out */
 public class MCAIter {
@@ -94,7 +92,7 @@ public class MCAIter {
     /* update for s */
     private void abUpdate(DMatrixRMaj Dr, DMatrixRMaj P, DMatrixRMaj r) {
         DMatrixRMaj B = new DMatrixRMaj(Dr.numRows, Dr.numCols);
-        CommonOps_DDRM.elementPower(-1/2, Dr, B);
+        CommonOps_DDRM.elementPower(-1./2, Dr, B);
         this.B = B;
         DMatrixRMaj rrT = new DMatrixRMaj(r.numRows, r.numRows);
         CommonOps_DDRM.multTransB(r, r, rrT);

@@ -1,89 +1,73 @@
 package com.mangione.continuous.observations.sparse;
 
+import java.util.Arrays;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import javax.annotation.Nonnull;
+
 import com.mangione.continuous.observations.ExemplarInterface;
 
-import java.util.*;
-import java.util.function.BinaryOperator;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+public class SparseExemplar<FEATURE, TARGET> extends SparseObservation<FEATURE> implements ExemplarInterface<FEATURE, TARGET> {
+	private final TARGET target;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-@SuppressWarnings("WeakerAccess")
-public class SparseExemplar<T> extends SparseObservation<T> implements ExemplarInterface<T, T> {
-	private static final Logger LOGGER = LoggerFactory.getLogger(SparseExemplar.class);
-	private final T target;
-	private final int targetIndex;
-
-	public SparseExemplar(List<T> values, List<Integer> columns, int numberOfColumns, T missingValue, int targetIndex) {
-		super(createAndFillIndexToValueMapRemovingTarget(values, columns, targetIndex),
-				numberOfColumns - 1, missingValue);
-		if (numberOfColumns < 1) {
-			throw new IllegalArgumentException("Number of columns must be greater than 0");
-		}
-
-		if (targetIndex < 0)
-			throw new IllegalArgumentException("Column index may not be negative");
-
-		this.targetIndex = targetIndex;
-		int locationOfTargetIndex = Collections.binarySearch(columns, targetIndex);
-		if (locationOfTargetIndex < 0)
-			throw new IllegalArgumentException(String.format("Target index %d must be set in values array", targetIndex));
-
-		this.target = values.get(locationOfTargetIndex);
+	public static <TARGET> SparseExemplar<Integer, TARGET> createBinaryExemplar(int[] columns, int numberOfColumns, TARGET target) {
+		Integer[] values = createBinaryFeatureArray(columns);
+		return new SparseExemplar<>(values, columns, numberOfColumns, 0, target);
 	}
 
-	public SparseExemplar(T[] values, Integer[] columns, int numberOfColumns, T missingValue, int targetIndex) {
-		this(Arrays.asList(values), Arrays.asList(columns), numberOfColumns, missingValue, targetIndex);
+	@Nonnull
+	private static Integer[] createBinaryFeatureArray(int[] columns) {
+		return Arrays.stream(columns)
+				.boxed()
+				.mapToInt(c -> 1)
+				.boxed()
+				.toArray(Integer[]::new);
 	}
 
-	public SparseExemplar(int numberOfColumns, T missingValue, T target) {
-		super(numberOfColumns, missingValue);
+	public SparseExemplar(FEATURE[] values, int[] columns, int numberOfColumns, FEATURE missingValue, TARGET target) {
+		super(values, columns, numberOfColumns, missingValue);
 		this.target = target;
-		this.targetIndex = numberOfColumns;
 	}
 
 	@Override
-	public T getTarget() {
+	public TARGET getLabel() {
 		return target;
 	}
 
 	@Override
-	public int getTargetIndex() {
-		return targetIndex;
+	public FEATURE getFeature(Integer index) {
+		return super.getFeature(index);
+	}
+
+	public TARGET getTarget() {
+		return target;
 	}
 
 	@Override
-	public List<T> getAllColumns() {
-		List<T> features = new ArrayList<>(getFeatures());
-		features.add(targetIndex, getTarget());
-		return features;
+	public boolean equals(Object o) {
+		if (this == o) return true;
+
+		if (!(o instanceof SparseExemplar<?, ?> that)) return false;
+
+		return new EqualsBuilder()
+				.appendSuper(super.equals(o))
+				.append(getLabel(), that.getLabel())
+				.isEquals();
 	}
 
 	@Override
-	public T getFeature(int index) {
-		if (index == targetIndex)
-			throw new IllegalArgumentException("May not return value at target index");
-		int adjustedIndexForRemovalOfTarget = index > targetIndex ? index - 1 : index;
-		return super.getFeature(adjustedIndexForRemovalOfTarget);
+	public int hashCode() {
+		return new HashCodeBuilder(17, 37)
+				.appendSuper(super.hashCode())
+				.append(getLabel())
+				.toHashCode();
 	}
 
-	private static <T> Map<Integer, T> createAndFillIndexToValueMapRemovingTarget(List<T> values, List<Integer> columns, int targetIndex) {
-		TreeMap<Integer, T> treeMap = IntStream.range(0, columns.size())
-				.boxed()
-				.distinct()
-				.collect(Collectors.toMap(columns::get, values::get, merger(), TreeMap::new));
-
-		treeMap.remove(targetIndex);
-		return treeMap;
+	@Override
+	public String toString() {
+		return "SparseExemplar{" +
+				"target=" + target +
+				"} " + super.toString();
 	}
-
-	private static <T> BinaryOperator<T> merger() {
-		return (u, v) -> {
-			LOGGER.warn(String.format("Duplicate key %s", u));
-			return u;
-		};
-	}
-
 }

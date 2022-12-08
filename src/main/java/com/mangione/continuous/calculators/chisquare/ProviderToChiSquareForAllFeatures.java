@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.mangione.continuous.observationproviders.ObservationProviderInterface;
 import com.mangione.continuous.observations.ExemplarInterface;
-import com.mangione.continuous.observations.ProxyValues;
+import com.mangione.continuous.encodings.ProxyValues;
 
 public class ProviderToChiSquareForAllFeatures {
 
@@ -37,7 +37,7 @@ public class ProviderToChiSquareForAllFeatures {
 					contingencyTableBuilders.stream()
 							.map(ContingencyTable.Builder::build)
 							.map(ChiSquare::new)
-							.collect(Collectors.toList()));
+							.toList());
 			offset += nextBatchSize;
 		}
 
@@ -60,15 +60,13 @@ public class ProviderToChiSquareForAllFeatures {
 		stopWatch.start();
 
 		Iterator<? extends ExemplarInterface<Integer, Integer>> iterator = provider.iterator();
-		//noinspection WhileLoopReplaceableByForEach
 		while (iterator.hasNext()) {
-
 			try {
 				ExemplarInterface<Integer, Integer> exemplar = iterator.next();
 				IntStream.range(0, batchSize)
 						.boxed()
 						.forEach(index -> contingencyTableBuilders.get(index).addObservation(
-								exemplar.getFeature(offset + index), exemplar.getTarget()));
+								exemplar.getFeature(offset + index), exemplar.getLabel()));
 
 				if (numObservations++ % 1000 == 0) {
 					stopWatch.split();

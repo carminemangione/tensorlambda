@@ -1,24 +1,22 @@
 package com.mangione.continuous.calculators.stats.counts;
 
-@SuppressWarnings("WeakerAccess")
-public class Count<K> {
-    private K key;
-    private int count;
+import javax.annotation.Nonnull;
 
-    public Count(K key) {
+public class Count<K> implements Comparable<Count<K>> {
+    private final K key;
+    private final int count;
+
+    public Count(K key, int count) {
+        this.count = count;
         this.key = key;
-    }
-
-    public int getCount() {
-        return count;
     }
 
     public K getKey() {
         return key;
     }
 
-    public void add() {
-        count++;
+    public int getCount() {
+        return count;
     }
 
     @Override
@@ -27,5 +25,10 @@ public class Count<K> {
                 "key=" + key +
                 ", count=" + count +
                 '}';
+    }
+
+    @Override
+    public int compareTo(@Nonnull Count<K> o) {
+        return Integer.compare(count, o.count);
     }
 }

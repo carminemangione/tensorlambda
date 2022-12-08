@@ -1,15 +1,15 @@
 package com.mangione.continuous.calculators.stats.counts;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.List;
+
+import org.junit.Test;
+
 import com.mangione.continuous.observationproviders.ArrayObservationProvider;
 import com.mangione.continuous.observationproviders.ListObservationProvider;
 import com.mangione.continuous.observations.ObservationInterface;
 import com.mangione.continuous.observations.dense.Observation;
-import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 public class CountsFromProviderTest {
 
@@ -17,12 +17,12 @@ public class CountsFromProviderTest {
     public void countsWithTwoColumns() {
     	Integer[][] values  = {{0, 0}, {0, 0}, {1, 1}, {1, 0},  {1, 0},  {1, 0}};
         ArrayObservationProvider<Integer, ObservationInterface<Integer>> provider =
-                new ArrayObservationProvider<>(values, integers -> new Observation<>(Arrays.asList(integers)));
+                new ArrayObservationProvider<>(values, Observation::new);
 
-        CountsFromProvider<ObservationInterface<Integer>, ListObservationProvider<Integer, ObservationInterface<Integer>>, String>
-                countsFromProvider = new CountsFromProvider<>(provider, this::generateKey);
+        CountsFromProvider<Integer, ObservationInterface<Integer>, ListObservationProvider<Integer,
+                ObservationInterface<Integer>>, String> countsFromProvider = new CountsFromProvider<>(provider, this::generateKey);
 
-        List<Count<String>> counts = countsFromProvider.getCounts().getCounts();
+        List<Count<String>> counts = countsFromProvider.getCounts();
         assertEquals(3, counts.size());
         assertEquals("10", counts.get(0).getKey());
         assertEquals(3, counts.get(0).getCount());
